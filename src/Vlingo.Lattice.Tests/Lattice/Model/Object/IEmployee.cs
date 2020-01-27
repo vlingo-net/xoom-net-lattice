@@ -6,9 +6,8 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using Vlingo.Common;
-using Vlingo.Lattice.Tests.Lattice.Model;
 
-namespace Vlingo.Lattice.Tests.Model.Object
+namespace Vlingo.Lattice.Tests.Lattice.Model.Object
 {
     public interface IEmployee
     {

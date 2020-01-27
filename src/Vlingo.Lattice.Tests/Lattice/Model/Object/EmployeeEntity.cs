@@ -5,11 +5,10 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using System;
 using Vlingo.Common;
 using Vlingo.Lattice.Model.Object;
 
-namespace Vlingo.Lattice.Tests.Model.Object
+namespace Vlingo.Lattice.Tests.Lattice.Model.Object
 {
     public class EmployeeEntity : ObjectEntity<EmployeeState>, IEmployee
     {

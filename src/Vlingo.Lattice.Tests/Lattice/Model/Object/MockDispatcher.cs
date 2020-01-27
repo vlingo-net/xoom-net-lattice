@@ -8,7 +8,7 @@
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Dispatch;
 
-namespace Vlingo.Lattice.Tests.Model.Object
+namespace Vlingo.Lattice.Tests.Lattice.Model.Object
 {
     public class MockDispatcher : IDispatcher<Dispatchable<TextEntry, TextState>>
     {

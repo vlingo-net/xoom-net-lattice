@@ -15,7 +15,7 @@ using Vlingo.Symbio.Store.Object.InMemory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Lattice.Tests.Model.Object
+namespace Vlingo.Lattice.Tests.Lattice.Model.Object
 {
     public class EmployeeEntityTest : IDisposable
     {
