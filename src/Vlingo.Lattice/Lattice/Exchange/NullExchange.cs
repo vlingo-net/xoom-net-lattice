@@ -15,9 +15,9 @@ namespace Vlingo.Lattice.Exchange
     /// </summary>
     public class NullExchange : IExchange
     {
-        private ILogger _logger = ConsoleLogger.BasicInstance();
+        private readonly ILogger _logger = ConsoleLogger.BasicInstance();
         
-        public static NullExchange Instance = new NullExchange();
+        public static readonly NullExchange Instance = new NullExchange();
         
         public void Close()
         {
