@@ -41,6 +41,6 @@ namespace Vlingo.Lattice.Exchange
         /// </summary>
         /// <param name="exchangeMessage">The possibly supported exchange message</param>
         /// <returns>True if supports <paramref name="exchangeMessage"/></returns>
-        bool Supports(object exchangeMessage);
+        bool Supports(object? exchangeMessage);
     }
 }
