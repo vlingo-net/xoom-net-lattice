@@ -5,6 +5,8 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System;
+
 namespace Vlingo.Lattice.Exchange
 {
     /// <summary>
@@ -16,8 +18,10 @@ namespace Vlingo.Lattice.Exchange
     public class Covey<TLocal, TExternal, TExchange>
     {
         public IExchangeAdapter<TLocal, TExternal, TExchange> Adapter { get; }
-        public IExchangeReceiver<TLocal> Receiver { get; }
         public IExchangeSender<TExchange> Sender { get; }
+        public IExchangeReceiver<TLocal> Receiver { get; }
+        public Type LocalType => typeof(TLocal);
+        public Type ExternalType => typeof(TExternal);
         
         /// <summary>
         /// Gets the <see cref="Covey{TLocal,TExternal,TExchange}"/> information from a set of related components, which includes
