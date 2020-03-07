@@ -5,7 +5,41 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-$HEADER$namespace $NAMESPACE$
+using System;
+using Vlingo.Common.Message;
+using Vlingo.Common.Version;
+
+namespace Vlingo.Lattice.Exchange.Local
 {
-  public class $CLASS$ {$END$}
+    public class LocalExchangeMessage : IMessage
+    {
+        public LocalExchangeMessage(string id, string type, string version, DateTimeOffset occurredOn, object payload)
+        {
+            RawPayload = payload;
+            Id = id;
+            Type = type;
+            Version = version;
+            OccurredOn = occurredOn;
+        }
+
+        public LocalExchangeMessage(string type, object payload) : this(Guid.NewGuid().ToString(), type, "1.0.0", DateTimeOffset.Now, payload)
+        {
+        }
+        
+        public string Id { get; }
+        
+        public DateTimeOffset OccurredOn { get; }
+        
+        public T Payload<T>() => (T) RawPayload;
+        
+        public object RawPayload { get; }
+
+        public string Type { get; }
+        
+        public string Version { get; }
+
+        public SemanticVersion SemanticVersion => this.From();
+
+        public override string ToString() => $"LocalExchangeMessage[type={Type} payload={RawPayload}]";
+    }
 }
