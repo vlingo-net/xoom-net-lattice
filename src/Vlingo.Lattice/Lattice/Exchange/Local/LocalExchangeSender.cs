@@ -5,10 +5,16 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Common.Message;
+
 namespace Vlingo.Lattice.Exchange.Local
 {
-    public class LocalExchangeSender
+    public class LocalExchangeSender : IExchangeSender<LocalExchangeMessage>
     {
-        
+        public IMessageQueue Queue { get; }
+
+        public LocalExchangeSender(IMessageQueue queue) => Queue = queue;
+
+        public void Send(LocalExchangeMessage message) => Queue.Enqueue(message);
     }
 }
