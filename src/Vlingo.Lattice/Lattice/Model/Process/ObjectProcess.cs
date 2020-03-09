@@ -21,7 +21,7 @@ namespace Vlingo.Lattice.Model.Process
     /// <typeparam name="T">The type of the <see cref="ObjectEntity{T}"/></typeparam>
     public abstract class ObjectProcess<T> : ObjectEntity<T>, IProcess<T> where T : StateObject
     {
-        private readonly Info<ObjectProcess<T>> _info;
+        private readonly Info<T> _info;
         private readonly List<Source> _applied;
         
         public abstract Chronicle<T> Chronicle { get; }
@@ -37,7 +37,7 @@ namespace Vlingo.Lattice.Model.Process
         
         protected ObjectProcess(string? id) : base(id)
         {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info<ObjectProcess<T>>();
+            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(ProcessTypeRegistry<T>.InternalName).Info();
             _applied = new List<Source>(2);
         }
         
