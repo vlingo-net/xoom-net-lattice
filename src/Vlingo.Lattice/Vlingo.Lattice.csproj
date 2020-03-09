@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+    
+        <!-- NuGet Metadata -->
+        <IsPackable>true</IsPackable>
+        <PackageVersion>0.0.1</PackageVersion>
+        <PackageId>Vlingo.Lattice</PackageId>
+        <Authors>Vlingo</Authors>
+        <Description>
+            The vlingo/PLATFORM tooling for reactive Domain-Driven Design models that are highly concurrent. Includes Compute Grid, Actor Caching, Object Spaces, Cluster Cross-Node Messaging, CQRS, and Event Sourcing support.
+        </Description>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/vlingo-net/vlingo-net-lattice</PackageProjectUrl>
+        <PackageIcon>vlingo-64x64.png</PackageIcon>
+        <RepositoryUrl>https://github.com/vlingo-net/vlingo-net-lattice</RepositoryUrl>
+        <PackageTags>vlingo-net-lattice;actor-model;actors;ddd;cqrs;event-sourcing;reactive;reactive-programming;netstandard20;netstandard21;net-languages;vlingo</PackageTags>
+        <Configurations>Debug;Release;Debug With Project References</Configurations>
+    </PropertyGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\vlingo-64x64.png" Pack="true" PackagePath="\" />
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <Choose>
+        <When Condition="'$(Configuration)' == 'Debug With Project References'">
+            <ItemGroup>
+                <ProjectReference Include="..\..\..\vlingo-net-actors\src\Vlingo.Actors\Vlingo.Actors.csproj" />
+            </ItemGroup>
+        </When>
+        <Otherwise>
+            <ItemGroup>
+                <PackageReference Include="Vlingo.Actors" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.Common" Version="$(VlingoVersion)" />
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
+</Project>
