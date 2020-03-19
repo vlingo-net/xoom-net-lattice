@@ -29,6 +29,9 @@
         <None Include="..\..\vlingo-64x64.png" Pack="true" PackagePath="\" />
         <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\vlingo-net-wire\src\Vlingo.Wire\Vlingo.Wire.csproj" />
+    </ItemGroup>
     <Choose>
         <When Condition="'$(Configuration)' == 'Debug With Project References'">
             <ItemGroup>
@@ -39,6 +42,7 @@
             <ItemGroup>
                 <PackageReference Include="Vlingo.Actors" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Common" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.Wire" Version="$(VlingoVersion)" />
             </ItemGroup>
         </Otherwise>
     </Choose>
