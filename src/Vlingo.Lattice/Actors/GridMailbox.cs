@@ -6,6 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Threading.Tasks;
 using Vlingo.Actors;
 using Vlingo.Common;
 using Vlingo.Lattice.Lattice.Grid.Application;
@@ -35,6 +36,8 @@ namespace Vlingo.Lattice.Actors
         {
             throw new NotImplementedException();
         }
+        
+        public TaskScheduler TaskScheduler { get; }
 
         public bool IsClosed { get; }
         public bool IsDelivering { get; }
