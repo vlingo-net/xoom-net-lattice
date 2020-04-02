@@ -32,6 +32,28 @@ namespace Vlingo.Lattice.Tests.Actors
             Assert.NotEqual(0, address.CompareTo(another));
             Assert.Equal(address.IdTyped<string>(), address.Id.ToString());
         }
+        
+        [Fact]
+        public void TestNameAndGuidIdGiven()
+        {
+            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+
+            var id1 = Guid.NewGuid().ToString();
+    
+            var address = addressFactory.From(id1, "test-address");
+    
+            Assert.NotNull(address);
+            Assert.Equal(new Guid(id1).ToLeastSignificantBits(), address.Id);
+            Assert.Equal("test-address", address.Name);
+    
+            var id2 = Guid.NewGuid().ToString();
+            var another = addressFactory.From(id2, "test-address");
+    
+            Assert.NotEqual(another, address);
+            Assert.NotEqual(0, address.CompareTo(another));
+            Assert.Equal(address, addressFactory.From(id1, "test-address"));
+            Assert.Equal(0, address.CompareTo(addressFactory.From(id1, "test-address")));
+        }
 
         [Fact]
         public void TestNameAndLongIdGiven()

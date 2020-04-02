@@ -24,13 +24,25 @@ namespace Vlingo.Lattice.Actors
             _generator = type.Generator();
         }
 
-        public IAddress FindableBy<T>(T id) => new GridAddress(GuidFrom(long.Parse(id!.ToString())));
+        public IAddress FindableBy<T>(T id) => 
+            Guid.TryParse(id!.ToString(), out var parsed) ? 
+                new GridAddress(parsed) :
+                new GridAddress(GuidFrom(long.Parse(id!.ToString())));
 
-        public IAddress From(long reservedId, string name) => new GridAddress(GuidFrom(reservedId), name);
+        public IAddress From(long reservedId, string name) =>
+            Guid.TryParse(reservedId!.ToString(), out var parsed) ? 
+                new GridAddress(parsed, name) :
+                new GridAddress(GuidFrom(long.Parse(reservedId!.ToString())), name);
 
-        public IAddress From(string idString) => new GridAddress(GuidFrom(long.Parse(idString)));
+        public IAddress From(string idString) =>
+            Guid.TryParse(idString, out var parsed) ? 
+                new GridAddress(parsed) :
+                new GridAddress(GuidFrom(long.Parse(idString)));
 
-        public IAddress From(string idString, string name) => new GridAddress(GuidFrom(long.Parse(idString)), name);
+        public IAddress From(string idString, string name) =>
+            Guid.TryParse(idString, out var parsed) ? 
+                new GridAddress(parsed, name) :
+                new GridAddress(GuidFrom(long.Parse(idString)), name);
 
         public IAddress None() => Empty;
 
@@ -38,7 +50,7 @@ namespace Vlingo.Lattice.Actors
 
         public IAddress UniquePrefixedWith(string prefixedWith) => new GridAddress(_generator.Generate(), prefixedWith, true);
 
-        public IAddress UniqueWith(string? name) => new GridAddress(_generator.Generate(name), name);
+        public IAddress UniqueWith(string? name) => new GridAddress(_generator.Generate(name!), name);
 
         public IAddress WithHighId() => throw new NotImplementedException("Unsupported for GridAddress.");
 
@@ -49,7 +61,7 @@ namespace Vlingo.Lattice.Actors
         private static Guid GuidFrom<T>(T id)
         {
             var bytes = new byte[16];
-            BitConverter.GetBytes((long) (object) id).CopyTo(bytes, 0);
+            BitConverter.GetBytes((long) (object) id!).CopyTo(bytes, 0);
             return new Guid(bytes);
         }
     }

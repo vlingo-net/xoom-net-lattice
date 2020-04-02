@@ -14,19 +14,19 @@ namespace Vlingo.Lattice.Actors
     public class GridAddress : IAddress
     {
         private readonly Guid _id;
-        private string _name;
+        private string? _name;
 
-        public long Id => ToLeastSignificntBits(_id);
+        public long Id => _id.ToLeastSignificantBits();
         
-        public long IdSequence => ToLeastSignificntBits(_id);
+        public long IdSequence => _id.ToLeastSignificantBits();
         
-        public string IdSequenceString => ToLeastSignificntBits(_id).ToString();
+        public string IdSequenceString => _id.ToLeastSignificantBits().ToString();
         
-        public string IdString => ToLeastSignificntBits(_id).ToString();
+        public string IdString => _id.ToLeastSignificantBits().ToString();
         
         public T IdTyped<T>() => (T)(object)IdString;
 
-        public string Name => string.IsNullOrEmpty(_name) ? IdString : _name;
+        public string Name => string.IsNullOrEmpty(_name) ? IdString : _name!;
         
         public bool IsDistributable => true;
 
@@ -50,28 +50,14 @@ namespace Vlingo.Lattice.Actors
         {
         }
 
-        internal GridAddress(Guid reservedId, string name) : this(reservedId, name, false)
+        internal GridAddress(Guid reservedId, string? name) : this(reservedId, name, false)
         {
         }
 
-        internal GridAddress(Guid reservedId, string name, bool prefixName)
+        internal GridAddress(Guid reservedId, string? name, bool prefixName)
         {
             _id = reservedId;
             _name = name == null ? null : prefixName ? name + _id : name;
         }
-
-        private long ToLeastSignificntBits(Guid id)
-        {
-            var bytes = id.ToByteArray();
-            var boolArray = new bool[bytes.Length];
-            for(var i = 0; i < bytes.Length; i++)
-            {
-                boolArray[i] = GetBit(bytes[i]);
-            }
-
-            return BitConverter.ToInt64(bytes, 0);
-        }
-        
-        private static bool GetBit(byte b) => (b & 1) != 0;
     }
 }
