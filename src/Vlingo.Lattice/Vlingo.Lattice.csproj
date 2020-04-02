@@ -35,11 +35,12 @@
     <Choose>
         <When Condition="'$(Configuration)' == 'Debug With Project References'">
             <ItemGroup>
-                <ProjectReference Include="..\..\..\vlingo-net-actors\src\Vlingo.Actors\Vlingo.Actors.csproj" />
+                <ProjectReference Include="..\..\..\vlingo-net-cluster\src\Vlingo.Cluster\Vlingo.Cluster.csproj" />
             </ItemGroup>
         </When>
         <Otherwise>
             <ItemGroup>
+                <PackageReference Include="Vlingo.Cluster" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Actors" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Common" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Wire" Version="$(VlingoVersion)" />
