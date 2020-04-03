@@ -17,15 +17,14 @@ namespace Vlingo.Lattice.Actors
 {
     public class GridMailbox : IMailbox
     {
-        //private static ILogger log = LoggerFactory.getLogger(GridMailbox.class);
+        private ILogger _log;
+        private IMailbox _local;
+        private Id _localId;
+        private Address _address;
 
-        private IMailbox local;
-        private Id localId;
-        private Address address;
+        private IHashRing<Id> _hashRing;
 
-        private IHashRing<Id> hashRing;
-
-        private IOutbound outbound;
+        private IOutbound _outbound;
         
         public void Run()
         {
