@@ -14,8 +14,8 @@ namespace Vlingo.Lattice.Lattice.Grid.Application
 {
     public interface IGridActorControl
     {
-        // void Start<T>(Id recipient, Id sender, T protocol, IAddress address, Definition.SerializationProxy definitionProxy);
-        //
+        void Start<T>(Id recipient, Id sender, T protocol, IAddress address, Definition.SerializationProxy<T> definitionProxy);
+        
         // void Deliver<T>(
         //         Id recipient,
         //         Id sender,

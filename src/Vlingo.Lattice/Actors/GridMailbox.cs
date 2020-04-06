@@ -55,6 +55,11 @@ namespace Vlingo.Lattice.Actors
             throw new NotImplementedException();
         }
 
+        public bool IsSuspendedFor(string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsSuspended { get; }
         public IMessage? Receive()
         {
