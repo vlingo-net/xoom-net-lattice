@@ -9,6 +9,7 @@ using System;
 using Vlingo.Actors;
 using Vlingo.Common.Identity;
 using Vlingo.Lattice.Actors;
+using Vlingo.UUID;
 using Xunit;
 
 namespace Vlingo.Lattice.Tests.Actors
@@ -30,7 +31,7 @@ namespace Vlingo.Lattice.Tests.Actors
     
             Assert.NotEqual(another, address);
             Assert.NotEqual(0, address.CompareTo(another));
-            Assert.Equal(address.IdTyped<string>(), address.Id.ToString());
+            Assert.Equal(address.IdTyped(s => s), address.Id.ToString());
         }
         
         [Fact]

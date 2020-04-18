@@ -8,6 +8,7 @@
 using System;
 using Vlingo.Actors;
 using Vlingo.Common.Identity;
+using Vlingo.UUID;
 
 namespace Vlingo.Lattice.Actors
 {
@@ -27,22 +28,22 @@ namespace Vlingo.Lattice.Actors
         public IAddress FindableBy<T>(T id) => 
             Guid.TryParse(id!.ToString(), out var parsed) ? 
                 new GridAddress(parsed) :
-                new GridAddress(GuidFrom(long.Parse(id!.ToString())));
+                new GridAddress(long.Parse(id!.ToString()).ToGuid());
 
         public IAddress From(long reservedId, string name) =>
             Guid.TryParse(reservedId!.ToString(), out var parsed) ? 
                 new GridAddress(parsed, name) :
-                new GridAddress(GuidFrom(long.Parse(reservedId!.ToString())), name);
+                new GridAddress(long.Parse(reservedId!.ToString()).ToGuid(), name);
 
         public IAddress From(string idString) =>
             Guid.TryParse(idString, out var parsed) ? 
                 new GridAddress(parsed) :
-                new GridAddress(GuidFrom(long.Parse(idString)));
+                new GridAddress(long.Parse(idString).ToGuid());
 
         public IAddress From(string idString, string name) =>
             Guid.TryParse(idString, out var parsed) ? 
                 new GridAddress(parsed, name) :
-                new GridAddress(GuidFrom(long.Parse(idString)), name);
+                new GridAddress(long.Parse(idString).ToGuid(), name);
 
         public IAddress None() => Empty;
 
@@ -57,12 +58,5 @@ namespace Vlingo.Lattice.Actors
         public IAddress WithHighId(string name) => throw new NotImplementedException("Unsupported for GridAddress.");
 
         public long TestNextIdValue() => throw new NotImplementedException("Unsupported for GridAddress.");
-
-        private static Guid GuidFrom<T>(T id)
-        {
-            var bytes = new byte[16];
-            BitConverter.GetBytes((long) (object) id!).CopyTo(bytes, 0);
-            return new Guid(bytes);
-        }
     }
 }

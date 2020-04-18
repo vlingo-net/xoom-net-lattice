@@ -7,6 +7,7 @@
 
 using System;
 using Vlingo.Actors;
+using Vlingo.UUID;
 
 namespace Vlingo.Lattice.Actors
 {
@@ -24,7 +25,7 @@ namespace Vlingo.Lattice.Actors
         
         public string IdString => _id.ToLeastSignificantBits().ToString();
         
-        public T IdTyped<T>() => (T)(object)IdString;
+        public T IdTyped<T>(Func<string, T> typeConverter) => typeConverter(IdString);
 
         public string Name => string.IsNullOrEmpty(_name) ? IdString : _name!;
         

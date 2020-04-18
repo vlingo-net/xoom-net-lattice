@@ -43,6 +43,7 @@
                 <PackageReference Include="Vlingo.Cluster" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Actors" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Common" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.UUID" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Wire" Version="$(VlingoVersion)" />
             </ItemGroup>
         </Otherwise>
