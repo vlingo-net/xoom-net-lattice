@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Vlingo.Lattice.Tests.Actors
 {
-    public class AddressTest
+    public class GridAddressTest
     {
         [Fact]
         public void TestNameGiven()
@@ -31,7 +31,7 @@ namespace Vlingo.Lattice.Tests.Actors
     
             Assert.NotEqual(another, address);
             Assert.NotEqual(0, address.CompareTo(another));
-            Assert.Equal(address.IdTyped(s => s), address.Id.ToString());
+            Assert.Equal(address.IdTyped(s => s), address.IdString);
         }
         
         [Fact]

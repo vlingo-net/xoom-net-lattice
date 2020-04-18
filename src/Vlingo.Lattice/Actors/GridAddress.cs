@@ -7,46 +7,14 @@
 
 using System;
 using Vlingo.Actors;
-using Vlingo.UUID;
 
 namespace Vlingo.Lattice.Actors
 {
     [Serializable]
-    public class GridAddress : IAddress
+    public class GridAddress : GuidAddress
     {
-        private readonly Guid _id;
-        private string? _name;
-
-        public long Id => _id.ToLeastSignificantBits();
+        public override bool IsDistributable => true;
         
-        public long IdSequence => _id.ToLeastSignificantBits();
-        
-        public string IdSequenceString => _id.ToLeastSignificantBits().ToString();
-        
-        public string IdString => _id.ToLeastSignificantBits().ToString();
-        
-        public T IdTyped<T>(Func<string, T> typeConverter) => typeConverter(IdString);
-
-        public string Name => string.IsNullOrEmpty(_name) ? IdString : _name!;
-        
-        public bool IsDistributable => true;
-
-        public int CompareTo(IAddress other) => Id.CompareTo(other.Id);
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null || obj.GetType() != typeof(GridAddress))
-            {
-                return false;
-            }
-            
-            return _id.Equals(((GridAddress) obj)._id);
-        }
-
-        public override int GetHashCode() => _id.GetHashCode();
-
-        public override string ToString() => $"GridAddress[id={_id}, name={(string.IsNullOrEmpty(_name) ? "(none)" : _name)}]";
-
         internal GridAddress(Guid reservedId) : this(reservedId, null, false)
         {
         }
@@ -55,10 +23,8 @@ namespace Vlingo.Lattice.Actors
         {
         }
 
-        internal GridAddress(Guid reservedId, string? name, bool prefixName)
+        internal GridAddress(Guid reservedId, string? name, bool prefixName): base(reservedId, name, prefixName)
         {
-            _id = reservedId;
-            _name = name == null ? null : prefixName ? name + _id : name;
         }
     }
 }

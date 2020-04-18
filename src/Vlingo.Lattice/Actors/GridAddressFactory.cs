@@ -12,51 +12,38 @@ using Vlingo.UUID;
 
 namespace Vlingo.Lattice.Actors
 {
-    public class GridAddressFactory : IAddressFactory
+    public class GridAddressFactory : GuidAddressFactory
     {
         private static IAddress Empty = new GridAddress(Guid.Empty, "(Empty)");
-        
-        private readonly IIdentityGenerator _generator;
-        private IdentityGeneratorType _type;
-        
-        public GridAddressFactory(IdentityGeneratorType type)
+
+        public GridAddressFactory(IdentityGeneratorType type) : base(type)
         {
-            _type = type;
-            _generator = type.Generator();
         }
 
-        public IAddress FindableBy<T>(T id) => 
+        public override IAddress FindableBy<T>(T id) => 
             Guid.TryParse(id!.ToString(), out var parsed) ? 
                 new GridAddress(parsed) :
                 new GridAddress(long.Parse(id!.ToString()).ToGuid());
 
-        public IAddress From(long reservedId, string name) =>
+        public override IAddress From(long reservedId, string name) =>
             Guid.TryParse(reservedId!.ToString(), out var parsed) ? 
                 new GridAddress(parsed, name) :
                 new GridAddress(long.Parse(reservedId!.ToString()).ToGuid(), name);
 
-        public IAddress From(string idString) =>
+        public override IAddress From(string idString) =>
             Guid.TryParse(idString, out var parsed) ? 
                 new GridAddress(parsed) :
                 new GridAddress(long.Parse(idString).ToGuid());
 
-        public IAddress From(string idString, string name) =>
+        public override IAddress From(string idString, string name) =>
             Guid.TryParse(idString, out var parsed) ? 
                 new GridAddress(parsed, name) :
                 new GridAddress(long.Parse(idString).ToGuid(), name);
 
-        public IAddress None() => Empty;
+        public override IAddress None() => Empty;
 
-        public IAddress Unique() => new GridAddress(_generator.Generate());
+        public override IAddress WithHighId() => throw new NotImplementedException("Unsupported for GridAddress.");
 
-        public IAddress UniquePrefixedWith(string prefixedWith) => new GridAddress(_generator.Generate(), prefixedWith, true);
-
-        public IAddress UniqueWith(string? name) => new GridAddress(_generator.Generate(name!), name);
-
-        public IAddress WithHighId() => throw new NotImplementedException("Unsupported for GridAddress.");
-
-        public IAddress WithHighId(string name) => throw new NotImplementedException("Unsupported for GridAddress.");
-
-        public long TestNextIdValue() => throw new NotImplementedException("Unsupported for GridAddress.");
+        public override IAddress WithHighId(string name) => throw new NotImplementedException("Unsupported for GridAddress.");
     }
 }
