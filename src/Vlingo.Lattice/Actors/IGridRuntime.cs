@@ -12,6 +12,5 @@ namespace Vlingo.Lattice.Actors
     public interface IGridRuntime
     {
         Actor ActorAt(IAddress address);
-        
     }
 }

@@ -44,6 +44,6 @@ namespace Vlingo.Lattice.Actors
 
         public override IAddress WithHighId() => throw new NotImplementedException("Unsupported for GridAddress.");
 
-        public override IAddress WithHighId(string name) => throw new NotImplementedException("Unsupported for GridAddress.");
+        public override IAddress WithHighId(string? name) => throw new NotImplementedException("Unsupported for GridAddress.");
     }
 }
