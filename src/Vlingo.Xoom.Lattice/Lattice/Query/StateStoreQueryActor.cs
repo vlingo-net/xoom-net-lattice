@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
@@ -115,6 +116,8 @@ namespace Vlingo.Xoom.Lattice.Query
             return (ICompletes<ObjectState<T>>) Completes();
         }
         
+        protected ICompletes<IEnumerable<TResult>> AllOf<TResult>(IEnumerable<TResult> all) => QueryAllOf(all.ToList());
+
         /// <summary>
         /// Gets a <see cref="ICompletes{TResult}"/> of the eventual result of querying
         /// for the state of the <typeparamref name="T"/> and identified by <paramref name="id"/>.
@@ -245,6 +248,21 @@ namespace Vlingo.Xoom.Lattice.Query
 
         private void QueryFor<TResult>(string id, ResultType resultType, TResult notFoundState, Action<TResult> answer) => 
             _stateStore.Read<TResult>(id, _readInterest, new QueryResultHandler<TResult>(answer, resultType, notFoundState));
+        
+        private ICompletes<IEnumerable<TResult>> QueryAllOf<TResult>(List<TResult> all)
+        {
+            Action<StateBundle> populator = state => all.Add((TResult) state.Object!);
+
+            var completes = CompletesEventually();
+            Action<IEnumerable<TResult>> collector = collected => completes.With(collected);
+
+            // final TerminalOperationConsumerSink sink =
+            //     new TerminalOperationConsumerSink(populator, all, collector);
+
+            _stateStore.ReadAll<TResult>( .andFinallyConsume(stream -> stream.flowInto(sink));
+
+            return completes();
+        }
     }
 
     public enum ResultType

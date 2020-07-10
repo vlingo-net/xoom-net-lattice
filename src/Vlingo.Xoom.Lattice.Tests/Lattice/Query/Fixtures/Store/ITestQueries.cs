@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System.Collections.Generic;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 
@@ -27,5 +28,7 @@ namespace Vlingo.Tests.Lattice.Query.Fixtures.Store
         ICompletes<ObjectState<TestState>> TestObjectStateById(string id, int retryInterval, int retryCount);
 
         ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState, int retryInterval, int retryCount);
+
+        ICompletes<IEnumerable<TestState>> All(IEnumerable<TestState> all);
     }
 }
