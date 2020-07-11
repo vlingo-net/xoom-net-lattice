@@ -259,9 +259,9 @@ namespace Vlingo.Xoom.Lattice.Query
             // final TerminalOperationConsumerSink sink =
             //     new TerminalOperationConsumerSink(populator, all, collector);
 
-            _stateStore.ReadAll<TResult>( .andFinallyConsume(stream -> stream.flowInto(sink));
+            //_stateStore.ReadAll<TResult>( .andFinallyConsume(stream -> stream.flowInto(sink));
 
-            return completes();
+            return (ICompletes<IEnumerable<TResult>>)Completes();
         }
     }
 
