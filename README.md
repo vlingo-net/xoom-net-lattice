@@ -1,6 +1,7 @@
 # vlingo-net-lattice
 
-[![Build status](https://ci.appveyor.com/api/projects/status/iql6xn08f59n38j5?svg=true)](https://ci.appveyor.com/project/VlingoNetOwner/vlingo-net-lattice/branch/master) 
+[![Build status](https://ci.appveyor.com/api/projects/status/iql6xn08f59n38j5?svg=true)](https://ci.appveyor.com/project/VlingoNetOwner/vlingo-net-lattice/branch/master)
+![Build master](https://github.com/vlingo-net/vlingo-net-lattice/workflows/.NET/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/Vlingo.Lattice.svg)](https://www.nuget.org/packages/Vlingo.Lattice)
 [![Gitter](https://badges.gitter.im/vlingo-platform-net/community.svg)](https://gitter.im/vlingo-platform-net/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
