@@ -15,6 +15,7 @@ namespace Vlingo.Lattice.Lattice.Model
     /// state and/or <see cref="Source"/> instances.
     /// </summary>
     /// <typeparam name="T">The type of the state</typeparam>
+    [Serializable]
     public class ApplyFailedException<T> : Exception
     {
         public ApplyFailedException(Applicable<T> applicable) => Applicable = applicable;
