@@ -8,7 +8,6 @@
 using System;
 using Vlingo.Actors;
 using Vlingo.Common.Identity;
-using Vlingo.Lattice.Actors;
 using Vlingo.UUID;
 using Xunit;
 

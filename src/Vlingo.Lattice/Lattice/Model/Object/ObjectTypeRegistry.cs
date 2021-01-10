@@ -11,7 +11,7 @@ using Vlingo.Actors;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
 
-namespace Vlingo.Lattice.Lattice.Model.Object
+namespace Vlingo.Lattice.Model.Object
 {
     /// <summary>
     /// Registry for <code>object</code> types are stored in an <see cref="IObjectStore"/>, using

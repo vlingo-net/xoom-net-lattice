@@ -8,7 +8,7 @@
 using System;
 using Vlingo.Symbio;
 
-namespace Vlingo.Lattice.Lattice.Model
+namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// An Exception used to indicate the failure of an attempt to <code>Apply()</code>

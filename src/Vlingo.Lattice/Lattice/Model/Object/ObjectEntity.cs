@@ -13,7 +13,7 @@ using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
 
-namespace Vlingo.Lattice.Lattice.Model.Object
+namespace Vlingo.Lattice.Model.Object
 {
     /// <summary>
     /// Abstract base type used to preserve and restore object state

@@ -19,6 +19,7 @@
         <RepositoryUrl>https://github.com/vlingo-net/vlingo-net-lattice</RepositoryUrl>
         <PackageTags>vlingo-net-lattice;actor-model;actors;ddd;cqrs;event-sourcing;reactive;reactive-programming;netstandard20;netstandard21;net-languages;vlingo</PackageTags>
         <Configurations>Debug;Release;Debug With Project References</Configurations>
+        <RootNamespace>Vlingo</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

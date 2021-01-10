@@ -7,7 +7,7 @@
 
 using Vlingo.Actors;
 
-namespace Vlingo.Lattice.Lattice.Model
+namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// Abstract base of all entity types.

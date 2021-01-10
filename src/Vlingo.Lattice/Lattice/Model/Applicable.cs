@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Vlingo.Actors;
 using Vlingo.Symbio;
 
-namespace Vlingo.Lattice.Lattice.Model
+namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// The elements used in the attempted <code>Apply()</code>

@@ -5,12 +5,10 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using System.Collections.Generic;
 using Vlingo.Actors;
-using Vlingo.Common;
 using Vlingo.Wire.Node;
 
-namespace Vlingo.Lattice.Lattice.Grid.Application
+namespace Vlingo.Lattice.Grid.Application
 {
     public interface IGridActorControl
     {

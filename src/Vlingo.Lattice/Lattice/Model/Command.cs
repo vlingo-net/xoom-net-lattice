@@ -7,7 +7,7 @@
 
 using Vlingo.Symbio;
 
-namespace Vlingo.Lattice.Lattice.Model
+namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// A abstract base for commands, which are considered a type of <see cref="Source{T}"/>.

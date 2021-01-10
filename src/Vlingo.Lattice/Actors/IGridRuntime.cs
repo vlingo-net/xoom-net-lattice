@@ -5,9 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Actors;
-
-namespace Vlingo.Lattice.Actors
+namespace Vlingo.Actors
 {
     public interface IGridRuntime
     {

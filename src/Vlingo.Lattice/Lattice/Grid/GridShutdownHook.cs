@@ -10,7 +10,7 @@ using System.Threading;
 using Vlingo.Actors;
 using Vlingo.Cluster.Model;
 
-namespace Vlingo.Lattice.Lattice.Grid
+namespace Vlingo.Lattice.Grid
 {
     internal class GridShutdownHook
     {

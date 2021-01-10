@@ -6,11 +6,10 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Actors;
 using Vlingo.Common.Identity;
 using Vlingo.UUID;
 
-namespace Vlingo.Lattice.Actors
+namespace Vlingo.Actors
 {
     public class GridAddressFactory : GuidAddressFactory
     {

@@ -7,13 +7,12 @@
 
 using System;
 using System.Threading.Tasks;
-using Vlingo.Actors;
 using Vlingo.Common;
-using Vlingo.Lattice.Lattice.Grid.Application;
-using Vlingo.Lattice.Lattice.Grid.Hashring;
+using Vlingo.Lattice.Grid.Application;
+using Vlingo.Lattice.Grid.Hashring;
 using Vlingo.Wire.Node;
 
-namespace Vlingo.Lattice.Actors
+namespace Vlingo.Actors
 {
     public class GridMailbox : IMailbox
     {

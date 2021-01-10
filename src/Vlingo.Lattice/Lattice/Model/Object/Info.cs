@@ -8,7 +8,7 @@
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
 
-namespace Vlingo.Lattice.Lattice.Model.Object
+namespace Vlingo.Lattice.Model.Object
 {
     /// <summary>
     /// Holder of registration information.

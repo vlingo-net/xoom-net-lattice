@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Lattice.Lattice.Model
+namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// Provides the means to request the identity of the <see cref="DomainEvent"/>.
