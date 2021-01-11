@@ -21,7 +21,7 @@ namespace Vlingo.Lattice.Model.Object
     public class ObjectTypeRegistry
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
-        private readonly Dictionary<Type, Info> _stores = new Dictionary<Type, Info>();
+        private readonly Dictionary<Type, object> _stores = new Dictionary<Type, object>();
 
         /// <summary>
         /// Construct my default state and register me with the <paramref name="world"/>.
@@ -30,14 +30,24 @@ namespace Vlingo.Lattice.Model.Object
         public ObjectTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
 
         /// <summary>
-        /// Answer the <see cref="Info"/>.
+        /// Answer the <see cref="Info{TState}"/>.
         /// </summary>
-        /// <returns><see cref="Info"/></returns>
-        public Info Info(Type type) => _stores[type];
+        /// <returns><see cref="Info{TState}"/></returns>
+        public Info<T> Info<T>() => (Info<T>)_stores[typeof(T)];
         
-        public ObjectTypeRegistry Register<T>(Info info)
+        /// <summary>
+        /// Gets the same instance of registry after registering the <see cref="T:Info{TState}"/>.
+        /// </summary>
+        /// <param name="info"><see cref="T:Info{TState}"/> to register</param>
+        /// <typeparam name="T">The type of the registration info</typeparam>
+        /// <returns>The same instance of <see cref="ObjectTypeRegistry"/></returns>
+        public ObjectTypeRegistry Register<T>(Info<T> info)
         {
-            _stores.Add(typeof(T), info);
+            if (!_stores.ContainsKey(typeof(T)))
+            {
+                _stores.Add(typeof(T), info);   
+            }
+            
             return this;
         }
     }

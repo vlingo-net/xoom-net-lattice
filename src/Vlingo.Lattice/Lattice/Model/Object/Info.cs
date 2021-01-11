@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
 
@@ -13,7 +14,8 @@ namespace Vlingo.Lattice.Model.Object
     /// <summary>
     /// Holder of registration information.
     /// </summary>
-    public class Info
+    /// <typeparam name="TState">The type of the underlying state.</typeparam>
+    public class Info<TState>
     {
         /// <summary>
         /// Construct my default state.
@@ -28,6 +30,7 @@ namespace Vlingo.Lattice.Model.Object
             StoreName = storeName;
             QueryObjectExpression = queryObjectExpression;
             Mapper = mapper;
+            StoreType = typeof(TState);
         }
         
         public StateObjectMapper Mapper { get; }
@@ -35,6 +38,8 @@ namespace Vlingo.Lattice.Model.Object
         public QueryExpression QueryObjectExpression { get; }
 
         public IObjectStore Store { get; }
+        
+        public Type StoreType { get; }
 
         public string StoreName { get; }
     }
