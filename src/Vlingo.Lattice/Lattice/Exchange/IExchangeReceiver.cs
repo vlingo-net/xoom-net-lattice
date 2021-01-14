@@ -7,8 +7,18 @@
 
 namespace Vlingo.Lattice.Exchange
 {
-    public interface IExchangeReceiver
+    /// <summary>
+    /// A receiver of messages from an <see cref="IExchange"/>, which may be implemented for each unique message type.
+    /// The <typeparamref name="T"/> has already been mapped and adapted from the exchange-typed message.
+    /// </summary>
+    /// <typeparam name="T">The type of the local message</typeparam>
+    public interface IExchangeReceiver<in T>
     {
-        
+        /// <summary>
+        /// Delivers the <typeparamref name="T"/> local typed message from the exchange to the receiver.
+        /// The <typeparamref name="T"/> has already been mapped and adapted from the exchange-typed message.
+        /// </summary>
+        /// <param name="message">The <typeparamref name="T"/> typed local message.</param>
+        void Receive(T message);
     }
 }
