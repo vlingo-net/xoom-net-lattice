@@ -5,10 +5,32 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Actors;
+using Vlingo.Actors.Plugin.Logging.Console;
+
 namespace Vlingo.Lattice.Exchange
 {
-    public class NullExchange
+    /// <summary>
+    /// Exchange that does nothing.
+    /// </summary>
+    public class NullExchange : IExchange
     {
+        private ILogger _logger = ConsoleLogger.BasicInstance();
         
+        public static NullExchange Instance = new NullExchange();
+        
+        public void Close()
+        {
+        }
+
+        public T Channel<T>() => default!;
+
+        public T Connection<T>() => default!;
+
+        public string Name => "NullExchange";
+
+        public IExchange Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey) => this;
+
+        public void Send<TLocal>(TLocal local) => _logger.Error($"NullExchange: Sending nowhere: {local}");
     }
 }
