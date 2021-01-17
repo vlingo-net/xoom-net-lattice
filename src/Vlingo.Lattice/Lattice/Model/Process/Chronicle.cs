@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Lattice.Tests.Model.Process
+namespace Vlingo.Lattice.Model.Process
 {
     /// <summary>
     /// State machine state management.
