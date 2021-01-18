@@ -8,11 +8,10 @@
 using System;
 using System.Collections.Generic;
 using Vlingo.Common;
-using Vlingo.Lattice.Model;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Journal;
 
-namespace Vlingo.Lattice.Tests.Model.Process
+namespace Vlingo.Lattice.Model.Process
 {
     /// <summary>
     /// Definition for a long-running process.
