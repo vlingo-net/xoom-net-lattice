@@ -5,10 +5,34 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Lattice.Exchange;
+using Vlingo.Lattice.Model.Object;
+using Vlingo.Symbio.Store.Object;
+
 namespace Vlingo.Lattice.Model.Process
 {
-    public class ObjectProcessInfo
+    /// <summary>
+    /// Holder of registration information for <see cref="ObjectProcess{T}"/> types.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ObjectProcessInfo<T> : Info<ObjectProcess<T>> where T : StateObject
     {
+        public ObjectTypeRegistry Registry { get; }
         
+        /// <summary>
+        /// Construct my default state.
+        /// </summary>
+        /// <param name="processName">The name of the current process</param>
+        /// <param name="exchange">The <see cref="IExchange"/></param>
+        /// <param name="registry">The <see cref="ObjectTypeRegistry"/> used by the <see cref="ObjectProcess{T}"/></param>
+        public ObjectProcessInfo(string processName, IExchange exchange, ObjectTypeRegistry registry) : base(processName, exchange)
+            => Registry = registry;
+
+        /// <summary>
+        /// Construct my default state.
+        /// </summary>
+        /// <param name="processName">The name of the current process</param>
+        /// <param name="registry">The <see cref="ObjectTypeRegistry"/> used by the <see cref="ObjectProcess{T}"/></param>
+        public ObjectProcessInfo(string processName, ObjectTypeRegistry registry) : base(processName) => Registry = registry;
     }
 }
