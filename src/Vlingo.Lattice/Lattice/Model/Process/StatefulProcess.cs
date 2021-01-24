@@ -9,74 +9,74 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Common;
-using Vlingo.Lattice.Model.Object;
+using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {
     /// <summary>
-    /// Abstract base definition for all concrete object process types.
+    /// Abstract base definition for all concrete stateful process types.
     /// </summary>
-    /// <typeparam name="T">The type of the <see cref="ObjectEntity{T}"/></typeparam>
-    public abstract class ObjectProcess<T> : ObjectEntity<T>, IProcess<T> where T : StateObject
+    /// <typeparam name="T">The type of <see cref="StatefulEntity{T}"/></typeparam>
+    public abstract class StatefulProcess<T> : StatefulEntity<T>, IProcess<T> where T : StateObject, IEntry
     {
-        private readonly Info<ObjectProcess<T>> _info;
+        private readonly Info<StatefulProcess<T>> _info;
         private readonly List<Source> _applied;
-        
+
         public abstract Chronicle<T> Chronicle { get; }
         
         public abstract string ProcessId { get; }
-
+        
         /// <summary>
-        /// Construct my default state using my <code>address</code> as my <code>id</code>.
+        /// Construct my default state using my <code>address</code> as my <code>streamName</code>.
         /// </summary>
-        public ObjectProcess() : this(null)
+        public StatefulProcess() : this(null)
         {
         }
         
-        protected ObjectProcess(string? id) : base(id)
+        protected StatefulProcess(string? streamName) : base(streamName)
         {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info<ObjectProcess<T>>();
+            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info<StatefulProcess<T>>();
             _applied = new List<Source>(2);
         }
-        
+
         public void Process(Command command)
         {
             _applied.Add(command);
             Apply(Chronicle.State, new ProcessMessage(command));
         }
-        
-        public ICompletes<TResult> Process<TResult>(Command command, Func<TResult> andThen)
+
+        public ICompletes<T1> Process<T1>(Command command, Func<T1> andThen)
         {
             _applied.Add(command);
             return Apply(Chronicle.State, new ProcessMessage(command), andThen);
         }
-        
+
         public void Process(DomainEvent @event)
         {
             _applied.Add(@event);
             Apply(Chronicle.State, new ProcessMessage(@event));
         }
-        
-        public ICompletes<TResult> Process<TResult>(DomainEvent @event, Func<TResult> andThen)
+
+        public ICompletes<T1> Process<T1>(DomainEvent @event, Func<T1> andThen)
         {
             _applied.Add(@event);
             return Apply(Chronicle.State, new ProcessMessage(@event), andThen);
         }
-        
+
         public void ProcessAll<TSource>(IEnumerable<Source<TSource>> sources)
         {
-            var listSources = sources.ToList();
-            _applied.AddRange(listSources);
-            Apply(Chronicle.State, ProcessMessage.Wrap(listSources));
+            var enumerable = sources.ToList();
+            _applied.AddRange(enumerable);
+            Apply(Chronicle.State, ProcessMessage.Wrap(enumerable));
         }
-        
-        public ICompletes<TResult> ProcessAll<TResult, TSource>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen)
+
+        public ICompletes<T1> ProcessAll<T1, TSource>(IEnumerable<Source<TSource>> sources, Func<T1> andThen)
         {
-            var listSources = sources.ToList();
-            _applied.AddRange(listSources);
-            return Apply(Chronicle.State, ProcessMessage.Wrap(listSources), andThen);
+            var enumerable = sources.ToList();
+            _applied.AddRange(enumerable);
+            return Apply(Chronicle.State, ProcessMessage.Wrap(enumerable), andThen);
         }
 
         public void Send(Command command) => _info.Exchange.Send(command);

@@ -8,6 +8,7 @@
 using Vlingo.Lattice.Exchange;
 using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
+using Vlingo.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {
@@ -15,7 +16,7 @@ namespace Vlingo.Lattice.Model.Process
     /// Holder of registration information for <see cref="StatefulProcess{T}"/> types.
     /// </summary>
     /// <typeparam name="T">The type of the <see cref="StatefulProcess{T}"/> state.</typeparam>
-    public class StatefulProcessInfo<T> : Info<StatefulProcess<T>> where T : IEntry
+    public class StatefulProcessInfo<T> : Info<StatefulProcess<T>> where T : StateObject, IEntry
     {
         public StatefulTypeRegistry<T> Registry { get; }
 

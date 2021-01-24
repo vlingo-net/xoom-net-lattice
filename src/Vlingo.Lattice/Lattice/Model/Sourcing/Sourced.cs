@@ -173,11 +173,20 @@ namespace Vlingo.Lattice.Model.Sourcing
         }
         
         /// <summary>
+        /// Apply all of the given <paramref name="source"/> to myself, which includes appending
+        /// them to my journal and reflecting the representative changes to my state.
+        /// </summary>
+        /// <param name="source">Source to apply</param>
+        /// <typeparam name="TSource">The type of the source</typeparam>
+        protected void Apply<TSource>(Source<TSource> source) => Apply(Wrap(source));
+        
+        /// <summary>
         /// Apply all of the given <paramref name="sources"/> to myself, which includes appending
         /// them to my journal and reflecting the representative changes to my state.
         /// </summary>
         /// <param name="sources">Sources to apply</param>
-        protected void Apply(IEnumerable<Source<T>> sources) => Apply(sources, Metadata, (Func<object>) null!);
+        /// <typeparam name="TSource">The type of the source</typeparam>
+        protected void Apply<TSource>(IEnumerable<Source<TSource>> sources) => Apply(sources, Metadata, (Func<object>) null!);
         
         /// <summary>
         /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
@@ -187,9 +196,22 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="sources">Sources to apply</param>
         /// <param name="andThen">The function executed following the application of sources</param>
         /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="ICompletes{TResult}"/></returns>
-        protected ICompletes<TResult> Apply<TResult>(IEnumerable<Source<T>> sources, Func<TResult> andThen) => Apply(sources, Metadata, andThen);
+        protected ICompletes<TResult> Apply<TSource, TResult>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen) => Apply(sources, Metadata, andThen);
 
+        /// <summary>
+        /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
+        /// which includes appending them to my journal and reflecting the representative changes
+        /// to my state, followed by the execution of a possible <paramref name="andThen"/>.
+        /// </summary>
+        /// <param name="source">Source to apply</param>
+        /// <param name="andThen">The function executed following the application of sources</param>
+        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TSource">The type of the source</typeparam>
+        /// <returns><see cref="ICompletes{TResult}"/></returns>
+        protected ICompletes<TResult> Apply<TSource, TResult>(Source<TSource> source, Func<TResult> andThen) => Apply(Wrap(source), Metadata, andThen);
+        
         /// <summary>
         /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
         /// which includes appending them to my journal and reflecting the representative changes
@@ -199,24 +221,26 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="metadata">The Metadata to apply along with source</param>
         /// <param name="andThen">The function executed following the application of sources</param>
         /// <typeparam name="TResult">The return type of the function andThen</typeparam>
+        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="ICompletes{TResult}"/></returns>
-        protected ICompletes<TResult> Apply<TResult>(IEnumerable<Source<T>> sources, Metadata metadata, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(IEnumerable<Source<TSource>> sources, Metadata metadata, Func<TResult>? andThen)
         {
-            BeforeApply(sources);
+            var listSources = sources.ToList();
+            BeforeApply(listSources);
             var journal = _journalInfo?.Journal;
             var completionSupplier = CompletionSupplier<TResult>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IAppendResultInterest));
-            journal?.AppendAllWith(StreamName, NextVersion, sources, metadata, Snapshot<TResult>(), _interest, completionSupplier!);
+            journal?.AppendAllWith(StreamName, NextVersion, listSources, metadata, Snapshot<TResult>(), _interest, completionSupplier!);
             return (ICompletes<TResult>) completes!;
         }
         
-        protected virtual void BeforeApply(IEnumerable<Source<T>> sources)
+        protected virtual void BeforeApply<TSource>(IEnumerable<Source<TSource>> sources)
         {
             // override to be informed prior to apply evaluation
             if (_testContext != null)
             {
-                var all = _testContext.ReferenceValue<List<Source<T>>>();
+                var all = _testContext.ReferenceValue<List<Source<TSource>>>();
                 all.AddRange(sources);
                 _testContext.ReferenceValueTo(all);
             }
@@ -305,7 +329,7 @@ namespace Vlingo.Lattice.Model.Sourcing
             StowMessages(typeof(IStoppable));
 
             _journalInfo?.Journal.StreamReader(GetType().Name)
-                .AndThenTo(reader => reader.StreamFor(StreamName))
+                .AndThenTo(reader => reader?.StreamFor(StreamName)!)
                 .AndThenConsume(stream =>
                 {
                     RestoreSnapshot(stream.Snapshot);
@@ -407,10 +431,10 @@ namespace Vlingo.Lattice.Model.Sourcing
         {
             if (snapshot != null && !snapshot.IsNull)
             {
-                RestoreSnapshot(_journalInfo.StateAdapterProvider.FromRaw<T, State<T>>(snapshot), _currentVersion);
+                RestoreSnapshot(_journalInfo!.StateAdapterProvider.FromRaw<T, State<T>>(snapshot), _currentVersion);
             }
         }
 
-        private List<Source<T>> Wrap(Source<T> source) => new List<Source<T>> {source};
+        private List<Source<TSource>> Wrap<TSource>(Source<TSource> source) => new List<Source<TSource>> {source};
     }
 }

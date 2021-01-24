@@ -138,14 +138,14 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
             var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IWriteResultInterest));
             _info.Store.Write(Id, state, NextVersion(), sources, metadata, _writeInterest, completionSupplier);
-            return (ICompletes<T>) completes!;
+            return (ICompletes<TResult>) completes!;
         }
 
         /// <summary>
@@ -162,14 +162,14 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </param>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state, string? metadataValue, string? operation, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TResult>(T state, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
             var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IWriteResultInterest));
             _info.Store.Write(Id, state, NextVersion(), metadata, _writeInterest, completionSupplier);
-            return (ICompletes<T>) completes!;
+            return (ICompletes<TResult>) completes!;
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? operation, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? operation, Func<TResult>? andThen)
             => Apply(state, sources, string.Empty, operation, andThen);
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </param>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state, string? operation, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TResult>(T state, string? operation, Func<TResult>? andThen)
             => Apply<TResult>(state, string.Empty, operation, andThen);
         
         /// <summary>
@@ -219,7 +219,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Func<TResult>? andThen)
             => Apply(state, sources, string.Empty, string.Empty, andThen);
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </param>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TResult>(T state, Func<TResult>? andThen)
             => Apply<TResult>(state, string.Empty, string.Empty, andThen);
 
         /// <summary>
@@ -245,10 +245,9 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="metadataValue">The Metadata to apply along with the state.</param>
         /// <param name="operation">The descriptive name of the operation that caused the state modification.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation)
-            => Apply(state, sources, metadataValue, operation, (Func<TResult>?) null);
+        protected ICompletes<TSource> Apply<TSource>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation)
+            => Apply(state, sources, metadataValue, operation, (Func<TSource>) null!);
 
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" /> and <paramref name="metadataValue" />,
@@ -257,10 +256,10 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="state">The state to apply.</param>
         /// <param name="metadataValue">The Metadata to apply along with the state.</param>
         /// <param name="operation">The descriptive name of the operation that caused the state modification.</param>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
+        /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state, string? metadataValue, string? operation)
-            => Apply<TResult>(state, metadataValue, operation, null);
+        protected ICompletes<TSource> Apply<TSource>(T state, string? metadataValue, string? operation)
+            => Apply<TSource>(state, metadataValue, operation, null);
         
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" />,
@@ -270,10 +269,9 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="sources">The <see cref="T:IEnumerable{Source{TSource}}" /> instances to apply.</param>
         /// <param name="operation">The descriptive name of the operation that caused the state modification.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? operation)
-            => Apply<TResult>(state, string.Empty, operation, null);
+        protected ICompletes<TSource> Apply<TSource>(T state, IEnumerable<Source<TSource>> sources, string? operation)
+            => Apply<TSource>(state, string.Empty, operation, null);
 
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" />,
@@ -281,11 +279,11 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </summary>
         /// <param name="state">The state to apply.</param>
         /// <param name="operation">The descriptive name of the operation that caused the state modification.</param>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
+        /// <typeparam name="TSource">The return type of the source.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state, string? operation)
-            => Apply<TResult>(state, string.Empty, operation, null);
-        
+        protected ICompletes<TSource> Apply<TSource>(T state, string? operation)
+            => Apply<TSource>(state, string.Empty, operation, null);
+
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" />,
         ///     along with <paramref name="sources"/>.
@@ -293,10 +291,9 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="state">The state to apply.</param>
         /// <param name="sources">The <see cref="T:IEnumerable{Source{TSource}}" /> instances to apply.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources)
-            => Apply(state, sources, string.Empty, string.Empty, (Func<TResult>?) null);
+        protected ICompletes<TSource> Apply<TSource>(T state, IEnumerable<Source<TSource>> sources)
+            => Apply(state, sources, string.Empty, string.Empty, (Func<TSource>?) null);
         
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" />,
@@ -311,7 +308,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Source<TSource> source, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, Source<TSource> source, Func<TResult>? andThen)
             => Apply(state, AsList(source), string.Empty, string.Empty, andThen);
         
         /// <summary>
@@ -321,10 +318,9 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="state">The state to apply.</param>
         /// <param name="source">The <see cref="T:Source{TSource}" /> instance to apply.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Source<TSource> source)
-            => Apply(state, AsList(source), string.Empty, string.Empty, (Func<TResult>?) null);
+        protected ICompletes<TSource> Apply<TSource>(T state, Source<TSource> source)
+            => Apply(state, AsList(source), string.Empty, string.Empty, (Func<TSource>?) null);
 
         /// <summary>
         ///     Gets <see cref="ICompletes{TResult}" />, applying <paramref name="state" />.
@@ -332,14 +328,14 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="state">The state to apply.</param>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TResult>(T state)
+        protected ICompletes<TResult> Apply<TResult>(T state)
             => Apply<TResult>(state, string.Empty, string.Empty, null);
         
         /// <summary>
         ///     Received after the full asynchronous evaluation of each <code>Apply()</code>.
         ///     Override if notification is desired.
         /// </summary>
-        protected void AfterApply()
+        protected virtual void AfterApply()
         {
         }
 

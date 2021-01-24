@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Concurrent;
 using Vlingo.Actors;
+using Vlingo.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {
     /// <summary>
     /// Registry for <see cref="IProcess{TState}"/> types.
     /// </summary>
-    public class ProcessTypeRegistry<T>
+    public class ProcessTypeRegistry<T> where T : StateObject
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
@@ -29,11 +30,11 @@ namespace Vlingo.Lattice.Model.Process
         /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
         /// </summary>
         /// <returns><see cref="Info{T}"/></returns>
-        public Info<T> Info()
+        public Info<TProcess> Info<TProcess>() where TProcess : IProcess<T>
         {
-            if (_stores.TryGetValue(typeof(T), out var value))
+            if (_stores.TryGetValue(typeof(TProcess), out var value))
             {
-                return (Info<T>) value;
+                return (Info<TProcess>) value;
             }
 
             throw new ArgumentOutOfRangeException($"No info registered fro {typeof(T).Name}");

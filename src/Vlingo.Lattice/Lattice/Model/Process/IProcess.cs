@@ -27,7 +27,7 @@ namespace Vlingo.Lattice.Model.Process
         /// <summary>
         /// Gets id, which is used for correlation among my collaborators.
         /// </summary>
-        string Id { get; }
+        string ProcessId { get; }
 
         /// <summary>
         /// Cause the <code>command</code> to be processed by persisting it as a <see cref="ProcessMessage"/>.

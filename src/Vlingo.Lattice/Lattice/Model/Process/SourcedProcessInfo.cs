@@ -14,7 +14,7 @@ namespace Vlingo.Lattice.Model.Process
     /// Holder of registration information for <see cref="SourcedProcess{T}"/> types.
     /// </summary>
     /// <typeparam name="T">The type of sourced processes</typeparam>
-    public class SourcedProcessInfo<T> : Info<T> where T : SourcedProcess<T>
+    public class SourcedProcessInfo<T> : Info<T> where T : IProcess<T> 
     {
         public SourcedTypeRegistry<T> Registry { get; }
 

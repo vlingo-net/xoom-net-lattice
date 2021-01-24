@@ -149,15 +149,13 @@ namespace Vlingo.Lattice.Model.Object
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Metadata metadata,
-            Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Metadata metadata, Func<TResult>? andThen)
         {
             var completionSupplier = CompletionSupplier<TResult>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IPersistResultInterest));
-            _info.Store.Persist(StateSources<T, Source<TSource>>.Of(state, sources), metadata, _persistResultInterest,
-                completionSupplier);
-            return (ICompletes<T>) completes!;
+            _info.Store.Persist(StateSources<T, Source<TSource>>.Of(state, sources), metadata, _persistResultInterest, completionSupplier);
+            return (ICompletes<TResult>) completes!;
         }
 
         /// <summary>
@@ -174,7 +172,7 @@ namespace Vlingo.Lattice.Model.Object
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Func<TResult>? andThen) =>
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, Func<TResult>? andThen) =>
             Apply(state, sources, Metadata, andThen);
 
         /// <summary>
@@ -192,13 +190,13 @@ namespace Vlingo.Lattice.Model.Object
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Source<TSource> source, Metadata metadata, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, Source<TSource> source, Metadata metadata, Func<TResult>? andThen)
         {
             var completionSupplier = CompletionSupplier<TResult>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IPersistResultInterest));
             _info.Store.Persist(StateSources<T, Source<TSource>>.Of(state, source), metadata, _persistResultInterest, completionSupplier);
-            return (ICompletes<T>) completes!;
+            return (ICompletes<TResult>) completes!;
         }
 
         /// <summary>
@@ -215,7 +213,7 @@ namespace Vlingo.Lattice.Model.Object
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Source<TSource> source, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, Source<TSource> source, Func<TResult>? andThen)
             => Apply(state, source, Metadata, andThen);
 
         /// <summary>
@@ -231,13 +229,13 @@ namespace Vlingo.Lattice.Model.Object
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TSource, TResult>(T state, Func<TResult>? andThen)
         {
             var completionSupplier = CompletionSupplier<TResult>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IPersistResultInterest));
             _info.Store.Persist(StateSources<T, Source<TSource>>.Of(state), _persistResultInterest, completionSupplier);
-            return (ICompletes<T>) completes!;
+            return (ICompletes<TResult>) completes!;
         }
 
         /// <summary>
@@ -246,10 +244,9 @@ namespace Vlingo.Lattice.Model.Object
         /// <param name="state">The state to preserve.</param>
         /// <param name="sources">The <see cref="T:IEnumerable{Source{TSource}}" /> instances to apply.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources)
-            => Apply(state, sources, Metadata, null as Func<TResult>);
+        protected ICompletes<TSource> Apply<TSource>(T state, IEnumerable<Source<TSource>> sources)
+            => Apply(state, sources, Metadata, null as Func<TSource>);
 
         /// <summary>
         ///     Applies the current <paramref name="state" /> and <paramref name="source" />.
@@ -257,16 +254,15 @@ namespace Vlingo.Lattice.Model.Object
         /// <param name="state">The state to preserve.</param>
         /// <param name="source">The <see cref="Source{TSource}" /> instance to apply.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
-        /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<T> Apply<TSource, TResult>(T state, Source<TSource> source)
-            => Apply(state, new List<Source<TSource>> {source}, Metadata, null as Func<TResult>);
+        protected ICompletes<TSource> Apply<TSource>(T state, Source<TSource> source)
+            => Apply(state, new List<Source<TSource>> {source}, Metadata, null as Func<TSource>);
 
         /// <summary>
         ///     Received after the full asynchronous evaluation of each <code>Apply()</code>.
         ///     Override if notification is desired.
         /// </summary>
-        protected void AfterApply()
+        protected virtual void AfterApply()
         {
         }
 
