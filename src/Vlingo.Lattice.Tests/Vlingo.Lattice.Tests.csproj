@@ -26,4 +26,10 @@
         <ProjectReference Include="..\Vlingo.Lattice\Vlingo.Lattice.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="vlingo-actors.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
