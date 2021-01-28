@@ -11,7 +11,7 @@ using Vlingo.Common.Identity;
 using Vlingo.UUID;
 using Xunit;
 
-namespace Vlingo.Lattice.Tests.Actors
+namespace Vlingo.Tests.Actors
 {
     public class GridAddressTest
     {

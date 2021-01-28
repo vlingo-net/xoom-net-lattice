@@ -7,7 +7,7 @@
 
 using Vlingo.Common;
 
-namespace Vlingo.Lattice.Tests.Lattice.Model.Object
+namespace Vlingo.Tests.Lattice.Model.Object
 {
     public interface IEmployee
     {

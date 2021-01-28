@@ -7,7 +7,7 @@
 
 using Vlingo.Symbio;
 
-namespace Vlingo.Lattice.Tests.Lattice.Model
+namespace Vlingo.Tests.Lattice.Model
 {
     public static class TestEvents
     {

@@ -10,7 +10,7 @@ using System.IO;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace Vlingo.Lattice.Tests
+namespace Vlingo.Tests
 {
     public class Converter : TextWriter
     {

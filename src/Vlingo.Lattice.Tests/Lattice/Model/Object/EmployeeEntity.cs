@@ -8,7 +8,7 @@
 using Vlingo.Common;
 using Vlingo.Lattice.Model.Object;
 
-namespace Vlingo.Lattice.Tests.Lattice.Model.Object
+namespace Vlingo.Tests.Lattice.Model.Object
 {
     public class EmployeeEntity : ObjectEntity<EmployeeState>, IEmployee
     {

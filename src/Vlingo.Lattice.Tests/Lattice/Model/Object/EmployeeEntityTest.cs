@@ -15,11 +15,11 @@ using Vlingo.Symbio.Store.Object.InMemory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Lattice.Tests.Lattice.Model.Object
+namespace Vlingo.Tests.Lattice.Model.Object
 {
     public class EmployeeEntityTest : IDisposable
     {
-        private World _world;
+        private readonly World _world;
         
         [Fact]
         public void TestThatEmployeeIdentifiesModifiesRecovers() {
@@ -66,9 +66,6 @@ namespace Vlingo.Lattice.Tests.Lattice.Model.Object
             registry.Register(employeeInfo);
         }
 
-        public void Dispose()
-        {
-            _world.Terminate();
-        }
+        public void Dispose() => _world.Terminate();
     }
 }

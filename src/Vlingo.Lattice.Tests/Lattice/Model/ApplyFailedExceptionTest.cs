@@ -12,7 +12,7 @@ using Vlingo.Lattice.Model;
 using Vlingo.Symbio;
 using Xunit;
 
-namespace Vlingo.Lattice.Tests.Lattice.Model
+namespace Vlingo.Tests.Lattice.Model
 {
     public class ApplyFailedExceptionTest
     {
@@ -28,7 +28,7 @@ namespace Vlingo.Lattice.Tests.Lattice.Model
             Assert.NotNull(e.Applicable.Sources);
             Assert.NotNull(e.Applicable.Metadata);
             Assert.NotNull(e.Applicable.CompletionSupplier);
-            Assert.Equal("Exception of type 'Vlingo.Lattice.Lattice.Model.ApplyFailedException`1[System.Object]' was thrown.", e.Message);
+            Assert.Equal("Exception of type 'Vlingo.Lattice.Model.ApplyFailedException`1[System.Object]' was thrown.", e.Message);
             Assert.Null(e.InnerException);
         }
         
