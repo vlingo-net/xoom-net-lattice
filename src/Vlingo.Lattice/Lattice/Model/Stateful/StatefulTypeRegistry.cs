@@ -53,12 +53,12 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <returns><see cref="Info{T}"/></returns>
         public Info<T> Info()
         {
-            if (_stores.TryGetValue(typeof(IStateStore<T>), out var value))
+            if (_stores.TryGetValue(typeof(T), out var value))
             {
                 return (Info<T>) value;
             }
 
-            throw new ArgumentOutOfRangeException($"No info registered fro {typeof(IStateStore<T>).Name}");
+            throw new ArgumentOutOfRangeException($"No info registered for {typeof(T).Name}");
         }
 
         /// <summary>

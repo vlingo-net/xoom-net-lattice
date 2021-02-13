@@ -37,7 +37,7 @@ namespace Vlingo.Lattice.Model.Process
                 return (Info<TProcess>) value;
             }
 
-            throw new ArgumentOutOfRangeException($"No info registered fro {typeof(T).Name}");
+            throw new ArgumentOutOfRangeException($"No info registered for {typeof(T).Name}");
         }
 
         /// <summary>
