@@ -13,7 +13,6 @@ using Vlingo.Common;
 using Vlingo.Lattice.Model.Sourcing;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Object;
 using Vlingo.Symbio.Store.State;
 
 namespace Vlingo.Lattice.Model.Stateful
@@ -66,7 +65,7 @@ namespace Vlingo.Lattice.Model.Stateful
             }
             else
             {
-                Apply<string, T>(newState.Item1, newState.Item2, (Func<T>?) null);
+                Apply<string, T>(newState.Item1, newState.Item2, null);
             }
         }
 
@@ -138,7 +137,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
+        protected virtual ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
             var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
@@ -162,7 +161,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </param>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<TResult> Apply<TResult>(T state, string? metadataValue, string? operation, Func<TResult>? andThen)
+        protected virtual ICompletes<TResult> Apply<TResult>(T state, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
             var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
@@ -432,7 +431,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="ignoreNotFound">The boolean indicating whether or not a not found condition may be ignored</param>
         private void Restore(bool ignoreNotFound)
         {
-            StowMessages(typeof(IQueryResultInterest));
+            StowMessages(typeof(IReadResultInterest));
             _info.Store.Read<T>(Id, _readInterest, ignoreNotFound);
         }
     }
