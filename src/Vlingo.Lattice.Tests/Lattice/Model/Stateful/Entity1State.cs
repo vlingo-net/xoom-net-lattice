@@ -4,23 +4,20 @@ using Vlingo.Symbio;
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
     public class Entity1State : BaseEntry<string>, IEquatable<Entity1State>
-    {   
-        public Entity1State(): this(UnknownId, EmptyTextData, -1)
-        {
-        }
-        
+    {
         public Entity1State(string id, string name, int age) : base(id, typeof(string), 1, EmptyTextData)
         {
             Name = name;
             Age = age;
         }
 
-        public Entity1State(string id) : this(id, null, 0)
+        private Entity1State(string id) : this(id, null, 0)
         {
         }
 
-        public string Name { get; }
-        public int Age { get; }
+        public string Name { get; private set; }
+        
+        public int Age { get; private set; }
 
         public bool HasState => Id != null && Name != null && Age > 0;
 
