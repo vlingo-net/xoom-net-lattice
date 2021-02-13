@@ -14,34 +14,34 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
-    public class MockTextDispatcher : IDispatcher<Dispatchable<TextEntry, TextState>>
+    public class MockTextDispatcher : IDispatcher<Dispatchable<Entity1State, TextState>>
     {
         private AccessSafely _access;
 
         private IDispatcherControl _control;
         private readonly Dictionary<string, TextState> _dispatched = new Dictionary<string, TextState>();
-        private readonly ConcurrentBag<TextEntry> _dispatchedEntries = new ConcurrentBag<TextEntry>();
+        private readonly ConcurrentBag<Entity1State> _dispatchedEntries = new ConcurrentBag<Entity1State>();
         private readonly AtomicBoolean _processDispatch = new AtomicBoolean(true);
         
         public MockTextDispatcher() => _access = AfterCompleting(0);
 
         public void ControlWith(IDispatcherControl control) => _control = control;
 
-        public void Dispatch(Dispatchable<TextEntry, TextState> dispatchable)
+        public void Dispatch(Dispatchable<Entity1State, TextState> dispatchable)
         {
             if (_processDispatch.Get())
             {
                 var dispatchId = dispatchable.Id;
-                _access.WriteUsing("dispatched", dispatchId, new Dispatch<TextState, TextEntry>(dispatchable.TypedState<TextState>(), dispatchable.Entries));
+                _access.WriteUsing("dispatched", dispatchId, new Dispatch<TextState, Entity1State>(dispatchable.TypedState<TextState>(), dispatchable.Entries));
             }
         }
         
         public AccessSafely AfterCompleting(int times)
         {
             _access = AccessSafely.AfterCompleting(times)
-                .WritingWith<string, Dispatch<TextState, TextEntry>>("dispatched", (id, dispatch) =>
+                .WritingWith<string, Dispatch<TextState, Entity1State>>("dispatched", (id, dispatch) =>
                 {
-                    _dispatched.Add(id, dispatch.State);
+                    _dispatched[id] = dispatch.State;
                     foreach (var entry in dispatch.Entries)
                     {
                         _dispatchedEntries.Add(entry);
@@ -59,7 +59,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             return _access;
         }
 
-        public List<Dispatchable<TextEntry, TextState>> GetDispatched() => _access.ReadFrom<List<Dispatchable<TextEntry, TextState>>>("dispatched");
+        public List<Dispatchable<Entity1State, TextState>> GetDispatched() => _access.ReadFrom<List<Dispatchable<Entity1State, TextState>>>("dispatched");
     }
     
     internal class Dispatch<TState, TEntry>
