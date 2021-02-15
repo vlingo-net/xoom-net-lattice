@@ -24,7 +24,7 @@ namespace Vlingo.Lattice.Model.Stateful
     /// only when your Command Model uses the <see cref="EventSourced"/>.
     /// </summary>
     /// <typeparam name="T">The type of the underlying state entry.</typeparam>
-    public abstract class StatefulEntity<T> : EntityActor, IReadResultInterest, IWriteResultInterest where T : IEntry
+    public abstract class StatefulEntity<T> : EntityActor, IReadResultInterest, IWriteResultInterest
     {
         protected string Id;
 

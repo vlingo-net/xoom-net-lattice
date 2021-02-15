@@ -6,7 +6,6 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Lattice.Exchange;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.State;
 
@@ -16,7 +15,7 @@ namespace Vlingo.Lattice.Model.Stateful
     /// Holder of registration information.
     /// </summary>
     /// <typeparam name="T">The native type of the state</typeparam>
-    public class Info<T> where T : IEntry
+    public class Info<T>
     {
         public IStateStore<T> Store { get; }
         public string StoreName { get; }

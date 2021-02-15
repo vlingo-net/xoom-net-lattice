@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Concurrent;
 using Vlingo.Actors;
-using Vlingo.Symbio;
 using Vlingo.Symbio.Store.State;
 
 namespace Vlingo.Lattice.Model.Stateful
@@ -16,7 +15,7 @@ namespace Vlingo.Lattice.Model.Stateful
     /// <summary>
     /// Registry for <see cref="StatefulEntity{T}"/> types that holds the <see cref="IStateStore{TEntry}"/> type
     /// </summary>
-    public class StatefulTypeRegistry<T> where T : IEntry
+    public class StatefulTypeRegistry<T>
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
