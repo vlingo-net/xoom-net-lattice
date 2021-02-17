@@ -10,13 +10,13 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Object
 {
-    public class MockDispatcher : IDispatcher<IDispatchable<IEntry, IState>>
+    public class MockDispatcher : IDispatcher<Dispatchable<IEntry, IState>>
     {
         public void ControlWith(IDispatcherControl control)
         {
         }
 
-        public void Dispatch(IDispatchable<IEntry, IState> dispatchable)
+        public void Dispatch(Dispatchable<IEntry, IState> dispatchable)
         {
         }
     }

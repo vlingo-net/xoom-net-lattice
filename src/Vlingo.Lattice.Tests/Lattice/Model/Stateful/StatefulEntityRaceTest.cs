@@ -68,7 +68,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             new EntryAdapterProvider(_world);
             var registry = new StatefulTypeRegistry<Entity1State>(_world);
             
-            var store = _world.ActorFor<IStateStore<Entity1State>>(() => new InMemoryStateStoreActor<TextState, Entity1State>(new List<IDispatcher<IDispatchable<Entity1State, TextState>>> {_dispatcher}));
+            var store = _world.ActorFor<IStateStore<Entity1State>>(() => new InMemoryStateStoreActor<TextState, Entity1State>(new List<IDispatcher<Dispatchable<Entity1State, TextState>>> {_dispatcher}));
             
             registry.Register(new Info<Entity1State>(store, nameof(Entity1State)));
         }
