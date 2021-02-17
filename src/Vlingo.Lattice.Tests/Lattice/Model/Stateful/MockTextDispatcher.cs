@@ -14,7 +14,7 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
-    public class MockTextDispatcher : IDispatcher<Dispatchable<Entity1State, TextState>>
+    public class MockTextDispatcher : IDispatcher<IDispatchable<Entity1State, TextState>>
     {
         private AccessSafely _access;
 
@@ -27,7 +27,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
 
         public void ControlWith(IDispatcherControl control) => _control = control;
 
-        public void Dispatch(Dispatchable<Entity1State, TextState> dispatchable)
+        public void Dispatch(IDispatchable<Entity1State, TextState> dispatchable)
         {
             if (_processDispatch.Get())
             {
@@ -59,7 +59,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             return _access;
         }
 
-        public List<Dispatchable<Entity1State, TextState>> GetDispatched() => _access.ReadFrom<List<Dispatchable<Entity1State, TextState>>>("dispatched");
+        public List<IDispatchable<Entity1State, TextState>> GetDispatched() => _access.ReadFrom<List<IDispatchable<Entity1State, TextState>>>("dispatched");
     }
     
     internal class Dispatch<TState, TEntry>

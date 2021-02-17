@@ -124,7 +124,8 @@ namespace Vlingo.Lattice.Model.Sourcing
                 var exception = new ApplyFailedException<TSnapshotState>(applicable, message, cause);
                 var maybeException = AfterApplyFailed(exception);
                 DisperseStowedMessages();
-                if (maybeException.IsPresent) {
+                if (maybeException.IsPresent)
+                {
                     Logger.Error(message, maybeException.Get());
                     throw maybeException.Get();
                 }
@@ -163,7 +164,8 @@ namespace Vlingo.Lattice.Model.Sourcing
                 var exception = new ApplyFailedException<TSnapshotState>(applicable, message, cause);
                 var maybeException = AfterApplyFailed(exception);
                 DisperseStowedMessages();
-                if (maybeException.IsPresent) {
+                if (maybeException.IsPresent)
+                {
                     Logger.Error(message, maybeException.Get());
                     throw maybeException.Get();
                 }

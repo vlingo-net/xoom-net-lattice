@@ -83,7 +83,8 @@ namespace Vlingo.Lattice.Model.Stateful
                 { 
                     DisperseStowedMessages();
                     var ignoreNotFound = (bool) @object!;
-                    if (!ignoreNotFound) {
+                    if (!ignoreNotFound)
+                    {
                        var message =
                            $"State not restored for: {GetType().Name}({id}) because: {cause.Result} with: {cause.Message}";
                         Logger.Error(message, cause);

@@ -8,7 +8,6 @@
 using System;
 using Vlingo.Actors;
 using Vlingo.Lattice.Model.Object;
-using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
 using Vlingo.Symbio.Store.Object.InMemory;
@@ -22,7 +21,8 @@ namespace Vlingo.Tests.Lattice.Model.Object
         private readonly World _world;
         
         [Fact]
-        public void TestThatEmployeeIdentifiesModifiesRecovers() {
+        public void TestThatEmployeeIdentifiesModifiesRecovers()
+        {
             var employeeNumber = "12345";
 
             var employee = _world.ActorFor<IEmployee>(() => new EmployeeEntity(employeeNumber));
@@ -50,7 +50,7 @@ namespace Vlingo.Tests.Lattice.Model.Object
             Console.SetOut(converter);
             
             _world = World.StartWithDefaults("test-object-entity");
-            var objectStore = _world.ActorFor<IObjectStore>(typeof(InMemoryObjectStoreActor<string, TextEntry, TextState>), new MockDispatcher());
+            var objectStore = _world.ActorFor<IObjectStore>(typeof(InMemoryObjectStoreActor<string>), new MockDispatcher());
 
             var registry = new ObjectTypeRegistry(_world);
 
