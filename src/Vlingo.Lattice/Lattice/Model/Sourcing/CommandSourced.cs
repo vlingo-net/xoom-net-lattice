@@ -10,7 +10,7 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// <summary>
     /// A <see cref="Sourced{T}"/> for concrete types of <see cref="Command"/>.
     /// </summary>
-    public abstract class CommandSourced : Sourced<DomainEvent>
+    public abstract class CommandSourced : Sourced<Command>
     {
         public CommandSourced(string streamName) : base(streamName)
         {

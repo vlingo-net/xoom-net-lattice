@@ -27,12 +27,12 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// <typeparam name="T">The concrete type that is being sourced</typeparam>
     public abstract class Sourced<T> : EntityActor, IAppendResultInterest
     {
-        private static readonly ConcurrentDictionary<Type, Dictionary<Type, Action<Sourced<T>, Source>>>
-            RegisteredConsumers = new ConcurrentDictionary<Type, Dictionary<Type, Action<Sourced<T>, Source>>>();
+        private static readonly ConcurrentDictionary<Type, Dictionary<Type, Delegate>>
+            RegisteredConsumers = new ConcurrentDictionary<Type, Dictionary<Type, Delegate>>();
 
         private TestContext? _testContext;
         private int _currentVersion;
-        private readonly Info<T>? _journalInfo;
+        private readonly Info? _journalInfo;
         private readonly IAppendResultInterest _interest;
 
         protected string StreamName { get; }
@@ -44,17 +44,15 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="consumer">The consumer used to perform the application of <typeparamref name="TSource"/></param>
         /// <typeparam name="TSourced">The <see cref="Sourced{T}"/> of the sourced entity to apply to</typeparam>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> of the source to be applied</typeparam>
-        public static void RegisterConsumer<TSourced, TSource>(Action<TSourced, TSource> consumer)
-            where TSourced : Sourced<T> where TSource : Source<T>
+        public void RegisterConsumer<TSource>(Action<TSource> consumer) where TSource : Source
         {
-
-            if (!RegisteredConsumers.TryGetValue(typeof(Sourced<T>), out var sourcedTypeMap))
+            if (!RegisteredConsumers.TryGetValue(GetType(), out var sourcedTypeMap))
             {
-                sourcedTypeMap = new Dictionary<Type, Action<Sourced<T>, Source>>();
-                RegisteredConsumers.AddOrUpdate(typeof(Sourced<T>), sourcedTypeMap, (type, funcs) => sourcedTypeMap);
+                sourcedTypeMap = new Dictionary<Type, Delegate>();
+                RegisteredConsumers.AddOrUpdate(GetType(), sourcedTypeMap, (type, funcs) => sourcedTypeMap);
             }
 
-            sourcedTypeMap.Add(typeof(TSource), (Action<Sourced<T>, Source>) consumer);
+            sourcedTypeMap.Add(typeof(TSource), consumer);
         }
 
         /// <summary>
@@ -203,7 +201,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         protected ICompletes<TResult> Apply<TSource, TResult>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen) => Apply(sources, Metadata, andThen);
 
         /// <summary>
-        /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
+        /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="source"/> to myself,
         /// which includes appending them to my journal and reflecting the representative changes
         /// to my state, followed by the execution of a possible <paramref name="andThen"/>.
         /// </summary>
@@ -362,13 +360,13 @@ namespace Vlingo.Lattice.Model.Sourcing
             var type = GetType();
 
             var consumerFound = false;
-            while (type != typeof(Sourced<T>))
+            while (type != null)
             {
                 if (RegisteredConsumers.TryGetValue(type!, out var sourcedTypeMap))
                 {
                     if (sourcedTypeMap.TryGetValue(source.GetType(), out var consumer))
                     {
-                        consumer(this, source);
+                        consumer.DynamicInvoke(source);
                         consumerFound = true;
                         break;
                     }
@@ -395,11 +393,11 @@ namespace Vlingo.Lattice.Model.Sourcing
             }
         }
 
-        private Info<T>? Info()
+        private Info? Info()
         {
             try
             {
-                return Stage.World.ResolveDynamic<SourcedTypeRegistry<T>>(SourcedTypeRegistry<T>.InternalName).Info();
+                return Stage.World.ResolveDynamic<SourcedTypeRegistry>(SourcedTypeRegistry.InternalName).Info(GetType());
             }
             catch (Exception e)
             {
@@ -429,11 +427,11 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// Restores the initial state of the receiver by means of the <paramref name="snapshot"/>.
         /// </summary>
         /// <param name="snapshot">the snapshot holding the <see cref="Sourced{T}"/> initial state</param>
-        private void RestoreSnapshot(State<T>? snapshot)
+        private void RestoreSnapshot(IState? snapshot)
         {
             if (snapshot != null && !snapshot.IsNull)
             {
-                RestoreSnapshot(_journalInfo!.StateAdapterProvider.FromRaw<T, State<T>>(snapshot), _currentVersion);
+                RestoreSnapshot(_journalInfo!.StateAdapterProvider.FromRaw<T, IState>(snapshot), _currentVersion);
             }
         }
 

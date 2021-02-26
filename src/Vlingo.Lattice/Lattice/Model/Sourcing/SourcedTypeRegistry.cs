@@ -18,7 +18,7 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// Registry for <see cref="Sourced{T}"/> types that holds the <see cref="Journal{T}"/> type,
     /// <see cref="EntryAdapterProvider"/>, and <see cref="StateAdapterProvider"/>.
     /// </summary>
-    public class SourcedTypeRegistry<T>
+    public class SourcedTypeRegistry
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
@@ -31,13 +31,13 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="dispatcher"><see cref="IDispatcher{TDispatchable}"/> of the journal.</param>
         /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
         /// <returns>The registry</returns>
-        public static SourcedTypeRegistry<T> Register<TActor, TEntry, TState>(World world,
+        public static SourcedTypeRegistry Register<TActor, TEntry, TState>(World world,
             IDispatcher<Dispatchable<IEntry<TEntry>, State<TState>>> dispatcher, params Type[] sourcedTypes)
             where TActor : Actor
         {
-            var journal = world.ActorFor<IJournal<T>>(typeof(TActor), dispatcher);
+            var journal = world.ActorFor<IJournal<TEntry>>(typeof(TActor), dispatcher);
 
-            return new SourcedTypeRegistry<T>(world, journal, sourcedTypes);
+            return new SourcedTypeRegistry(world, journal, sourcedTypes);
         }
 
         /// <summary>
@@ -47,14 +47,13 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="world">The World to which I am registered</param>
         /// <param name="journal">The journal of this registry</param>
         /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
-        public SourcedTypeRegistry(World world, IJournal<T> journal, params Type[] sourcedTypes)
-        : this (world)
+        public SourcedTypeRegistry(World world, IJournal journal, params Type[] sourcedTypes) : this (world)
         {
             EntryAdapterProvider.Instance(world);
 
             foreach (var sourcedType in sourcedTypes)
             {
-                Register(new Info<T>(journal, sourcedType.FullName));
+                Register(Sourcing.Info.RegisterSourced(journal, sourcedType));
             }
         }
         
@@ -63,16 +62,23 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
         public SourcedTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
-        
+
+        /// <summary>
+        /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
+        /// </summary>
+        /// <typeparam name="TSourced">The type of the sourced entity</typeparam>
+        /// <returns><see cref="Info{T}"/></returns>
+        public Info? Info<TSourced>() => Info(typeof(TSourced));
+
         /// <summary>
         /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
         /// </summary>
         /// <returns><see cref="Info{T}"/></returns>
-        public Info<T>? Info()
+        public Info? Info(Type sourcedType)
         {
-            if (_stores.TryGetValue(typeof(Sourced<T>), out var value))
+            if (_stores.TryGetValue(sourcedType, out var value))
             {
-                return (Info<T>) value;
+                return (Info) value;
             }
 
             return default;
@@ -83,7 +89,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// </summary>
         /// <param name="info"><see cref="Info{T}"/> to register</param>
         /// <returns>The registry</returns>
-        public SourcedTypeRegistry<T> Register(Info<T> info)
+        public SourcedTypeRegistry Register(Info info)
         {
             _stores.AddOrUpdate(info.SourcedType, info, (type, o) => info);
             return this;
