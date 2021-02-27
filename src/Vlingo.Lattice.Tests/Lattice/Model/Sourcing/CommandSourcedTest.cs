@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Vlingo.Tests.Lattice.Model.Sourcing
 {
-    public class CommandSourcedTest
+    public class CommandSourcedTest : IDisposable
     {
         private readonly MockJournalDispatcher _dispatcher;
         private readonly IEntity _entity;
@@ -84,5 +84,7 @@ namespace Vlingo.Tests.Lattice.Model.Sourcing
             _result = new Result();
             _entity = _world.ActorFor<IEntity>(() => new TestCommandSourcedEntity(_result));
         }
+
+        public void Dispose() => _world.Terminate();
     }
 }

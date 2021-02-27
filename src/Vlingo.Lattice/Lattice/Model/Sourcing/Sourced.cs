@@ -27,8 +27,8 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// <typeparam name="T">The concrete type that is being sourced</typeparam>
     public abstract class Sourced<T> : EntityActor, IAppendResultInterest
     {
-        private static readonly ConcurrentDictionary<Type, Dictionary<Type, Delegate>>
-            RegisteredConsumers = new ConcurrentDictionary<Type, Dictionary<Type, Delegate>>();
+        private readonly ConcurrentDictionary<Type, Dictionary<Type, Delegate>>
+            _registeredConsumers = new ConcurrentDictionary<Type, Dictionary<Type, Delegate>>();
 
         private TestContext? _testContext;
         private int _currentVersion;
@@ -39,17 +39,16 @@ namespace Vlingo.Lattice.Model.Sourcing
 
         /// <summary>
         /// Register the means to apply <typeparamref name="TSource"/> instances for state transition
-        /// of <typeparamref name="TSourced"/> by means of a given <paramref name="consumer"/>.
+        /// by means of a given <paramref name="consumer"/>.
         /// </summary>
         /// <param name="consumer">The consumer used to perform the application of <typeparamref name="TSource"/></param>
-        /// <typeparam name="TSourced">The <see cref="Sourced{T}"/> of the sourced entity to apply to</typeparam>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> of the source to be applied</typeparam>
         public void RegisterConsumer<TSource>(Action<TSource> consumer) where TSource : Source
         {
-            if (!RegisteredConsumers.TryGetValue(GetType(), out var sourcedTypeMap))
+            if (!_registeredConsumers.TryGetValue(GetType(), out var sourcedTypeMap))
             {
                 sourcedTypeMap = new Dictionary<Type, Delegate>();
-                RegisteredConsumers.AddOrUpdate(GetType(), sourcedTypeMap, (type, funcs) => sourcedTypeMap);
+                _registeredConsumers.AddOrUpdate(GetType(), sourcedTypeMap, (type, funcs) => sourcedTypeMap);
             }
 
             sourcedTypeMap.Add(typeof(TSource), consumer);
@@ -362,7 +361,7 @@ namespace Vlingo.Lattice.Model.Sourcing
             var consumerFound = false;
             while (type != null)
             {
-                if (RegisteredConsumers.TryGetValue(type!, out var sourcedTypeMap))
+                if (_registeredConsumers.TryGetValue(type!, out var sourcedTypeMap))
                 {
                     if (sourcedTypeMap.TryGetValue(source.GetType(), out var consumer))
                     {
