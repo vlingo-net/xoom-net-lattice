@@ -5,7 +5,6 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using System;
 using System.Threading.Tasks;
 using Vlingo.Common;
 using Vlingo.Lattice.Model.Sourcing;
@@ -14,17 +13,13 @@ namespace Vlingo.Tests.Lattice.Model.Sourcing
 {
     public class TestCommandSourcedEntity : CommandSourced, IEntity
     {
-        private readonly Action<DoCommand1> _bi1;
-        private readonly Action<DoCommand2> _bi2;
         private readonly Result _result;
 
         public TestCommandSourcedEntity(Result result) : base("TestCommand123")
         {
             _result = result;
-            _bi1 = Applied1;
-            _bi2 = Applied2;
-            RegisterConsumer(_bi1);
-            RegisterConsumer(_bi2);
+            RegisterConsumer<DoCommand1>(Applied1);
+            RegisterConsumer<DoCommand2>(Applied2);
         }
 
         public void DoTest1() => Apply(new DoCommand1());
