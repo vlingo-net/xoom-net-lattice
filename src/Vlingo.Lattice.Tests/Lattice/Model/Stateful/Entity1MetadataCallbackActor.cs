@@ -87,8 +87,6 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
         // StatefulEntity
         //===================================
         
-        protected override void OnStateObject(Entity1State stateObject) => _state = stateObject;
-
         protected override void State(Entity1State state) => _state = state;
     }
 }
