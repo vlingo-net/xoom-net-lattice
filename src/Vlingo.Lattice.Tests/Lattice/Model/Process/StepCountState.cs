@@ -5,7 +5,20 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-$HEADER$namespace $NAMESPACE$
+using Vlingo.Symbio.Store.Object;
+
+namespace Vlingo.Tests.Lattice.Model.Process
 {
-  public class $CLASS$ {$END$}
+    public class StepCountState : StateObject
+    {
+        private int _stepCount;
+
+        public StepCountState(int stepCount) => _stepCount = stepCount;
+
+        public StepCountState() => _stepCount = 0;
+
+        public void CountStep() => ++_stepCount;
+
+        public int StepCount() => _stepCount;
+    }
 }

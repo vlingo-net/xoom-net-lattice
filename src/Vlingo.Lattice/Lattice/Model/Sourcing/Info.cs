@@ -14,7 +14,6 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// <summary>
     /// Holder of registration information.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="IJournal{T}"/> of the registration</typeparam>
     public class Info
     {
         public EntryAdapterProvider EntryAdapterProvider { get; }
@@ -52,7 +51,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="adapter"><see cref="IEntryAdapter{TSource,TEntry}"/> to register</param>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
         /// <typeparam name="TEntry">The <see cref="IEntry{T}"/> extender being registered</typeparam>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter) where TSource : Source where TEntry : IEntry
         {
             EntryAdapterProvider.RegisterAdapter(adapter);
@@ -66,7 +65,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="consumer">The consumer being registered</param>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
         /// <typeparam name="TEntry">The <see cref="IEntry{T}"/> extender being registered</typeparam>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<Type, IEntryAdapter<TSource, TEntry>> consumer) where TSource : Source where TEntry : IEntry
         {
             EntryAdapterProvider.RegisterAdapter(adapter, consumer);
@@ -79,7 +78,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="adapter"><see cref="IStateAdapter{TSource,TEntry}"/> to register</param>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
         /// <typeparam name="TState">The <see cref="State{T}"/> extender being registered</typeparam>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info RegisterStateAdapter<TSource, TState>(IStateAdapter<Source<TSource>, State<TState>> adapter)
         {
             StateAdapterProvider.RegisterAdapter(adapter);
@@ -93,7 +92,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="consumer">The consumer being registered</param>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
         /// <typeparam name="TState">The <see cref="State{T}"/> extender being registered</typeparam>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info RegisterStateAdapter<TSource, TState>(IStateAdapter<Source<TSource>, State<TState>> adapter, Action<Type, IStateAdapter<Source<TSource>, State<TState>>> consumer)
         {
             StateAdapterProvider.RegisterAdapter(adapter, consumer);

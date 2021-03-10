@@ -140,7 +140,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
         protected virtual ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
-            var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
+            var metadata = Metadata.With(state!, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IWriteResultInterest));
@@ -164,7 +164,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
         protected virtual ICompletes<TResult> Apply<TResult>(T state, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
-            var metadata = Metadata.With(state, metadataValue ?? "", operation ?? "");
+            var metadata = Metadata.With(state!, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IWriteResultInterest));
@@ -374,13 +374,6 @@ namespace Vlingo.Lattice.Model.Stateful
         ///     <see cref="T:Tuple{T, IEnumerable{Source{string}}}" />
         /// </returns>
         protected Tuple<T, IEnumerable<Source<string>>>? WhenNewState() => null;
-
-        /// <summary>
-        ///     Received by my extender when my state object has been preserved and restored.
-        ///     Must be overridden by my extender.
-        /// </summary>
-        /// <param name="stateObject">The T typed state object.</param>
-        protected abstract void OnStateObject(T stateObject);
 
         protected override void Restore() => Restore(false);
         

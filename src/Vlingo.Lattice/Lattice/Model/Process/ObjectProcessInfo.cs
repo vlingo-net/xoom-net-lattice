@@ -15,7 +15,7 @@ namespace Vlingo.Lattice.Model.Process
     /// Holder of registration information for <see cref="ObjectProcess{T}"/> types.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ObjectProcessInfo<T> : Info<ObjectProcess<T>> where T : StateObject
+    public class ObjectProcessInfo<T> : Info<T> where T : StateObject
     {
         public ObjectTypeRegistry Registry { get; }
         

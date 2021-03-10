@@ -5,7 +5,38 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-$HEADER$namespace $NAMESPACE$
+using Vlingo.Common;
+using Vlingo.Lattice.Model;
+
+namespace Vlingo.Tests.Lattice.Model.Process
 {
-  public interface $INTERFACE$ {$END$}
+    public interface IFiveStepProcess
+    {
+        ICompletes<int> QueryStepCount();
+        void StepOneHappened();
+        void StepTwoHappened();
+        void StepThreeHappened();
+        void StepFourHappened();
+        void StepFiveHappened();
+    }
+
+    public class DoStepOne : Command
+    {
+    }
+
+    public class DoStepTwo : Command
+    {
+    }
+
+    public class DoStepThree : Command
+    {
+    }
+
+    public class DoStepFour : Command
+    {
+    }
+
+    public class DoStepFive : Command
+    {
+    }
 }

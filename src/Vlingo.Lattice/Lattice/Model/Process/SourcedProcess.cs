@@ -33,7 +33,7 @@ namespace Vlingo.Lattice.Model.Process
     /// <typeparam name="T">The type of the process state and used by the <see cref="Chronicle"/></typeparam>
     public abstract class SourcedProcess<T> : Sourced<T>, IProcess<T> where T : StateObject
     {
-        private readonly Info<SourcedProcess<T>> _info;
+        private readonly Info<T> _info;
         private readonly List<Source> _applied;
 
         public Chronicle<T> Chronicle => Snapshot<Chronicle<T>>();
@@ -49,7 +49,7 @@ namespace Vlingo.Lattice.Model.Process
         
         protected SourcedProcess(string? streamName) : base(streamName)
         {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info<SourcedProcess<T>>();
+            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info();
             _applied = new List<Source>(2);
         }
         

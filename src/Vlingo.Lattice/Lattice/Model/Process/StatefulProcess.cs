@@ -19,9 +19,9 @@ namespace Vlingo.Lattice.Model.Process
     /// Abstract base definition for all concrete stateful process types.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="StatefulEntity{T}"/></typeparam>
-    public abstract class StatefulProcess<T> : StatefulEntity<T>, IProcess<T> where T : StateObject, IEntry
+    public abstract class StatefulProcess<T> : StatefulEntity<T>, IProcess<T> where T : StateObject
     {
-        private readonly Info<StatefulProcess<T>> _info;
+        private readonly Info<T> _info;
         private readonly List<Source> _applied;
 
         public abstract Chronicle<T> Chronicle { get; }
@@ -37,7 +37,7 @@ namespace Vlingo.Lattice.Model.Process
         
         protected StatefulProcess(string? streamName) : base(streamName)
         {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info<StatefulProcess<T>>();
+            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info();
             _applied = new List<Source>(2);
         }
 

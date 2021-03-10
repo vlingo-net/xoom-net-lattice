@@ -5,10 +5,54 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Common;
+using Vlingo.Lattice.Model.Process;
+
 namespace Vlingo.Tests.Lattice.Model.Process
 {
-    public class FiveStepEmittingStatefulProcess
+    public class FiveStepEmittingStatefulProcess : StatefulProcess<StepCountState>, IFiveStepProcess
     {
+        private readonly Chronicle<StepCountState> _chronicle;
+        private StepCountState _state;
+
+        public FiveStepEmittingStatefulProcess() : base("12345")
+        {
+            _state = new StepCountState();
+            _chronicle = new Chronicle<StepCountState>(_state);
+        }
         
+        protected override void State(StepCountState state) => _state = state;
+
+        public override Chronicle<StepCountState> Chronicle => _chronicle;
+
+        public override string ProcessId => Id;
+        
+        public ICompletes<int> QueryStepCount() => Completes().With(_state.StepCount());
+
+        public void StepOneHappened()
+        {
+            _state.CountStep();
+            Process(new DoStepTwo());
+        }
+
+        public void StepTwoHappened()
+        {
+            _state.CountStep();
+            Process(new DoStepThree());
+        }
+
+        public void StepThreeHappened()
+        {
+            _state.CountStep();
+            Process(new DoStepFour());
+        }
+
+        public void StepFourHappened()
+        {
+            _state.CountStep();
+            Process(new DoStepFive());
+        }
+
+        public void StepFiveHappened() => _state.CountStep();
     }
 }

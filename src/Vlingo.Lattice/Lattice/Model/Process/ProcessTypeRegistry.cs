@@ -30,11 +30,11 @@ namespace Vlingo.Lattice.Model.Process
         /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
         /// </summary>
         /// <returns><see cref="Info{T}"/></returns>
-        public Info<TProcess> Info<TProcess>() where TProcess : IProcess<T>
+        public Info<T> Info()
         {
-            if (_stores.TryGetValue(typeof(TProcess), out var value))
+            if (_stores.TryGetValue(typeof(T), out var value))
             {
-                return (Info<TProcess>) value;
+                return (Info<T>) value;
             }
 
             throw new ArgumentOutOfRangeException($"No info registered for {typeof(T).Name}");
