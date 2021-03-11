@@ -20,29 +20,25 @@ namespace Vlingo.Tests.Lattice.Model.Process
         public DoStepThreeReceiver DoStepThreeReceiver { get; }
         public DoStepFourReceiver DoStepFourReceiver { get; }
         public DoStepFiveReceiver DoStepFiveReceiver{ get; }
-        
-        private readonly AtomicInteger _stepCount;
-        private IFiveStepProcess _process;
 
-        public ExchangeReceivers()
+        public ExchangeReceivers(IFiveStepProcess process)
         {
-            DoStepOneReceiver = new DoStepOneReceiver(_process, Access);
-            DoStepTwoReceiver = new DoStepTwoReceiver(_process, Access);
-            DoStepThreeReceiver = new DoStepThreeReceiver(_process, Access);
-            DoStepFourReceiver = new DoStepFourReceiver(_process, Access);
-            DoStepFiveReceiver = new DoStepFiveReceiver(_process, Access);
-
-            _stepCount = new AtomicInteger(0);
-
             Access = AccessSafely.AfterCompleting(5);
-            Access.WritingWith<int>("stepCount", delta => _stepCount.IncrementAndGet())
-                .ReadingWith("stepCount", () => _stepCount.Get());
+            
+            DoStepOneReceiver = new DoStepOneReceiver(process, Access);
+            DoStepTwoReceiver = new DoStepTwoReceiver(process, Access);
+            DoStepThreeReceiver = new DoStepThreeReceiver(process, Access);
+            DoStepFourReceiver = new DoStepFourReceiver(process, Access);
+            DoStepFiveReceiver = new DoStepFiveReceiver(process, Access);
+
+            var stepCount = new AtomicInteger(0);
+            
+            Access.WritingWith<int>("stepCount", delta => stepCount.IncrementAndGet())
+                .ReadingWith("stepCount", () => stepCount.Get());
         }
-        
-        public void Process(IFiveStepProcess process) => _process = process;
     }
     
-    public class DoStepOneReceiver : IExchangeReceiver<DoStepOne>
+    public class DoStepOneReceiver : DefaultExchangeReceiver<DoStepOne>
     {
         private readonly IFiveStepProcess _process;
         private readonly AccessSafely _access;
@@ -53,14 +49,14 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _access = access;
         }
     
-        public void Receive(DoStepOne message)
+        public override void Receive(DoStepOne message)
         {
             _process.StepOneHappened();
             _access.WriteUsing("stepCount", 1);
         }
     }
     
-    public class DoStepTwoReceiver : IExchangeReceiver<DoStepTwo>
+    public class DoStepTwoReceiver : DefaultExchangeReceiver<DoStepTwo>
     {
         private readonly IFiveStepProcess _process;
         private readonly AccessSafely _access;
@@ -71,14 +67,14 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _access = access;
         }
     
-        public void Receive(DoStepTwo message)
+        public override void Receive(DoStepTwo message)
         {
-            _process.StepOneHappened();
+            _process.StepTwoHappened();
             _access.WriteUsing("stepCount", 1);
         }
     }
     
-    public class DoStepThreeReceiver : IExchangeReceiver<DoStepThree>
+    public class DoStepThreeReceiver : DefaultExchangeReceiver<DoStepThree>
     {
         private readonly IFiveStepProcess _process;
         private readonly AccessSafely _access;
@@ -89,14 +85,14 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _access = access;
         }
     
-        public void Receive(DoStepThree message)
+        public override void Receive(DoStepThree message)
         {
-            _process.StepOneHappened();
+            _process.StepThreeHappened();
             _access.WriteUsing("stepCount", 1);
         }
     }
     
-    public class DoStepFourReceiver : IExchangeReceiver<DoStepFour>
+    public class DoStepFourReceiver : DefaultExchangeReceiver<DoStepFour>
     {
         private readonly IFiveStepProcess _process;
         private readonly AccessSafely _access;
@@ -107,14 +103,14 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _access = access;
         }
     
-        public void Receive(DoStepFour message)
+        public override void Receive(DoStepFour message)
         {
-            _process.StepOneHappened();
+            _process.StepFourHappened();
             _access.WriteUsing("stepCount", 1);
         }
     }
     
-    public class DoStepFiveReceiver : IExchangeReceiver<DoStepFive>
+    public class DoStepFiveReceiver : DefaultExchangeReceiver<DoStepFive>
     {
         private readonly IFiveStepProcess _process;
         private readonly AccessSafely _access;
@@ -125,9 +121,9 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _access = access;
         }
     
-        public void Receive(DoStepFive message)
+        public override void Receive(DoStepFive message)
         {
-            _process.StepOneHappened();
+            _process.StepFiveHappened();
             _access.WriteUsing("stepCount", 1);
         }
     }
