@@ -9,20 +9,33 @@ using System;
 
 namespace Vlingo.Lattice.Exchange
 {
+    public class Covey
+    {
+        public Covey(IExchangeAdapter adapter, IExchangeSender sender, IExchangeReceiver receiver, Type localType, Type externalType)
+        {
+            Adapter = adapter;
+            Sender = sender;
+            Receiver = receiver;
+            LocalType = localType;
+            ExternalType = externalType;
+        }
+        
+        public IExchangeAdapter Adapter { get; }
+        public IExchangeSender Sender { get; }
+        public IExchangeReceiver Receiver { get; }
+        
+        public Type LocalType { get; }
+        public Type ExternalType { get; }
+    }
+    
     /// <summary>
     /// A set of <see cref="IExchange"/> components.
     /// </summary>
     /// <typeparam name="TLocal">The local object type</typeparam>
     /// <typeparam name="TExternal">The external object type</typeparam>
     /// <typeparam name="TExchange">The exchange message type</typeparam>
-    public class Covey<TLocal, TExternal, TExchange>
+    public class Covey<TLocal, TExternal, TExchange> : Covey
     {
-        public IExchangeAdapter<TLocal, TExternal, TExchange> Adapter { get; }
-        public IExchangeSender<TExchange> Sender { get; }
-        public IExchangeReceiver<TLocal> Receiver { get; }
-        public Type LocalType => typeof(TLocal);
-        public Type ExternalType => typeof(TExternal);
-        
         /// <summary>
         /// Gets the <see cref="Covey{TLocal,TExternal,TExchange}"/> information from a set of related components, which includes
         /// <see cref="IExchangeSender{T}"/>, <see cref="IExchangeReceiver{T}"/>, <see cref="IExchangeAdapter{TLocal,TExternal,TExchange}"/>, and the classes of the local and
@@ -45,11 +58,8 @@ namespace Vlingo.Lattice.Exchange
         /// <param name="sender"></param>
         /// <param name="receiver"></param>
         /// <param name="adapter"></param>
-        public Covey(IExchangeSender<TExchange> sender, IExchangeReceiver<TLocal> receiver, IExchangeAdapter<TLocal, TExternal, TExchange> adapter)
+        private Covey(IExchangeSender<TExchange> sender, IExchangeReceiver<TLocal> receiver, IExchangeAdapter<TLocal, TExternal, TExchange> adapter) : base(adapter, sender, receiver, typeof(TLocal), typeof(TExternal))
         {
-            Sender = sender;
-            Receiver = receiver;
-            Adapter = adapter;
         }
     }
 }

@@ -24,35 +24,33 @@ namespace Vlingo.Lattice.Exchange
         /// </summary>
         public Forwarder() => _coveys = new List<object>();
 
-        public void ForwardToReceiver<TLocal, TExternal, TExchange>(TExchange exchangeMessage) =>
-            ForwardToAllReceivers(exchangeMessage, OfExchangeMessage<TLocal, TExternal, TExchange>(exchangeMessage));
+        public void ForwardToReceiver(object exchangeMessage) =>
+            ForwardToAllReceivers(exchangeMessage, OfExchangeMessage(exchangeMessage));
 
 
-        public void ForwardToAllReceivers<TLocal, TExternal, TExchange>(TExchange exchangeMessage) => 
-            ForwardToAllReceivers(exchangeMessage, OfExchangeMessage<TLocal, TExternal, TExchange>(exchangeMessage));
+        public void ForwardToAllReceivers(object exchangeMessage) => 
+            ForwardToAllReceivers(exchangeMessage, OfExchangeMessage(exchangeMessage));
 
         /// <summary>
-        /// Forward the <typeparamref name="TLocal"/>} local object as an <typeparamref name="TExchange"/> exchange message to the sender.
+        /// Forward the <typeparamref name="TLocal"/>} local object as an exchange message to the sender.
         /// </summary>
         /// <param name="local">The local object to send.</param>
         /// <typeparam name="TLocal">The local object type</typeparam>
-        /// <typeparam name="TExternal">The external object type</typeparam>
-        /// <typeparam name="TExchange">The exchange message type</typeparam>
-        public void ForwardToSender<TLocal, TExternal, TExchange>(TLocal local)
+        public void ForwardToSender<TLocal>(TLocal local)
         {
-            var covey = OfObjectType<TLocal, TExternal, TExchange>(local?.GetType());
-            var exchangeTypedMessage = covey.Adapter.ToExchange(local);
-            covey.Sender.Send(exchangeTypedMessage);
+            var covey = OfObjectType(local?.GetType());
+            var exchangeTypedMessage = covey.Adapter.ToExchange(local!);
+            covey.Sender.Send(exchangeTypedMessage!);
         }
         
         public void Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey) => _coveys.Add(covey);
 
-        private void ForwardToAllReceivers<TLocal, TExternal, TExchange>(TExchange exchangeMessage, IEnumerable<Covey<TLocal, TExternal, TExchange>> coveys)
+        private void ForwardToAllReceivers(object exchangeMessage, IEnumerable<Covey> coveys)
         {
             coveys.ToList().ForEach(covey =>
             {
                 var localObject = covey.Adapter.FromExchange(exchangeMessage);
-                covey.Receiver.Receive(localObject);
+                covey.Receiver.Receive(localObject!);
             });
         }
         
@@ -60,29 +58,25 @@ namespace Vlingo.Lattice.Exchange
         /// Answer a <see cref="Covey{TLocal,TExternal,TExchange}"/> collection of the <paramref name="exchangeMessage"/>.
         /// </summary>
         /// <param name="exchangeMessage">The exchange message to match</param>
-        /// <typeparam name="TLocal">The local object type</typeparam>
-        /// <typeparam name="TExternal">The external object type</typeparam>
-        /// <typeparam name="TExchange">The exchange message type</typeparam>
-        /// <returns><see cref="Covey{TLocal,TExternal,TExchange}"/></returns>
-        /// <exception cref="ArgumentException">The <typeparamref name="TExchange"/> is not supported.</exception>
-        private List<Covey<TLocal, TExternal, TExchange>> OfExchangeMessage<TLocal, TExternal, TExchange>(TExchange exchangeMessage)
+        /// <returns><see cref="Covey"/></returns>
+        private List<Covey> OfExchangeMessage(object exchangeMessage)
         {
             var matched = _coveys
-                .Cast<Covey<TLocal, TExternal, TExchange>>()
+                .Cast<Covey>()
                 .Where(covey => covey.Adapter.Supports(exchangeMessage))
                 .ToList();
 
             if (!matched.Any())
             {
-                throw new ArgumentException($"Not a supported message type: {exchangeMessage?.GetType().Name}");
+                throw new ArgumentException($"Not a supported message type: {exchangeMessage.GetType().Name}");
             }
 
             return matched;
         }
 
-        private Covey<TLocal, TExternal, TExchange> OfObjectType<TLocal, TExternal, TExchange>(Type? objectType)
+        private Covey OfObjectType(Type? objectType)
         {
-            foreach (Covey<TLocal, TExternal, TExchange> covey in _coveys)
+            foreach (Covey covey in _coveys)
             {
                 if (covey.ExternalType == objectType || covey.ExternalType.IsAssignableFrom(objectType) 
                                                      || covey.LocalType == objectType || covey.LocalType.IsAssignableFrom(objectType))

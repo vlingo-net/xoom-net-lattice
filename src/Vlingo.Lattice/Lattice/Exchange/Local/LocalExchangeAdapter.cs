@@ -7,13 +7,13 @@
 
 namespace Vlingo.Lattice.Exchange.Local
 {
-    public class LocalExchangeAdapter<TLocal, TExternal> : IExchangeAdapter<TLocal, TExternal, LocalExchangeMessage>
+    public class LocalExchangeAdapter<TLocal, TExternal> : DefaultExchangeAdapter<TLocal, TExternal, LocalExchangeMessage>
     {
-        public TLocal FromExchange(LocalExchangeMessage exchangeMessage) => exchangeMessage.Payload<TLocal>();
+        public override TLocal FromExchange(LocalExchangeMessage exchangeMessage) => exchangeMessage.Payload<TLocal>();
 
-        public LocalExchangeMessage ToExchange(TLocal localMessage) => 
+        public override LocalExchangeMessage ToExchange(TLocal localMessage) => 
             new LocalExchangeMessage(localMessage!.GetType().FullName!, localMessage);
 
-        public bool Supports(object? exchangeMessage) => exchangeMessage != null && ((LocalExchangeMessage) exchangeMessage).RawPayload.GetType() == typeof(TLocal);
+        public override bool Supports(object? exchangeMessage) => exchangeMessage != null && ((LocalExchangeMessage) exchangeMessage).RawPayload.GetType() == typeof(TLocal);
     }
 }

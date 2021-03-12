@@ -37,8 +37,8 @@ namespace Vlingo.Lattice.Exchange.Local
             return this;
         }
 
-        public void Send<TLocal>(TLocal local) => _forwarder.ForwardToSender<TLocal, TLocal, IMessage>(local);
+        public void Send<TLocal>(TLocal local) => _forwarder.ForwardToSender(local);
 
-        public void HandleMessage(IMessage message) => _forwarder.ForwardToReceiver<IMessage, IMessage, IMessage>(message);
+        public void HandleMessage(IMessage message) => _forwarder.ForwardToReceiver(message);
     }
 }

@@ -7,6 +7,20 @@
 
 namespace Vlingo.Lattice.Exchange
 {
+    public interface IExchangeAdapter
+    {
+        object? FromExchange(object exchangeMessage);
+      
+        object? ToExchange(object localMessage);
+        
+        /// <summary>
+        /// Gets whether or not this adapter supports the <paramref name="exchangeMessage"/>.
+        /// </summary>
+        /// <param name="exchangeMessage">The possibly supported exchange message</param>
+        /// <returns>True if supports <paramref name="exchangeMessage"/></returns>
+        bool Supports(object? exchangeMessage);
+    }
+    
     /// <summary>
     /// Adapts the local messages of type <typeparamref name="TLocal"/> to exchange messages
     /// of type <typeparamref name="TExchange"/> that hold external type <typeparamref name="TExternal"/>. This may involve
@@ -18,7 +32,7 @@ namespace Vlingo.Lattice.Exchange
     /// <typeparam name="TLocal">The local object type</typeparam>
     /// <typeparam name="TExternal">The external object type</typeparam>
     /// <typeparam name="TExchange">The exchange message type</typeparam>
-    public interface IExchangeAdapter<TLocal, TExternal, TExchange>
+    public interface IExchangeAdapter<TLocal, TExternal, TExchange> : IExchangeAdapter
     {
         /// <summary>
         /// Gets the <typeparamref name="TLocal"/> typed local message from the <paramref name="exchangeMessage"/>
@@ -35,12 +49,5 @@ namespace Vlingo.Lattice.Exchange
         /// <param name="localMessage">The message of type <typeparamref name="TLocal"/></param>
         /// <returns>The message of type <typeparamref name="TExchange"/></returns>
         TExchange ToExchange(TLocal localMessage);
-        
-        /// <summary>
-        /// Gets whether or not this adapter supports the <paramref name="exchangeMessage"/>.
-        /// </summary>
-        /// <param name="exchangeMessage">The possibly supported exchange message</param>
-        /// <returns>True if supports <paramref name="exchangeMessage"/></returns>
-        bool Supports(object? exchangeMessage);
     }
 }

@@ -7,8 +7,10 @@
 
 namespace Vlingo.Lattice.Exchange
 {
-    public class DefaultExchangeSender
+    public abstract class DefaultExchangeSender<TExchange> : IExchangeSender<TExchange>
     {
-        
+        public abstract void Send(TExchange message);
+
+        public void Send(object message) => Send((TExchange) message);
     }
 }

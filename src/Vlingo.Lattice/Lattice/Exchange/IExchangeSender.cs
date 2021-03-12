@@ -7,11 +7,16 @@
 
 namespace Vlingo.Lattice.Exchange
 {
+    public interface IExchangeSender
+    {
+        void Send(object message);
+    }
+    
     /// <summary>
     /// A sender of messages to a <see cref="IExchange"/>.
     /// </summary>
     /// <typeparam name="T">The exchange typed message</typeparam>
-    public interface IExchangeSender<in T>
+    public interface IExchangeSender<in T> : IExchangeSender
     {
         /// <summary>
         ///  Sends the exchange typed message through the exchange.

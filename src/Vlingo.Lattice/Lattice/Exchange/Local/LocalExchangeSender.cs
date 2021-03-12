@@ -9,12 +9,12 @@ using Vlingo.Common.Message;
 
 namespace Vlingo.Lattice.Exchange.Local
 {
-    public class LocalExchangeSender : IExchangeSender<LocalExchangeMessage>
+    public class LocalExchangeSender : DefaultExchangeSender<LocalExchangeMessage>
     {
         public IMessageQueue Queue { get; }
 
         public LocalExchangeSender(IMessageQueue queue) => Queue = queue;
 
-        public void Send(LocalExchangeMessage message) => Queue.Enqueue(message);
+        public override void Send(LocalExchangeMessage message) => Queue.Enqueue(message);
     }
 }
