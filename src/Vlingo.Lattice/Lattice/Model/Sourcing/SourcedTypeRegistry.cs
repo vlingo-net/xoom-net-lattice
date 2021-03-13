@@ -20,12 +20,13 @@ namespace Vlingo.Lattice.Model.Sourcing
     /// </summary>
     public class SourcedTypeRegistry
     {
+        private Type? _sourcedType;
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
 
         /// <summary>
-        /// Answer a new <see cref="SourcedTypeRegistry{T}"/> with registered <paramref name="sourcedTypes"/>, creating
-        /// the <see cref="IJournal{T}"/> of type <typeparamref name="T"/>, registering me with the <paramref name="world"/>.
+        /// Answer a new <see cref="SourcedTypeRegistry"/> with registered <paramref name="sourcedTypes"/>, creating
+        /// the <see cref="IJournal{TEntry}"/> of type <typeparamref name="TEntry"/>, registering me with the <paramref name="world"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
         /// <param name="dispatcher"><see cref="IDispatcher{TDispatchable}"/> of the journal.</param>
@@ -42,7 +43,7 @@ namespace Vlingo.Lattice.Model.Sourcing
 
         /// <summary>
         /// Construct my default state with <paramref name="sourcedTypes"/> creating the <see cref="IJournal{T}"/>
-        /// of type <typeparamref name="T"/>, and register me with the <paramref name="world"/>.
+        /// and register me with the <paramref name="world"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
         /// <param name="journal">The journal of this registry</param>
@@ -64,18 +65,20 @@ namespace Vlingo.Lattice.Model.Sourcing
         public SourcedTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
 
         /// <summary>
-        /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
+        /// Answer the <see cref="Info"/>.
         /// </summary>
         /// <typeparam name="TSourced">The type of the sourced entity</typeparam>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info? Info<TSourced>() => Info(typeof(TSourced));
 
         /// <summary>
-        /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
+        /// Answer the <see cref="Info"/>.
         /// </summary>
-        /// <returns><see cref="Info{T}"/></returns>
+        /// <returns><see cref="Info"/></returns>
         public Info? Info(Type sourcedType)
         {
+            _sourcedType = sourcedType;
+            
             if (_stores.TryGetValue(sourcedType, out var value))
             {
                 return (Info) value;

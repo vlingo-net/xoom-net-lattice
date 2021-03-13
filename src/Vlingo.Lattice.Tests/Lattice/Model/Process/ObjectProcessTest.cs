@@ -27,16 +27,19 @@ namespace Vlingo.Tests.Lattice.Model.Process
         private readonly IExchange _exchange;
         private readonly ExchangeReceivers _exchangeReceivers;
         private readonly LocalExchangeSender _exchangeSender;
-        private readonly IFiveStepProcess _process;
+        private World _world;
 
         [Fact]
         public void TestFiveStepEmittingProcess()
         {
+            var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingObjectProcess());
+            _exchangeReceivers.SetProcess(process);
+
             _exchange.Send(new DoStepOne());
 
             Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
 
-            Assert.Equal(5, _process.QueryStepCount().Await());
+            Assert.Equal(5, process.QueryStepCount().Await());
         }
 
         public ObjectProcessTest(ITestOutputHelper output)
@@ -44,17 +47,17 @@ namespace Vlingo.Tests.Lattice.Model.Process
             var converter = new Converter(output);
             Console.SetOut(converter);
             
-            var world = World.StartWithDefaults("five-step-process-test");
+            _world = World.StartWithDefaults("five-step-process-test");
 
             var queue = new AsyncMessageQueue(null);
             _exchange = new LocalExchange(queue);
             var adapter = new ProcessMessageTextAdapter();
-            EntryAdapterProvider.Instance(world).RegisterAdapter(adapter);
+            EntryAdapterProvider.Instance(_world).RegisterAdapter(adapter);
 
             var dispatcher = new MockDispatcher();
-            var objectStore = world.ActorFor<IObjectStore>(() => new InMemoryObjectStoreActor<string>(dispatcher));
+            var objectStore = _world.ActorFor<IObjectStore>(() => new InMemoryObjectStoreActor<string>(dispatcher));
 
-            var objectTypeRegistry = new ObjectTypeRegistry(world);
+            var objectTypeRegistry = new ObjectTypeRegistry(_world);
 
             var stepCountStateInfo =
                 new Vlingo.Lattice.Model.Object.Info<StepCountObjectState>(
@@ -67,11 +70,10 @@ namespace Vlingo.Tests.Lattice.Model.Process
             
             _exchangeSender = new LocalExchangeSender(queue);
 
-            var processTypeRegistry = new ProcessTypeRegistry<StepCountObjectState>(world);
+            var processTypeRegistry = new ProcessTypeRegistry<StepCountObjectState>(_world);
             processTypeRegistry.Register(new ObjectProcessInfo<StepCountObjectState>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
             
-            _process = world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingObjectProcess());
-            _exchangeReceivers = new ExchangeReceivers(_process);
+            _exchangeReceivers = new ExchangeReceivers();
             
             RegisterExchangeCoveys();
         }

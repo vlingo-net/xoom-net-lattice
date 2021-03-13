@@ -49,7 +49,7 @@ namespace Vlingo.Lattice.Model.Process
         
         protected SourcedProcess(string? streamName) : base(streamName)
         {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(typeof(ProcessTypeRegistry<T>).Name).Info();
+            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry<T>>(ProcessTypeRegistry<T>.InternalName).Info();
             _applied = new List<Source>(2);
         }
         

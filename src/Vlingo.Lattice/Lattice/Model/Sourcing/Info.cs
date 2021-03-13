@@ -66,7 +66,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
         /// <typeparam name="TEntry">The <see cref="IEntry{T}"/> extender being registered</typeparam>
         /// <returns><see cref="Info"/></returns>
-        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<Type, IEntryAdapter<TSource, TEntry>> consumer) where TSource : Source where TEntry : IEntry
+        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<IEntryAdapter<TSource, TEntry>> consumer) where TSource : Source where TEntry : IEntry
         {
             EntryAdapterProvider.RegisterAdapter(adapter, consumer);
             return this;

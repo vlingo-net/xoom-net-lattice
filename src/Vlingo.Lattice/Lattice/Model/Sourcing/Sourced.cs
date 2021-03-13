@@ -108,12 +108,12 @@ namespace Vlingo.Lattice.Model.Sourcing
             //TODO handle metadata
             outcome
                 .AndThen(result => {
-                RestoreSnapshot(snapshot, _currentVersion);
-                ApplyResultVersioned(source);
-                AfterApply();
-                CompleteUsing(@object);
-                DisperseStowedMessages();
-                return result;
+                    RestoreSnapshot(snapshot, _currentVersion);
+                    ApplyResultVersioned(source);
+                    AfterApply();
+                    CompleteUsing(@object);
+                    DisperseStowedMessages();
+                    return result;
             })
             .Otherwise(cause => {
                 var applicable = new Applicable<TSnapshotState>(default!, new Source[] { source }, metadata, (CompletionSupplier<TSnapshotState>) @object);
@@ -144,19 +144,19 @@ namespace Vlingo.Lattice.Model.Sourcing
             //TODO handle metadata
             outcome
                 .AndThen(result => {
-                RestoreSnapshot(snapshot, _currentVersion);
-                foreach (var source in sources)
-                {
-                    ApplyResultVersioned(source);
-                }
-                AfterApply();
-                CompleteUsing(@object);
-                DisperseStowedMessages();
-                return result;
+                    RestoreSnapshot(snapshot, _currentVersion);
+                    foreach (var source in sources)
+                    {
+                        ApplyResultVersioned(source);
+                    }
+                    AfterApply();
+                    CompleteUsing(@object);
+                    DisperseStowedMessages();
+                    return result;
             })
             .Otherwise(cause => {
-                    var listSources = sources.ToList();
-                    var applicable = new Applicable<TSnapshotState>(default!, listSources, metadata, (CompletionSupplier<TSnapshotState>) @object);
+                var listSources = sources.ToList();
+                var applicable = new Applicable<TSnapshotState>(default!, listSources, metadata, (CompletionSupplier<TSnapshotState>) @object);
                 var message = $"Source (count {listSources.Count}) not appended for: {GetType().Name}({StreamName}) because: {cause.Result} with: {cause.Message}";
                 var exception = new ApplyFailedException<TSnapshotState>(applicable, message, cause);
                 var maybeException = AfterApplyFailed(exception);
