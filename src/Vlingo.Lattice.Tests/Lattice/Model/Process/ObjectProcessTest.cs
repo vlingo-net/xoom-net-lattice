@@ -27,7 +27,7 @@ namespace Vlingo.Tests.Lattice.Model.Process
         private readonly IExchange _exchange;
         private readonly ExchangeReceivers _exchangeReceivers;
         private readonly LocalExchangeSender _exchangeSender;
-        private World _world;
+        private readonly World _world;
 
         [Fact]
         public void TestFiveStepEmittingProcess()
@@ -60,7 +60,7 @@ namespace Vlingo.Tests.Lattice.Model.Process
             var objectTypeRegistry = new ObjectTypeRegistry(_world);
 
             var stepCountStateInfo =
-                new Vlingo.Lattice.Model.Object.Info<StepCountObjectState>(
+                new Info<StepCountObjectState>(
                     objectStore,
                     nameof(StepCountObjectState),
                     MapQueryExpression.Using<StepCountObjectState>("find", MapQueryExpression.Map("id", "id")),
@@ -70,8 +70,8 @@ namespace Vlingo.Tests.Lattice.Model.Process
             
             _exchangeSender = new LocalExchangeSender(queue);
 
-            var processTypeRegistry = new ProcessTypeRegistry<StepCountObjectState>(_world);
-            processTypeRegistry.Register(new ObjectProcessInfo<StepCountObjectState>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
+            var processTypeRegistry = new ProcessTypeRegistry(_world);
+            processTypeRegistry.Register(new ObjectProcessInfo<FiveStepEmittingObjectProcess>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
             
             _exchangeReceivers = new ExchangeReceivers();
             

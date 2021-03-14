@@ -7,8 +7,6 @@
 
 using Vlingo.Lattice.Exchange;
 using Vlingo.Lattice.Model.Stateful;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {
@@ -16,7 +14,7 @@ namespace Vlingo.Lattice.Model.Process
     /// Holder of registration information for <see cref="StatefulProcess{T}"/> types.
     /// </summary>
     /// <typeparam name="T">The type of the <see cref="StatefulProcess{T}"/> state.</typeparam>
-    public class StatefulProcessInfo<T> : Info<StatefulProcess<T>> where T : StateObject, IEntry
+    public class StatefulProcessInfo<T> : Info
     {
         public StatefulTypeRegistry<T> Registry { get; }
 
@@ -26,7 +24,7 @@ namespace Vlingo.Lattice.Model.Process
         /// <param name="processName">The name of the current process</param>
         /// <param name="exchange">The <see cref="IExchange"/></param>
         /// <param name="registry">The <see cref="StatefulTypeRegistry{T}"/> used by the <see cref="StatefulProcess{T}"/></param>
-        public StatefulProcessInfo(string processName, IExchange exchange, StatefulTypeRegistry<T> registry) : base(processName, exchange)
+        public StatefulProcessInfo(string processName, IExchange exchange, StatefulTypeRegistry<T> registry) : base(typeof(T), processName, exchange)
             => Registry = registry;
 
         /// <summary>
@@ -34,6 +32,6 @@ namespace Vlingo.Lattice.Model.Process
         /// </summary>
         /// <param name="processName">The name of the current process</param>
         /// <param name="registry">The <see cref="StatefulTypeRegistry{T}"/> used by the <see cref="StatefulProcess{T}"/></param>
-        public StatefulProcessInfo(string processName, StatefulTypeRegistry<T> registry) : base(processName) => Registry = registry;
+        public StatefulProcessInfo(string processName, StatefulTypeRegistry<T> registry) : base(typeof(T), processName) => Registry = registry;
     }
 }

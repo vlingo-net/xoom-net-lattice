@@ -8,17 +8,16 @@
 using System;
 using System.Collections.Concurrent;
 using Vlingo.Actors;
-using Vlingo.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {
     /// <summary>
     /// Registry for <see cref="IProcess{TState}"/> types.
     /// </summary>
-    public class ProcessTypeRegistry<T> where T : StateObject
+    public class ProcessTypeRegistry
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
-        private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
+        private readonly ConcurrentDictionary<Type, Info> _stores = new ConcurrentDictionary<Type, Info>();
 
         /// <summary>
         /// Construct my default state and register me with the <see cref="World"/>.
@@ -27,25 +26,25 @@ namespace Vlingo.Lattice.Model.Process
         public ProcessTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
         
         /// <summary>
-        /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
+        /// Answer the <see cref="Info"/>.
         /// </summary>
-        /// <returns><see cref="Info{T}"/></returns>
-        public Info<T> Info()
+        /// <returns><see cref="Info"/></returns>
+        public Info Info(Type processType)
         {
-            if (_stores.TryGetValue(typeof(T), out var value))
+            if (_stores.TryGetValue(processType, out var value))
             {
-                return (Info<T>) value;
+                return value;
             }
 
-            throw new ArgumentOutOfRangeException($"No info registered for {typeof(T).Name}");
+            throw new ArgumentOutOfRangeException($"No info registered for {value?.ProcessType.Name}");
         }
 
         /// <summary>
-        /// Answer myself after registering the <see cref="Info{T}"/>.
+        /// Answer myself after registering the <see cref="Info"/>.
         /// </summary>
-        /// <param name="info"><see cref="Info{T}"/> to register</param>
+        /// <param name="info"><see cref="Info"/> to register</param>
         /// <returns>The registry</returns>
-        public ProcessTypeRegistry<T> Register(Info<T> info)
+        public ProcessTypeRegistry Register(Info info)
         {
             _stores.AddOrUpdate(info.ProcessType, info, (type, o) => info);
             return this;

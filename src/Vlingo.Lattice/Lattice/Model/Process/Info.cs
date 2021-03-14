@@ -13,21 +13,22 @@ namespace Vlingo.Lattice.Model.Process
     /// <summary>
     /// Holder of registration information.
     /// </summary>
-    /// <typeparam name="T">The type of Process of the registration</typeparam>
-    public abstract class Info<T>
+    public abstract class Info
     {
         public IExchange Exchange { get; }
         public string ProcessName { get; }
 
-        public Type ProcessType => typeof(T);
+        public Type ProcessType { get; }
 
         /// <summary>
         /// Construct my default state.
         /// </summary>
+        /// <param name="processType">The type of the process.</param>
         /// <param name="processName">The string name of the Process</param>
         /// <param name="exchange">The exchange</param>
-        public Info(string processName, IExchange exchange)
+        public Info(Type processType, string processName, IExchange exchange)
         {
+            ProcessType = processType;
             ProcessName = processName;
             Exchange = exchange;
         }
@@ -35,8 +36,9 @@ namespace Vlingo.Lattice.Model.Process
         /// <summary>
         /// Construct my default state.
         /// </summary>
+        /// <param name="processType">The type of the process.</param>
         /// <param name="processName">The string name of the Process</param>
-        public Info(string processName) : this(processName, NullExchange.Instance)
+        public Info(Type processType, string processName) : this(processType, processName, NullExchange.Instance)
         {
         }
     }
