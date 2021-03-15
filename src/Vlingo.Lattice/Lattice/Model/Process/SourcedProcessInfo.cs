@@ -13,8 +13,9 @@ namespace Vlingo.Lattice.Model.Process
     /// <summary>
     /// Holder of registration information for <see cref="SourcedProcess{T}"/> types.
     /// </summary>
-    /// <typeparam name="T">The type of sourced processes</typeparam>
-    public class SourcedProcessInfo<T> : Info
+    /// <typeparam name="TProcess">The type of sourced process</typeparam>
+    /// <typeparam name="TState">The type of the state of the sourced process</typeparam>
+    public class SourcedProcessInfo<TProcess, TState> : Info where TProcess : IProcess<TState>
     {
         public SourcedTypeRegistry Registry { get; }
 
@@ -24,7 +25,7 @@ namespace Vlingo.Lattice.Model.Process
         /// <param name="processName">The name of the current process</param>
         /// <param name="exchange">The <see cref="IExchange"/></param>
         /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
-        public SourcedProcessInfo(string processName, IExchange exchange, SourcedTypeRegistry registry) : base(typeof(T), processName, exchange)
+        public SourcedProcessInfo(string processName, IExchange exchange, SourcedTypeRegistry registry) : base(typeof(TProcess), processName, exchange)
             => Registry = registry;
 
         /// <summary>
@@ -32,6 +33,6 @@ namespace Vlingo.Lattice.Model.Process
         /// </summary>
         /// <param name="processName">The name of the current process</param>
         /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
-        public SourcedProcessInfo(string processName, SourcedTypeRegistry registry) : base(typeof(T), processName) => Registry = registry;
+        public SourcedProcessInfo(string processName, SourcedTypeRegistry registry) : base(typeof(TProcess), processName) => Registry = registry;
     }
 }

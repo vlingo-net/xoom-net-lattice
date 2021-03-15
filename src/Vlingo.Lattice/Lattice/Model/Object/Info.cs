@@ -15,7 +15,7 @@ namespace Vlingo.Lattice.Model.Object
     /// Holder of registration information.
     /// </summary>
     /// <typeparam name="TState">The type of the underlying state.</typeparam>
-    public class Info<TState>
+    public class Info<TState> : StateObject
     {
         /// <summary>
         /// Construct my default state.

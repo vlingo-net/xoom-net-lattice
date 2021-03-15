@@ -71,7 +71,7 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _exchangeSender = new LocalExchangeSender(queue);
 
             var processTypeRegistry = new ProcessTypeRegistry(_world);
-            processTypeRegistry.Register(new ObjectProcessInfo<FiveStepEmittingObjectProcess>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
+            processTypeRegistry.Register(new ObjectProcessInfo<FiveStepEmittingObjectProcess, StepCountObjectState>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
             
             _exchangeReceivers = new ExchangeReceivers();
             

@@ -13,8 +13,9 @@ namespace Vlingo.Lattice.Model.Process
     /// <summary>
     /// Holder of registration information for <see cref="ObjectProcess{T}"/> types.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ObjectProcessInfo<T> : Info
+    /// <typeparam name="TProcess">The type of the process</typeparam>
+    /// <typeparam name="TState">The Type of the state for the process</typeparam>
+    public class ObjectProcessInfo<TProcess, TState> : Info where TProcess : IProcess<TState>
     {
         public ObjectTypeRegistry Registry { get; }
         
@@ -24,7 +25,7 @@ namespace Vlingo.Lattice.Model.Process
         /// <param name="processName">The name of the current process</param>
         /// <param name="exchange">The <see cref="IExchange"/></param>
         /// <param name="registry">The <see cref="ObjectTypeRegistry"/> used by the <see cref="ObjectProcess{T}"/></param>
-        public ObjectProcessInfo(string processName, IExchange exchange, ObjectTypeRegistry registry) : base(typeof(T), processName, exchange)
+        public ObjectProcessInfo(string processName, IExchange exchange, ObjectTypeRegistry registry) : base(typeof(TProcess), processName, exchange)
             => Registry = registry;
 
         /// <summary>
@@ -32,6 +33,6 @@ namespace Vlingo.Lattice.Model.Process
         /// </summary>
         /// <param name="processName">The name of the current process</param>
         /// <param name="registry">The <see cref="ObjectTypeRegistry"/> used by the <see cref="ObjectProcess{T}"/></param>
-        public ObjectProcessInfo(string processName, ObjectTypeRegistry registry) : base(typeof(T), processName) => Registry = registry;
+        public ObjectProcessInfo(string processName, ObjectTypeRegistry registry) : base(typeof(TProcess), processName) => Registry = registry;
     }
 }

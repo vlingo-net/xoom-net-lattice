@@ -81,8 +81,8 @@ namespace Vlingo.Tests.Lattice.Model.Process
             _exchangeSender = new LocalExchangeSender(queue);
 
             var processTypeRegistry = new ProcessTypeRegistry(_world);
-            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepSendingSourcedProcess>(nameof(FiveStepSendingSourcedProcess), _exchange, _sourcedTypeRegistry));
-            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepEmittingSourcedProcess>(nameof(FiveStepEmittingSourcedProcess), _exchange, _sourcedTypeRegistry));
+            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepSendingSourcedProcess, PorcessObjectState>(nameof(FiveStepSendingSourcedProcess), _exchange, _sourcedTypeRegistry));
+            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepEmittingSourcedProcess, PorcessObjectState>(nameof(FiveStepEmittingSourcedProcess), _exchange, _sourcedTypeRegistry));
             
             RegisterExchangeCoveys();
         }

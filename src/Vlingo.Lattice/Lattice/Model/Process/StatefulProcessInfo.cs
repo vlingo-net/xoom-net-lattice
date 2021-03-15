@@ -13,25 +13,26 @@ namespace Vlingo.Lattice.Model.Process
     /// <summary>
     /// Holder of registration information for <see cref="StatefulProcess{T}"/> types.
     /// </summary>
-    /// <typeparam name="T">The type of the <see cref="StatefulProcess{T}"/> state.</typeparam>
-    public class StatefulProcessInfo<T> : Info
+    /// <typeparam name="TProcess">The type of the <see cref="StatefulProcess{T}"/> state.</typeparam>
+    /// <typeparam name="TState">The type of the state of the underlying process.</typeparam>
+    public class StatefulProcessInfo<TProcess, TState> : Info where TProcess : IProcess<TState>
     {
-        public StatefulTypeRegistry<T> Registry { get; }
+        public StatefulTypeRegistry<TState> Registry { get; }
 
         /// <summary>
         /// Construct my default state.
         /// </summary>
         /// <param name="processName">The name of the current process</param>
         /// <param name="exchange">The <see cref="IExchange"/></param>
-        /// <param name="registry">The <see cref="StatefulTypeRegistry{T}"/> used by the <see cref="StatefulProcess{T}"/></param>
-        public StatefulProcessInfo(string processName, IExchange exchange, StatefulTypeRegistry<T> registry) : base(typeof(T), processName, exchange)
+        /// <param name="registry">The <see cref="StatefulTypeRegistry{TState}"/> used by the <see cref="StatefulProcess{T}"/></param>
+        public StatefulProcessInfo(string processName, IExchange exchange, StatefulTypeRegistry<TState> registry) : base(typeof(TProcess), processName, exchange)
             => Registry = registry;
 
         /// <summary>
         /// Construct my default state.
         /// </summary>
         /// <param name="processName">The name of the current process</param>
-        /// <param name="registry">The <see cref="StatefulTypeRegistry{T}"/> used by the <see cref="StatefulProcess{T}"/></param>
-        public StatefulProcessInfo(string processName, StatefulTypeRegistry<T> registry) : base(typeof(T), processName) => Registry = registry;
+        /// <param name="registry">The <see cref="StatefulTypeRegistry{TState}"/> used by the <see cref="StatefulProcess{T}"/></param>
+        public StatefulProcessInfo(string processName, StatefulTypeRegistry<TState> registry) : base(typeof(TProcess), processName) => Registry = registry;
     }
 }
