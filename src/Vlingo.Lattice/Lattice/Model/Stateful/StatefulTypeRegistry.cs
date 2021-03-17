@@ -13,28 +13,28 @@ using Vlingo.Symbio.Store.State;
 namespace Vlingo.Lattice.Model.Stateful
 {
     /// <summary>
-    /// Registry for <see cref="StatefulEntity{T}"/> types that holds the <see cref="IStateStore{TEntry}"/> type
+    /// Registry for <see cref="StatefulEntity{T}"/> types that holds the <see cref="IStateStore"/> type
     /// </summary>
-    public class StatefulTypeRegistry<T>
+    public class StatefulTypeRegistry
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
 
         /// <summary>
-        /// Answer a new <see cref="StatefulTypeRegistry{T}"/> after registering all all <paramref name="types"/> with <paramref name="stateStore"/>
+        /// Answer a new <see cref="StatefulTypeRegistry"/> after registering all all <paramref name="types"/> with <paramref name="stateStore"/>
         /// using the default store name for each of the <paramref name="types"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered.</param>
-        /// <param name="stateStore"><see cref="IStateStore{T}"/>.</param>
+        /// <param name="stateStore"><see cref="IStateStore"/>.</param>
         /// <param name="types">The native type of states to be stored.</param>
         /// <returns>The registry</returns>
-        public static StatefulTypeRegistry<T> RegisterAll(World world, IStateStore<T> stateStore, params Type[] types)
+        public static StatefulTypeRegistry RegisterAll(World world, IStateStore stateStore, params Type[] types)
         {
-            var registry = new StatefulTypeRegistry<T>(world);
+            var registry = new StatefulTypeRegistry(world);
             
             foreach (var type in types)
             {
-                registry.Register(new Info<T>(stateStore, type.Name));
+                registry.Register(new Info(stateStore, type, type.Name));
             }
 
             return registry;
@@ -45,19 +45,21 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
         public StatefulTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
+
+        public Info Info<T>() => Info(typeof(T));
         
         /// <summary>
-        /// Answer the <see cref="Info{T}"/> of the <typeparamref name="T"/> type.
+        /// Answer the <see cref="Info{T}"/>.
         /// </summary>
         /// <returns><see cref="Info{T}"/></returns>
-        public Info<T> Info()
+        public Info Info(Type processType)
         {
-            if (_stores.TryGetValue(typeof(T), out var value))
+            if (_stores.TryGetValue(processType, out var value))
             {
-                return (Info<T>) value;
+                return (Info) value;
             }
 
-            throw new ArgumentOutOfRangeException($"No info registered for {typeof(T).Name}");
+            throw new ArgumentOutOfRangeException($"No info registered for {processType.Name}");
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// </summary>
         /// <param name="info"><see cref="Info{T}"/> to register</param>
         /// <returns>The registry</returns>
-        public StatefulTypeRegistry<T> Register(Info<T> info)
+        public StatefulTypeRegistry Register(Info info)
         {
             StateTypeStateStoreMap.StateTypeToStoreName(info.StoreName, info.StoreType);
             _stores.AddOrUpdate(info.StoreType, info, (type, o) => info);

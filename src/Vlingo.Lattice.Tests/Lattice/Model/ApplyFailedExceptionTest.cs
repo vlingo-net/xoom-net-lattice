@@ -19,7 +19,7 @@ namespace Vlingo.Tests.Lattice.Model
         [Fact]
         public void TestThatFailedHasApplicable()
         {
-            var applicable = new Applicable<object>(null, Enumerable.Empty<Source>(), Metadata.NullMetadata(), CompletionSupplier<object>.SupplierOrNull<object>(() => null, null));
+            var applicable = new Applicable<object>(null, Enumerable.Empty<ISource>(), Metadata.NullMetadata(), CompletionSupplier<object>.SupplierOrNull<object>(() => null, null));
             var e = new ApplyFailedException<object>(applicable);
 
             Assert.NotNull(e);
@@ -36,7 +36,7 @@ namespace Vlingo.Tests.Lattice.Model
         public void TestThatFailedHasExceptionInfo()
         {
             var cause = new Exception("TestInner", new Exception());
-            var applicable = new Applicable<object>(null, Enumerable.Empty<Source>(), Metadata.NullMetadata(), CompletionSupplier<object>.SupplierOrNull<object>(() => null, null));
+            var applicable = new Applicable<object>(null, Enumerable.Empty<ISource>(), Metadata.NullMetadata(), CompletionSupplier<object>.SupplierOrNull<object>(() => null, null));
             var e = new ApplyFailedException<object>(applicable, "TestOuter", cause);
 
             Assert.NotNull(e);

@@ -17,7 +17,7 @@ namespace Vlingo.Lattice.Model
     /// <typeparam name="T">The type of the state</typeparam>
     public class Applicable<T>
     {
-        public Applicable(T state, IEnumerable<Source> sources, Metadata metadata, CompletionSupplier<T> completionSupplier)
+        public Applicable(T state, IEnumerable<ISource> sources, Metadata metadata, CompletionSupplier<T> completionSupplier)
         {
             State = state;
             Sources = sources;
@@ -29,7 +29,7 @@ namespace Vlingo.Lattice.Model
         
         public Metadata Metadata { get; }
         
-        public IEnumerable<Source> Sources { get; }
+        public IEnumerable<ISource> Sources { get; }
         
         public T State { get; }
     }

@@ -14,23 +14,52 @@ namespace Vlingo.Lattice.Model.Stateful
     /// <summary>
     /// Holder of registration information.
     /// </summary>
-    /// <typeparam name="T">The native type of the state</typeparam>
-    public class Info<T>
+    public class Info
     {
-        public IStateStore<T> Store { get; }
+        public IStateStore Store { get; }
         public string StoreName { get; }
 
-        public Type StoreType => typeof(T);
+        public Type StoreType { get; }
+        public EntryAdapterProvider EntryAdapterProvider { get; }
+        public StateAdapterProvider StateAdapterProvider { get; }
 
         /// <summary>
         /// Construct my default state.
         /// </summary>
+        /// <param name="stateType">The type of state store state</param>
         /// <param name="storeName">The string name of the Store</param>
         /// <param name="store">The store</param>
-        public Info(IStateStore<T> store, string storeName)
+        public Info(IStateStore store, Type stateType, string storeName)
         {
             Store = store;
+            StoreType = stateType;
             StoreName = storeName;
+            EntryAdapterProvider = new EntryAdapterProvider();
+            StateAdapterProvider = new StateAdapterProvider();
+        }
+        
+        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter) where TSource : ISource where TEntry : IEntry
+        {
+            EntryAdapterProvider.RegisterAdapter(adapter);
+            return this;
+        }
+        
+        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<IEntryAdapter<TSource, TEntry>> consumer) where TSource : ISource where TEntry : IEntry
+        {
+            EntryAdapterProvider.RegisterAdapter(adapter, consumer);
+            return this;
+        }
+        
+        public Info RegisterStateAdapter<TSource, TState>(IStateAdapter<Source<TSource>, State<TState>> adapter)
+        {
+            StateAdapterProvider.RegisterAdapter(adapter);
+            return this;
+        }
+        
+        public Info RegisterStateAdapter<TSource, TState>(IStateAdapter<Source<TSource>, State<TState>> adapter, Action<Type, IStateAdapter<Source<TSource>, State<TState>>> consumer)
+        {
+            StateAdapterProvider.RegisterAdapter(adapter, consumer);
+            return this;
         }
 
         /// <summary>
@@ -47,10 +76,9 @@ namespace Vlingo.Lattice.Model.Stateful
     /// <summary>
     /// Holder of binary registration information.
     /// </summary>
-    /// <typeparam name="T">The native type of the state</typeparam>
-    public class BinaryInfo<T> : Info<T> where T : IEntry
+    public class BinaryInfo : Info
     {
-        public BinaryInfo(IStateStore<T> store, string storeName) : base(store, storeName)
+        public BinaryInfo(IStateStore store, string storeName) : base(store, typeof(BinaryInfo), storeName)
         {
         }
 
@@ -60,10 +88,9 @@ namespace Vlingo.Lattice.Model.Stateful
     /// <summary>
     /// Holder of text registration information.
     /// </summary>
-    /// <typeparam name="T">The native type of the state</typeparam>
-    public class TextInfo<T> : Info<T> where T : IEntry
+    public class TextInfo : Info
     {
-        public TextInfo(IStateStore<T> store, string storeName) : base(store, storeName)
+        public TextInfo(IStateStore store, string storeName) : base(store, typeof(TextInfo), storeName)
         {
         }
 

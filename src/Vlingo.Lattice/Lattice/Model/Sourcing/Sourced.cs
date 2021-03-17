@@ -43,7 +43,7 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// </summary>
         /// <param name="consumer">The consumer used to perform the application of <typeparamref name="TSource"/></param>
         /// <typeparam name="TSource">The <see cref="Source{T}"/> of the source to be applied</typeparam>
-        public void RegisterConsumer<TSource>(Action<TSource> consumer) where TSource : Source
+        public void RegisterConsumer<TSource>(Action<TSource> consumer) where TSource : ISource
         {
             if (!_registeredConsumers.TryGetValue(GetType(), out var sourcedTypeMap))
             {
@@ -98,12 +98,12 @@ namespace Vlingo.Lattice.Model.Sourcing
 
         public void AppendResultedIn<TSource, TSnapshotState>(IOutcome<StorageException, Result> outcome,
             string streamName, int streamVersion, TSource source,
-            Optional<TSnapshotState> snapshot, object @object) where TSource : Source =>
+            Optional<TSnapshotState> snapshot, object @object) where TSource : ISource =>
             AppendResultedIn(outcome, streamName, streamVersion, source, Metadata.NullMetadata(), snapshot, @object);
 
         public void AppendResultedIn<TSource, TSnapshotState>(IOutcome<StorageException, Result> outcome,
             string streamName, int streamVersion, TSource source,
-            Metadata metadata, Optional<TSnapshotState> snapshot, object @object) where TSource : Source
+            Metadata metadata, Optional<TSnapshotState> snapshot, object @object) where TSource : ISource
         {
             //TODO handle metadata
             outcome
@@ -116,7 +116,7 @@ namespace Vlingo.Lattice.Model.Sourcing
                     return result;
             })
             .Otherwise(cause => {
-                var applicable = new Applicable<TSnapshotState>(default!, new Source[] { source }, metadata, (CompletionSupplier<TSnapshotState>) @object);
+                var applicable = new Applicable<TSnapshotState>(default!, new ISource[] { source }, metadata, (CompletionSupplier<TSnapshotState>) @object);
                 var message = $"Source (count 1) not appended for: {GetType().Name}({StreamName}) because: {cause.Result} with: {cause.Message}";
                 var exception = new ApplyFailedException<TSnapshotState>(applicable, message, cause);
                 var maybeException = AfterApplyFailed(exception);
@@ -133,13 +133,13 @@ namespace Vlingo.Lattice.Model.Sourcing
 
         public void AppendAllResultedIn<TSource, TSnapshotState>(IOutcome<StorageException, Result> outcome,
             string streamName, int streamVersion,
-            IEnumerable<TSource> sources, Optional<TSnapshotState> snapshot, object @object) where TSource : Source =>
+            IEnumerable<TSource> sources, Optional<TSnapshotState> snapshot, object @object) where TSource : ISource =>
             AppendAllResultedIn(outcome, streamName, streamVersion, sources, Metadata.NullMetadata(), snapshot, @object);
 
         public void AppendAllResultedIn<TSource, TSnapshotState>(IOutcome<StorageException, Result> outcome,
             string streamName, int streamVersion,
             IEnumerable<TSource> sources, Metadata metadata, Optional<TSnapshotState> snapshot, object @object)
-            where TSource : Source
+            where TSource : ISource
         {
             //TODO handle metadata
             outcome
@@ -156,7 +156,7 @@ namespace Vlingo.Lattice.Model.Sourcing
             })
             .Otherwise(cause => {
                 var listSources = sources.ToList();
-                var applicable = new Applicable<TSnapshotState>(default!, listSources, metadata, (CompletionSupplier<TSnapshotState>) @object);
+                var applicable = new Applicable<TSnapshotState>(default!, listSources.Cast<ISource>(), metadata, (CompletionSupplier<TSnapshotState>) @object);
                 var message = $"Source (count {listSources.Count}) not appended for: {GetType().Name}({StreamName}) because: {cause.Result} with: {cause.Message}";
                 var exception = new ApplyFailedException<TSnapshotState>(applicable, message, cause);
                 var maybeException = AfterApplyFailed(exception);
@@ -176,16 +176,14 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// them to my journal and reflecting the representative changes to my state.
         /// </summary>
         /// <param name="source">Source to apply</param>
-        /// <typeparam name="TSource">The type of the source</typeparam>
-        protected void Apply<TSource>(Source<TSource> source) => Apply(Wrap(source));
+        protected void Apply(ISource source) => Apply(Wrap(source));
         
         /// <summary>
         /// Apply all of the given <paramref name="sources"/> to myself, which includes appending
         /// them to my journal and reflecting the representative changes to my state.
         /// </summary>
         /// <param name="sources">Sources to apply</param>
-        /// <typeparam name="TSource">The type of the source</typeparam>
-        protected void Apply<TSource>(IEnumerable<Source<TSource>> sources) => Apply(sources, Metadata, (Func<object>) null!);
+        protected void Apply(IEnumerable<ISource> sources) => Apply(sources, Metadata, (Func<object>) null!);
         
         /// <summary>
         /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
@@ -195,9 +193,8 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="sources">Sources to apply</param>
         /// <param name="andThen">The function executed following the application of sources</param>
         /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="ICompletes{TResult}"/></returns>
-        protected ICompletes<TResult> Apply<TSource, TResult>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen) => Apply(sources, Metadata, andThen);
+        protected ICompletes<TResult> Apply<TResult>(IEnumerable<ISource> sources, Func<TResult> andThen) => Apply(sources, Metadata, andThen);
 
         /// <summary>
         /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="source"/> to myself,
@@ -207,9 +204,8 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="source">Source to apply</param>
         /// <param name="andThen">The function executed following the application of sources</param>
         /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="ICompletes{TResult}"/></returns>
-        protected ICompletes<TResult> Apply<TSource, TResult>(Source<TSource> source, Func<TResult> andThen) => Apply(Wrap(source), Metadata, andThen);
+        protected ICompletes<TResult> Apply<TResult>(ISource source, Func<TResult> andThen) => Apply(Wrap(source), Metadata, andThen);
         
         /// <summary>
         /// Answer <see cref="ICompletes{TResult}"/>, applying all of the given <paramref name="sources"/> to myself,
@@ -220,26 +216,25 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// <param name="metadata">The Metadata to apply along with source</param>
         /// <param name="andThen">The function executed following the application of sources</param>
         /// <typeparam name="TResult">The return type of the function andThen</typeparam>
-        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="ICompletes{TResult}"/></returns>
-        protected ICompletes<TResult> Apply<TSource, TResult>(IEnumerable<Source<TSource>> sources, Metadata metadata, Func<TResult>? andThen)
+        protected ICompletes<TResult> Apply<TResult>(IEnumerable<ISource> sources, Metadata metadata, Func<TResult>? andThen)
         {
             var listSources = sources.ToList();
-            BeforeApply(listSources);
+            BeforeApply<ISource>(listSources);
             var journal = _journalInfo?.Journal;
             var completionSupplier = CompletionSupplier<TResult>.SupplierOrNull(andThen, CompletesEventually());
             var completes = andThen == null ? null : Completes();
             StowMessages(typeof(IAppendResultInterest));
-            journal?.AppendAllWith(StreamName, NextVersion, listSources, metadata, Snapshot<TResult>(), _interest, completionSupplier!);
+            journal?.AppendAllWith<ISource, TResult>(StreamName, NextVersion, listSources, metadata, Snapshot<TResult>(), _interest, completionSupplier!);
             return (ICompletes<TResult>) completes!;
         }
         
-        protected virtual void BeforeApply<TSource>(IEnumerable<Source<TSource>> sources)
+        protected virtual void BeforeApply<TSource>(IEnumerable<ISource> sources)
         {
             // override to be informed prior to apply evaluation
             if (_testContext != null)
             {
-                var all = _testContext.ReferenceValue<List<Source<TSource>>>();
+                var all = _testContext.ReferenceValue<List<ISource>>();
                 all.AddRange(sources);
                 _testContext.ReferenceValueTo(all);
             }
@@ -348,13 +343,13 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// the <see cref="Action"/> of its registered <code>_sourcedTypeMap</code>.
         /// </summary>
         /// <param name="source">The sources to apply</param>
-        private void ApplyResultVersioned(Source source)
+        private void ApplyResultVersioned(ISource source)
         {
             ApplySource(source);
             ++_currentVersion;
         }
 
-        private void ApplySource(Source source)
+        private void ApplySource(ISource source)
         {
             var type = GetType();
 
@@ -434,6 +429,6 @@ namespace Vlingo.Lattice.Model.Sourcing
             }
         }
 
-        private List<Source<TSource>> Wrap<TSource>(Source<TSource> source) => new List<Source<TSource>> {source};
+        private List<ISource> Wrap(ISource source) => new List<ISource> {source};
     }
 }

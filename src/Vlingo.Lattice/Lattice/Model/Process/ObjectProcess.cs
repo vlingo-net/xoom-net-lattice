@@ -22,7 +22,7 @@ namespace Vlingo.Lattice.Model.Process
     public abstract class ObjectProcess<T> : ObjectEntity<T>, IProcess<T> where T : StateObject
     {
         private readonly Info _info;
-        private readonly List<Source> _applied;
+        private readonly List<ISource> _applied;
         
         public abstract Chronicle<T> Chronicle { get; }
         
@@ -38,7 +38,7 @@ namespace Vlingo.Lattice.Model.Process
         protected ObjectProcess(string? id) : base(id)
         {
             _info = Stage.World.ResolveDynamic<ProcessTypeRegistry>(ProcessTypeRegistry.InternalName).Info(GetType());
-            _applied = new List<Source>(2);
+            _applied = new List<ISource>(2);
         }
         
         public void Process(Command command)

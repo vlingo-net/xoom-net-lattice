@@ -18,20 +18,19 @@ namespace Vlingo.Lattice.Model.Process
     /// </summary>
     public class ProcessMessage : Source<ProcessMessage>
     {
-        public Source? Source { get; }
+        public ISource? Source { get; }
         
         /// <summary>
         /// Answer a new <see cref="T:IEnumerable{Source{ProcessMessage}}"/> that wraps each of the elements of <code>sources</code>.
         /// </summary>
         /// <param name="sources">The source elements each to be wrapped with a ProcessMessage</param>
-        /// <typeparam name="TSource">The type of the source</typeparam>
         /// <returns><see cref="T:IEnumerable{Source{ProcessMessage}}"/></returns>
-        public static IEnumerable<Source<ProcessMessage>> Wrap<TSource>(IEnumerable<Source<TSource>> sources)
+        public static IEnumerable<ProcessMessage> Wrap(IEnumerable<ISource> sources)
         {
             var srcs = sources.ToList();
             var reuse = !srcs.Any() && srcs[0].GetType() == typeof(ProcessMessage);
 
-            var messages = new List<Source>(srcs.Count);
+            var messages = new List<ISource>(srcs.Count);
             foreach (var source in srcs)
             {
                 if (reuse)
@@ -64,7 +63,7 @@ namespace Vlingo.Lattice.Model.Process
         /// Construct my default state with the <paramref name="source"/> and a type version of 1.
         /// </summary>
         /// <param name="source">The source to set as my source</param>
-        public ProcessMessage(Source source) => Source = source;
+        public ProcessMessage(ISource source) => Source = source;
 
         /// <summary>
         /// Construct my default state with no source and a type version of 1.

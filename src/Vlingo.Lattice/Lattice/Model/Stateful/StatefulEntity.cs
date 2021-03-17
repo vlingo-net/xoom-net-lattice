@@ -29,7 +29,7 @@ namespace Vlingo.Lattice.Model.Stateful
         protected string Id;
 
         private int _currentVersion;
-        private readonly Info<T> _info;
+        private readonly Info _info;
         private readonly IReadResultInterest _readInterest;
         private readonly IWriteResultInterest _writeInterest;
         
@@ -102,7 +102,8 @@ namespace Vlingo.Lattice.Model.Stateful
             }
         }
 
-        public void WriteResultedIn<TState, TSource>(IOutcome<StorageException, Result> outcome, string id, TState state, int stateVersion, IEnumerable<Source<TSource>> sources, object? @object)        {
+        public void WriteResultedIn<TState, TSource>(IOutcome<StorageException, Result> outcome, string id, TState state, int stateVersion, IEnumerable<TSource> sources, object? @object)
+        {
             outcome
                 .AndThen(result =>
                 {
@@ -138,7 +139,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <typeparam name="TResult">The return type of the Supplier function, which is the type of the completed state.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected virtual ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<Source<TSource>> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
+        protected virtual ICompletes<TResult> Apply<TSource, TResult>(T state, IEnumerable<TSource> sources, string? metadataValue, string? operation, Func<TResult>? andThen)
         {
             var metadata = Metadata.With(state!, metadataValue ?? "", operation ?? "");
             var completionSupplier = CompletionSupplier<T>.SupplierOrNull(andThen, CompletesEventually());
@@ -319,7 +320,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="source">The <see cref="T:Source{TSource}" /> instance to apply.</param>
         /// <typeparam name="TSource">The type of the source.</typeparam>
         /// <returns><see cref="ICompletes{TResult}" />.</returns>
-        protected ICompletes<TSource> Apply<TSource>(T state, Source<TSource> source)
+        protected ICompletes<TSource> Apply<TSource>(T state, TSource source)
             => Apply(state, AsList(source), string.Empty, string.Empty, (Func<TSource>?) null);
 
         /// <summary>
@@ -345,7 +346,7 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="source">The source to return as collection</param>
         /// <typeparam name="TNewSource">The type of the underlying source</typeparam>
         /// <returns>The stream of <see cref="T:IEnumerable{Source{T}}" /></returns>
-        protected IEnumerable<Source<TNewSource>> AsList<TNewSource>(Source<TNewSource> source) => new List<Source<TNewSource>> {source};
+        protected IEnumerable<TNewSource> AsList<TNewSource>(TNewSource source) => new List<TNewSource> {source};
 
         /// <summary>
         ///     Answer a representation of a number of segments as a
@@ -384,12 +385,12 @@ namespace Vlingo.Lattice.Model.Stateful
         /// <param name="state">The <typeparamref name="T"/> typed state</param>
         protected abstract void State(T state);
 
-        private Info<T> Info()
+        private Info Info()
         {
             try
             {
-                var registry = Stage.World.ResolveDynamic<StatefulTypeRegistry<T>>(StatefulTypeRegistry<T>.InternalName);
-                var info = registry.Info();
+                var registry = Stage.World.ResolveDynamic<StatefulTypeRegistry>(StatefulTypeRegistry.InternalName);
+                var info = registry.Info(typeof(T));
                 return info;
             }
             catch (Exception e)

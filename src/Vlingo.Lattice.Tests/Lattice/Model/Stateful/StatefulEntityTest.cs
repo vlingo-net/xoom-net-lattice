@@ -24,7 +24,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
     public class StatefulEntityTest : IDisposable
     {
         private static readonly AtomicInteger RaceConditions = new AtomicInteger(0);
-        private readonly MockTextDispatcher _dispatcher;
+        private readonly MockTextDispatcher<TextEntry, TextState> _dispatcher;
         private readonly Random _idGenerator = new Random();
         private readonly World _world;
         private readonly StateAdapterProvider _stateAdapterProvider;
@@ -116,16 +116,16 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             Console.SetOut(converter);
             
             _world = World.StartWithDefaults("stateful-entity");
-            _dispatcher = new MockTextDispatcher();
+            _dispatcher = new MockTextDispatcher<TextEntry, TextState>();
 
             _stateAdapterProvider = new StateAdapterProvider(_world);
             _stateAdapterProvider.RegisterAdapter(new Entity1StateAdapter());
             new EntryAdapterProvider(_world);
-            var registry = new StatefulTypeRegistry<Entity1State>(_world);
+            var registry = new StatefulTypeRegistry(_world);
             
-            var store = _world.ActorFor<IStateStore<Entity1State>>(() => new InMemoryStateStoreActor<TextState, Entity1State>(new List<IDispatcher<Dispatchable<Entity1State, TextState>>> {_dispatcher}));
+            var store = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, TextEntry>(new List<IDispatcher<Dispatchable<TextEntry, TextState>>> {_dispatcher}));
             
-            registry.Register(new Info<Entity1State>(store, nameof(Entity1State)));
+            registry.Register(new Info(store, typeof(Entity1State), nameof(Entity1State)));
         }
 
         public void Dispose() => _world.Terminate();

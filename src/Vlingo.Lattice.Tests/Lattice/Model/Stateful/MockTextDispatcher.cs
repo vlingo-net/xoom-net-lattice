@@ -14,32 +14,31 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
-    public class MockTextDispatcher : IDispatcher<Dispatchable<Entity1State, TextState>>
+    public class MockTextDispatcher<TEntry, TState> : IDispatcher<Dispatchable<TEntry, TState>> where TEntry : IEntry where TState : class, IState
     {
         private AccessSafely _access;
 
         private IDispatcherControl _control;
-        private readonly Dictionary<string, TextState> _dispatched = new Dictionary<string, TextState>();
-        private readonly ConcurrentBag<Entity1State> _dispatchedEntries = new ConcurrentBag<Entity1State>();
+        private readonly Dictionary<string, TState> _dispatched = new Dictionary<string, TState>();
+        private readonly ConcurrentBag<TEntry> _dispatchedEntries = new ConcurrentBag<TEntry>();
         private readonly AtomicBoolean _processDispatch = new AtomicBoolean(true);
         
         public MockTextDispatcher() => _access = AfterCompleting(0);
 
         public void ControlWith(IDispatcherControl control) => _control = control;
-
-        public void Dispatch(Dispatchable<Entity1State, TextState> dispatchable)
+        public void Dispatch(Dispatchable<TEntry, TState> dispatchable)
         {
             if (_processDispatch.Get())
             {
                 var dispatchId = dispatchable.Id;
-                _access.WriteUsing("dispatched", dispatchId, new Dispatch<TextState, Entity1State>(dispatchable.TypedState<TextState>(), dispatchable.Entries));
+                _access.WriteUsing("dispatched", dispatchId, new Dispatch<TState, TEntry>(dispatchable.TypedState<TState>(), dispatchable.Entries));
             }
         }
-        
+
         public AccessSafely AfterCompleting(int times)
         {
             _access = AccessSafely.AfterCompleting(times)
-                .WritingWith<string, Dispatch<TextState, Entity1State>>("dispatched", (id, dispatch) =>
+                .WritingWith<string, Dispatch<TState, TEntry>>("dispatched", (id, dispatch) =>
                 {
                     _dispatched[id] = dispatch.State;
                     foreach (var entry in dispatch.Entries)
@@ -48,7 +47,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
                     }
                 })
                 .ReadingWith("dispatchedIds", () => _dispatched.Keys)
-                .ReadingWith<string, TextState>("dispatchedState", id => _dispatched[id])
+                .ReadingWith<string, TState>("dispatchedState", id => _dispatched[id])
                 .ReadingWith("dispatchedStateCount", () => _dispatched.Count)
 
                 .WritingWith<bool>("processDispatch", flag => _processDispatch.Set(flag))
@@ -59,7 +58,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             return _access;
         }
 
-        public List<Dispatchable<Entity1State, TextState>> GetDispatched() => _access.ReadFrom<List<Dispatchable<Entity1State, TextState>>>("dispatched");
+        public List<Dispatchable<TEntry, TState>> GetDispatched() => _access.ReadFrom<List<Dispatchable<TEntry, TState>>>("dispatched");
     }
     
     internal class Dispatch<TState, TEntry>

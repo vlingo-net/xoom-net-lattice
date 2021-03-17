@@ -1,9 +1,15 @@
+// Copyright © 2012-2021 VLINGO LABS. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the
+// Mozilla Public License, v. 2.0. If a copy of the MPL
+// was not distributed with this file, You can obtain
+// one at https://mozilla.org/MPL/2.0/.
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Vlingo.Common;
 using Vlingo.Lattice.Model.Stateful;
-using Vlingo.Symbio;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
@@ -24,7 +30,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             return base.Apply(state, metadataValue, operation, andThen);
         }
 
-        protected override ICompletes<TResult> Apply<TSource, TResult>(Entity1State state, IEnumerable<Source<TSource>> sources, string metadataValue, string operation, Func<TResult> andThen)
+        protected override ICompletes<TResult> Apply<TSource, TResult>(Entity1State state, IEnumerable<TSource> sources, string metadataValue, string operation, Func<TResult> andThen)
         {
             _runsApply.CompareAndSet(false, true);
             return base.Apply(state, sources, metadataValue, operation, andThen);

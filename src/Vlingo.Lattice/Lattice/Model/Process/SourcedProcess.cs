@@ -34,7 +34,7 @@ namespace Vlingo.Lattice.Model.Process
     public abstract class SourcedProcess<T> : Sourced<T>, IProcess<T> where T : StateObject
     {
         private readonly Info _info;
-        private readonly List<Source> _applied;
+        private readonly List<ISource> _applied;
 
         public Chronicle<T> Chronicle => Snapshot<Chronicle<T>>();
         
@@ -50,7 +50,7 @@ namespace Vlingo.Lattice.Model.Process
         protected SourcedProcess(string? streamName) : base(streamName)
         {
             _info = Stage.World.ResolveDynamic<ProcessTypeRegistry>(ProcessTypeRegistry.InternalName).Info(GetType());
-            _applied = new List<Source>(2);
+            _applied = new List<ISource>(2);
         }
         
         /// <summary>

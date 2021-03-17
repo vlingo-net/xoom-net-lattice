@@ -18,7 +18,7 @@ namespace Vlingo.Lattice.Model.Process
             try
             {
                 var serializedMessage = JsonSerialization.Deserialized<SerializableProcessMessage>(entry.EntryData);
-                var source = JsonSerialization.Deserialized<Source>(serializedMessage.Source);
+                var source = JsonSerialization.Deserialized<ISource>(serializedMessage.Source);
                 return new ProcessMessage(source);
             }
             catch (Exception e)
@@ -68,7 +68,7 @@ namespace Vlingo.Lattice.Model.Process
                 Source = SourceToText(message.Source);
             }
 
-            private string SourceToText(Source? source)
+            private string SourceToText(ISource? source)
             {
                 var sourceJson = JsonSerialization.Serialized(source);
                 return sourceJson;
