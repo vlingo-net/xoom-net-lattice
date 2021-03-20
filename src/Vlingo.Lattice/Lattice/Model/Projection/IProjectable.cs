@@ -43,7 +43,7 @@ namespace Vlingo.Lattice.Model.Projection
         /// <summary>
         /// Gets the unique id of data.
         /// </summary>
-        int DataId { get; }
+        string DataId { get; }
         
         /// <summary>
         /// Gets all the entries.
