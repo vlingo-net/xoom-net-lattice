@@ -5,8 +5,6 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using System;
-
 namespace Vlingo.Lattice.Model.Projection
 {
     /// <summary>
@@ -21,7 +19,7 @@ namespace Vlingo.Lattice.Model.Projection
         /// <param name="projectable">The <see cref="IProjectable"/> requiring confirmation of completed projections operations</param>
         /// <param name="control">The <see cref="IProjectionControl"/></param>
         /// <returns>The <see cref="Confirmer"/></returns>
-        Action ConfirmerFor(IProjectable projectable, IProjectionControl control);
+        Confirmer ConfirmerFor(IProjectable projectable, IProjectionControl control);
         
         /// <summary>
         /// Confirms that all projection operations have been completed.
@@ -30,9 +28,9 @@ namespace Vlingo.Lattice.Model.Projection
         void ConfirmProjected(string projectionId);
     }
 
-    public static class ProjectionControlExtensions
+    public static class ProjectionControl
     {
-        public static Confirmer ConfirmerFor(this IProjectionControl projectionControl, IProjectable projectable, IProjectionControl control) 
-            => new Confirmer(() => control.ConfirmProjected(projectable.ProjectionId));
+        public static Confirmer ConfirmerFor(IProjectable projectable, IProjectionControl control) 
+            => new(() => control.ConfirmProjected(projectable.ProjectionId));
     }
 }
