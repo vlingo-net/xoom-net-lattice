@@ -44,7 +44,7 @@ namespace Vlingo.Lattice.Model.Projection
 
         public virtual byte[] DataAsBytes() => throw new NotImplementedException("Projectable data is not binary compatible.");
 
-        public string DataAsText() => throw new NotImplementedException("Projectable data is not text compatible.");
+        public virtual string DataAsText() => throw new NotImplementedException("Projectable data is not text compatible.");
 
         public int DataVersion()
         {
