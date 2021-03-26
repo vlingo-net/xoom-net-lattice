@@ -74,5 +74,7 @@ namespace Vlingo.Lattice.Model.Process
                 return sourceJson;
             }
         }
+
+        public ISource AnyTypeFromEntry(IEntry entry) => FromEntry((TextEntry) entry);
     }
 }
