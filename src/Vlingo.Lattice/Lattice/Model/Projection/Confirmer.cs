@@ -21,6 +21,6 @@ namespace Vlingo.Lattice.Model.Projection
         /// <summary>
         /// Confirms the completion of projections operations.
         /// </summary>
-        void Confirm() => _toConfirm();
+        public void Confirm() => _toConfirm();
     }
 }
