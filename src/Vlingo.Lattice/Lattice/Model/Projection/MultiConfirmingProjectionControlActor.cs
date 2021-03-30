@@ -108,7 +108,7 @@ namespace Vlingo.Lattice.Model.Projection
                 ExpiresBy = expiresBy;
             }
 
-            public Confirmable IncrementTotal() => new(Projectable, Count, Total + 1, ExpiresBy);
+            public Confirmable IncrementTotal() => new Confirmable(Projectable, Count, Total + 1, ExpiresBy);
         }
     }
 }

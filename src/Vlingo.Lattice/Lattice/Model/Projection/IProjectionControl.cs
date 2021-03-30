@@ -31,6 +31,6 @@ namespace Vlingo.Lattice.Model.Projection
     public static class ProjectionControl
     {
         public static Confirmer ConfirmerFor(IProjectable projectable, IProjectionControl control) 
-            => new(() => control.ConfirmProjected(projectable.ProjectionId));
+            => new Confirmer(() => control.ConfirmProjected(projectable.ProjectionId));
     }
 }
