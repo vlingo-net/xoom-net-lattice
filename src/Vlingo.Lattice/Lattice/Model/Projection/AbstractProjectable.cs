@@ -37,7 +37,7 @@ namespace Vlingo.Lattice.Model.Projection
                 ++_index;
             }
 
-            _entries.Select(entry => entry.TypeName).ToList().ForEach(type => becauseOf[_index++] = Type);
+            _entries.Select(entry => entry.TypeName).ToList().ForEach(type => becauseOf[_index++] = type);
 
             return becauseOf;
         }
