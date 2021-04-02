@@ -39,9 +39,8 @@ namespace Vlingo.Lattice.Model.Projection
             foreach (var whenMatchingCause in whenMatchingCauses)
             {
                 var cause = Cause.DetermineFor(whenMatchingCause);
-                var projections = _mappedProjections[cause];
 
-                if (projections == null)
+                if (!_mappedProjections.TryGetValue(cause, out var projections))
                 {
                     projections = new List<IProjection>();
                     _mappedProjections.Add(cause, projections);
