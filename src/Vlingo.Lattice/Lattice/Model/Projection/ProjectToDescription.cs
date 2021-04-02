@@ -30,7 +30,7 @@ namespace Vlingo.Lattice.Model.Projection
             _becauseOfType = new List<Type> {becauseOf};
         }
 
-        public ProjectToDescription HandlesFrom(Assembly assembly)
+        public ProjectToDescription AndWith(Assembly assembly)
         {
             var sourceType = typeof(ISource);
             var sources = assembly.GetTypes().Where(t => sourceType.IsAssignableFrom(sourceType)).ToList();
@@ -39,7 +39,7 @@ namespace Vlingo.Lattice.Model.Projection
             return this;
         }
         
-        public ProjectToDescription Handles<TSource>() where TSource : ISource
+        public ProjectToDescription AndWith<TSource>() where TSource : ISource
         {
             var type = typeof(TSource);
             _becauseOf.Add((type.AssemblyQualifiedName ?? type.FullName) ?? type.Name);
