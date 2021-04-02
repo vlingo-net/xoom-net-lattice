@@ -12,7 +12,7 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Lattice.Model.Projection
 {
-    public class TextProjectionDispatcherActor : ProjectionDispatcherActor<IEntry, TextState>
+    public class TextProjectionDispatcherActor : ProjectionDispatcherActor<IEntry, IState>
     {
         public TextProjectionDispatcherActor() : this (Enumerable.Empty<ProjectToDescription>())
         {
@@ -26,7 +26,7 @@ namespace Vlingo.Lattice.Model.Projection
         {
         }
 
-        public override void Dispatch(Dispatchable<IEntry, TextState> dispatchable)
+        public override void Dispatch(Dispatchable<IEntry, IState> dispatchable)
         {
             dispatchable.State.IfPresent(state =>
             {
