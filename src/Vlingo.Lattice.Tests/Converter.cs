@@ -16,11 +16,8 @@ namespace Vlingo.Tests
     {
         ITestOutputHelper _output;
         
-        public Converter(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-        
+        public Converter(ITestOutputHelper output) => _output = output;
+
         public override Encoding Encoding => Encoding.UTF8;
 
         public override void WriteLine(string message)
