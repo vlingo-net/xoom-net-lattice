@@ -18,7 +18,7 @@ namespace Vlingo.Lattice.Model.Projection
     /// </summary>
     public class AbstractProjectionDispatcherActor : Actor, IProjectionDispatcher
     {
-        private MatchableProjections _matchableProjections;
+        private readonly MatchableProjections _matchableProjections;
 
         /// <summary>
         /// Construct my default state.
