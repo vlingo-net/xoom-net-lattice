@@ -51,9 +51,7 @@ namespace Vlingo.Lattice.Model.Projection
 
         public void ConfirmProjected(string projectionId)
         {
-            var confirmable = _confirmables[projectionId];
-
-            if (confirmable == null) return; // too many confirms possible
+            if (!_confirmables.TryGetValue(projectionId, out var confirmable)) return; // too many confirms possible
 
             var total = confirmable.Total + 1;
 
