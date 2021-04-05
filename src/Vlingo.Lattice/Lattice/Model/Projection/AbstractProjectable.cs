@@ -73,7 +73,7 @@ namespace Vlingo.Lattice.Model.Projection
         }
 
         public IEnumerable<IEntry> Entries => _entries;
-        public bool HasEntries => _entries != null && !_entries.Any();
+        public bool HasEntries => _entries != null && _entries.Any();
 
         public string Metadata
         {
