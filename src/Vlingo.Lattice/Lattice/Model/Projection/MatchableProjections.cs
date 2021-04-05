@@ -16,8 +16,8 @@ namespace Vlingo.Lattice.Model.Projection
     /// </summary>
     public class MatchableProjections
     {
-        private static string _wildcard = "*";
-        private Dictionary<Cause, List<IProjection>> _mappedProjections = new Dictionary<Cause, List<IProjection>>();
+        private const string Wildcard = "*";
+        private readonly Dictionary<Cause, List<IProjection>> _mappedProjections = new Dictionary<Cause, List<IProjection>>();
 
         /// <summary>
         /// Gets the <see cref="IEnumerable{IProjection}"/> matching the <paramref name="actualCauses"/> requiring projection(s).
@@ -64,8 +64,8 @@ namespace Vlingo.Lattice.Model.Projection
             /// <returns>Returns a concrete implementation of <see cref="Cause"/> handling specific scenario</returns>
             public static Cause DetermineFor(string matchableCause)
             {
-                var beginsWithWildcard = matchableCause.StartsWith(_wildcard);
-                var endsWithWildcard = matchableCause.EndsWith(_wildcard);
+                var beginsWithWildcard = matchableCause.StartsWith(Wildcard);
+                var endsWithWildcard = matchableCause.EndsWith(Wildcard);
 
                 if (beginsWithWildcard && endsWithWildcard) return new ContainsCause(matchableCause);
                 if (beginsWithWildcard) return new EndsWithCause(matchableCause);
@@ -77,7 +77,7 @@ namespace Vlingo.Lattice.Model.Projection
             /// Construct my default state.
             /// </summary>
             /// <param name="value">The string segment to match on, which may specify one or more wildcards</param>
-            public Cause(string value) => Value = value.Replace("\\*", "");
+            public Cause(string value) => Value = value.Replace("*", "");
             
             /// <summary>
             /// Answer whether or not I match the <paramref name="actualCauses"/>.
