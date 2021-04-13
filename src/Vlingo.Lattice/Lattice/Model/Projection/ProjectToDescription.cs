@@ -23,6 +23,13 @@ namespace Vlingo.Lattice.Model.Projection
         public IEnumerable<Type> BecauseOfType => _becauseOfType;
         public Expression<Func<IProjection>> ProjectionDefinition { get; }
 
+        public ProjectToDescription(Expression<Func<IProjection>> projectionDefinition, params string[] becauseOf)
+        {
+            ProjectionDefinition = projectionDefinition;
+            _becauseOf = new List<string>(becauseOf);
+            _becauseOfType = new List<Type>();
+        }
+        
         public ProjectToDescription(Expression<Func<IProjection>> projectionDefinition, Type becauseOf)
         {
             ProjectionDefinition = projectionDefinition;
@@ -61,6 +68,9 @@ namespace Vlingo.Lattice.Model.Projection
         public static ProjectToDescription<TActor> With<TSource>(Expression<Func<IProjection>> projectionDefinition)
             where TSource : ISource =>
             new ProjectToDescription<TActor>(projectionDefinition, typeof(TSource));
+        
+        public static ProjectToDescription<TActor> With(Expression<Func<IProjection>> projectionDefinition, params string[] becauseOf) =>
+            new ProjectToDescription<TActor>(projectionDefinition, becauseOf);
 
         /// <summary>
         /// Construct my default state.
@@ -68,6 +78,10 @@ namespace Vlingo.Lattice.Model.Projection
         /// <param name="projectionDefinition">The expression tree of the projection that must be an Actor</param>
         /// <param name="becauseOf">The array causes/reasons that the projectionType handles</param>
         private ProjectToDescription(Expression<Func<IProjection>> projectionDefinition, Type becauseOf) : base(projectionDefinition, becauseOf)
+        {
+        }
+        
+        private ProjectToDescription(Expression<Func<IProjection>> projectionDefinition, params string[] becauseOf) : base(projectionDefinition, becauseOf)
         {
         }
     }
