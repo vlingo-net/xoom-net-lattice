@@ -9,8 +9,8 @@ using System;
 using System.Collections.Concurrent;
 using Vlingo.Actors;
 using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.Journal;
+using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Lattice.Model.Sourcing
 {
@@ -29,11 +29,11 @@ namespace Vlingo.Lattice.Model.Sourcing
         /// the <see cref="IJournal{TEntry}"/> of type <typeparamref name="TEntry"/>, registering me with the <paramref name="world"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
-        /// <param name="dispatcher"><see cref="IDispatcher{TDispatchable}"/> of the journal.</param>
+        /// <param name="dispatcher"><see cref="IDispatcher"/> of the journal.</param>
         /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
         /// <returns>The registry</returns>
         public static SourcedTypeRegistry Register<TActor, TEntry, TState>(World world,
-            IDispatcher<Dispatchable<IEntry<TEntry>, State<TState>>> dispatcher, params Type[] sourcedTypes)
+            IDispatcher dispatcher, params Type[] sourcedTypes)
             where TActor : Actor
         {
             var journal = world.ActorFor<IJournal<TEntry>>(typeof(TActor), dispatcher);

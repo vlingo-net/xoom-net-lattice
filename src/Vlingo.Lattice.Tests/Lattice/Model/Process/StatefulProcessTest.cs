@@ -14,12 +14,12 @@ using Vlingo.Lattice.Exchange.Local;
 using Vlingo.Lattice.Model.Process;
 using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.State;
 using Vlingo.Symbio.Store.State.InMemory;
 using Vlingo.Tests.Lattice.Model.Stateful;
 using Xunit;
 using Xunit.Abstractions;
+using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Tests.Lattice.Model.Process
 {
@@ -28,7 +28,7 @@ namespace Vlingo.Tests.Lattice.Model.Process
         private readonly IExchange _exchange;
         private readonly ExchangeReceivers _exchangeReceivers;
         private readonly LocalExchangeSender _exchangeSender;
-        private readonly MockTextDispatcher<TextEntry, TextState> _dispatcher;
+        private readonly MockTextDispatcher _dispatcher;
         private readonly World _world;
 
         [Fact]
@@ -54,8 +54,8 @@ namespace Vlingo.Tests.Lattice.Model.Process
 
             var queue = new AsyncMessageQueue(null);
             _exchange = new LocalExchange(queue);
-            _dispatcher = new MockTextDispatcher<TextEntry, TextState>();
-            var stateStore = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, TextEntry>(new List<IDispatcher<Dispatchable<TextEntry, TextState>>> {_dispatcher}));
+            _dispatcher = new MockTextDispatcher();
+            var stateStore = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, TextEntry>(new List<IDispatcher> {_dispatcher}));
 
             var statefulTypeRegistry = new StatefulTypeRegistry(_world);
             

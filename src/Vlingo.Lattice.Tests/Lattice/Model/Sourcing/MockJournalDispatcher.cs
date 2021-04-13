@@ -12,7 +12,7 @@ using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Sourcing
 {
-    public class MockJournalDispatcher : IDispatcher<Dispatchable<IEntry, IState>>
+    public class MockJournalDispatcher : IDispatcher
     {
         private AccessSafely _access;
         private readonly List<IEntry> _entries = new List<IEntry>();
@@ -23,7 +23,7 @@ namespace Vlingo.Tests.Lattice.Model.Sourcing
         {
         }
 
-        public void Dispatch(Dispatchable<IEntry, IState> dispatchable) =>
+        public void Dispatch(Dispatchable dispatchable) =>
             _access.WriteUsing("appendedAll", dispatchable.Entries);
 
         public AccessSafely AfterCompleting(int times)

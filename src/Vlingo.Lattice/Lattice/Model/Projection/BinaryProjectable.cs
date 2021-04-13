@@ -12,7 +12,7 @@ namespace Vlingo.Lattice.Model.Projection
 {
     public class BinaryProjectable : AbstractProjectable
     {
-        public BinaryProjectable(State<byte[]> state, IEnumerable<IEntry> entries, string projectionId) : base(state, entries, projectionId)
+        public BinaryProjectable(IState state, IEnumerable<IEntry> entries, string projectionId) : base(state, entries, projectionId)
         {
         }
 

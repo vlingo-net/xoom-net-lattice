@@ -7,12 +7,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Lattice.Model.Projection
 {
-    public class BinaryProjectionDispatcherActor : ProjectionDispatcherActor<IEntry, State<byte[]>>
+    public class BinaryProjectionDispatcherActor : ProjectionDispatcherActor
     {
         public BinaryProjectionDispatcherActor() : this (Enumerable.Empty<ProjectToDescription>())
         {
@@ -26,7 +25,7 @@ namespace Vlingo.Lattice.Model.Projection
         {
         }
 
-        public override void Dispatch(Dispatchable<IEntry, State<byte[]>> dispatchable)
+        public override void Dispatch(Dispatchable dispatchable)
         {
             dispatchable.State.IfPresent(state =>
             {

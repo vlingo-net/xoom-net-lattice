@@ -11,18 +11,18 @@ using Vlingo.Actors;
 using Vlingo.Common;
 using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.State;
 using Vlingo.Symbio.Store.State.InMemory;
 using Xunit;
 using Xunit.Abstractions;
+using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {
     public class StatefulEntityRaceTest : IDisposable
     {
         private static readonly AtomicInteger RaceConditions = new AtomicInteger(0);
-        private readonly MockTextDispatcher<Entity1State, TextState> _dispatcher;
+        private readonly MockTextDispatcher _dispatcher;
         private readonly Random _idGenerator = new Random();
         private readonly World _world;
         
@@ -61,14 +61,14 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
             Console.SetOut(converter);
             
             _world = World.StartWithDefaults("stateful-entity");
-            _dispatcher = new MockTextDispatcher<Entity1State, TextState>();
+            _dispatcher = new MockTextDispatcher();
 
             var stateAdapterProvider = new StateAdapterProvider(_world);
             stateAdapterProvider.RegisterAdapter(new Entity1StateAdapter());
             new EntryAdapterProvider(_world);
             var registry = new StatefulTypeRegistry(_world);
             
-            var store = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, Entity1State>(new List<IDispatcher<Dispatchable<Entity1State, TextState>>> {_dispatcher}));
+            var store = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, Entity1State>(new List<IDispatcher> {_dispatcher}));
             
             registry.Register(new Info(store, typeof(Entity1State), nameof(Entity1State)));
         }

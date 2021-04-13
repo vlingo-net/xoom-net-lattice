@@ -9,13 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Actors;
-using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Dispatch;
+using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Lattice.Model.Projection
 {
-    public abstract class ProjectionDispatcherActor<TEntry, TState> : AbstractProjectionDispatcherActor, IDispatcher<Dispatchable<TEntry, TState>>, IConfirmDispatchedResultInterest where TEntry : IEntry where TState : class, IState
+    public abstract class ProjectionDispatcherActor : AbstractProjectionDispatcherActor, IDispatcher, IConfirmDispatchedResultInterest
     {
         private readonly IConfirmDispatchedResultInterest _interest;
         private IDispatcherControl? _control;
@@ -45,7 +45,7 @@ namespace Vlingo.Lattice.Model.Projection
         
         public void ControlWith(IDispatcherControl control) => _control = control;
 
-        public abstract void Dispatch(Dispatchable<TEntry, TState> dispatchable);
+        public abstract void Dispatch(Dispatchable dispatchable);
 
         //=====================================
         // ConfirmDispatchedResultInterest

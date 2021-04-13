@@ -15,11 +15,11 @@ using Vlingo.Lattice.Model;
 using Vlingo.Lattice.Model.Projection;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.Journal;
 using Vlingo.Symbio.Store.Journal.InMemory;
 using Xunit;
 using Xunit.Abstractions;
+using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Tests.Lattice.Model.Projection
 {
@@ -105,10 +105,10 @@ namespace Vlingo.Tests.Lattice.Model.Projection
 
             var dispatcherProtocols =
                 _world.Stage.ActorFor(
-                    new Type[] { typeof(IDispatcher<Dispatchable<IEntry, IState>>), typeof(IProjectionDispatcher) },
+                    new[] { typeof(IDispatcher), typeof(IProjectionDispatcher) },
                     Definition.Has(() => new TextProjectionDispatcherActor(descriptions)));
 
-            var dispatchers = Protocols.Two<IDispatcher<Dispatchable<IEntry, IState>>, IProjectionDispatcher>(dispatcherProtocols);
+            var dispatchers = Protocols.Two<IDispatcher, IProjectionDispatcher>(dispatcherProtocols);
 
             var dispatcher = dispatchers._1;
 

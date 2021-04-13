@@ -5,18 +5,17 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Object
 {
-    public class MockDispatcher : IDispatcher<Dispatchable<IEntry, IState>>
+    public class MockDispatcher : IDispatcher
     {
         public void ControlWith(IDispatcherControl control)
         {
         }
 
-        public void Dispatch(Dispatchable<IEntry, IState> dispatchable)
+        public void Dispatch(Dispatchable dispatchable)
         {
         }
     }
