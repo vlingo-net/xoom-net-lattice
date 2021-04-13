@@ -17,11 +17,12 @@ namespace Vlingo.Lattice.Model.Projection
 {
     public abstract class ProjectionDispatcherActor : AbstractProjectionDispatcherActor, IDispatcher, IConfirmDispatchedResultInterest
     {
+        private readonly long _multiConfirmationsExpiration;
         private readonly IConfirmDispatchedResultInterest _interest;
-        private IDispatcherControl? _control;
-        private readonly IMultiConfirming _multiConfirming;
-        private readonly IProjectionControl _multiConfirmingProjectionControl;
-        private readonly IProjectionControl _projectionControl;
+        private IMultiConfirming? _multiConfirming;
+        private IProjectionControl? _multiConfirmingProjectionControl;
+        private readonly Func<IDispatcherControl, IProjectionControl> _projectionControlFactory;
+        private IProjectionControl? _projectionControl;
 
         protected ProjectionDispatcherActor() : this(Enumerable.Empty<ProjectToDescription>(), MultiConfirming.DefaultExpirationLimit)
         {
@@ -29,21 +30,25 @@ namespace Vlingo.Lattice.Model.Projection
         
         protected ProjectionDispatcherActor(IEnumerable<ProjectToDescription> projectToDescriptions, long multiConfirmationsExpiration) : base(projectToDescriptions)
         {
+            _multiConfirmationsExpiration = multiConfirmationsExpiration;
             _interest = SelfAs<IConfirmDispatchedResultInterest>();
-            _projectionControl = new DefaultProjectionControl(_control, _interest, RequiresDispatchedConfirmation, Logger);
-            var protocols = ChildActorFor(new[] {typeof(IMultiConfirming), typeof(IProjectionControl)},
-                Definition.Has(() =>
-                    new MultiConfirmingProjectionControlActor(_projectionControl, multiConfirmationsExpiration)));
-
-            _multiConfirming = protocols.Get<IMultiConfirming>(0);
-            _multiConfirmingProjectionControl = protocols.Get<IProjectionControl>(1);
+            _projectionControlFactory = control => new DefaultProjectionControl(control, _interest, RequiresDispatchedConfirmation, Logger);
         }
         
         //=====================================
         // Dispatcher
         //=====================================
         
-        public void ControlWith(IDispatcherControl control) => _control = control;
+        public void ControlWith(IDispatcherControl control)
+        {
+            _projectionControl = _projectionControlFactory(control);
+            var protocols = ChildActorFor(new[] {typeof(IMultiConfirming), typeof(IProjectionControl)},
+                Definition.Has(() =>
+                    new MultiConfirmingProjectionControlActor(_projectionControlFactory(control), _multiConfirmationsExpiration)));
+
+            _multiConfirming = protocols.Get<IMultiConfirming>(0);
+            _multiConfirmingProjectionControl = protocols.Get<IProjectionControl>(1);
+        }
 
         public abstract void Dispatch(Dispatchable dispatchable);
 
@@ -69,12 +74,12 @@ namespace Vlingo.Lattice.Model.Projection
 
             if (count > 1)
             {
-                _multiConfirming.ManageConfirmationsFor(projectable, count);
+                _multiConfirming?.ManageConfirmationsFor(projectable, count);
             }
 
             foreach (var projection in projections)
             {
-                projection.ProjectWith(projectable, count > 1 ? _multiConfirmingProjectionControl : _projectionControl);
+                projection.ProjectWith(projectable, count > 1 ? _multiConfirmingProjectionControl! : _projectionControl!);
             }
         }
     }
