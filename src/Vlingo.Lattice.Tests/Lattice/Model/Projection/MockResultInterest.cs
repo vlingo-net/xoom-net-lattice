@@ -21,11 +21,11 @@ namespace Vlingo.Tests.Lattice.Model.Projection
     {
         private readonly AtomicInteger _confirmDispatchedResultedIn = new AtomicInteger(0);
         private readonly AtomicInteger _readTextResultedIn = new AtomicInteger(0);
-        private AtomicInteger _writeTextResultedIn = new AtomicInteger(0);
+        private readonly AtomicInteger _writeTextResultedIn = new AtomicInteger(0);
 
         private readonly AtomicRefValue<Result> _textReadResult = new AtomicRefValue<Result>();
-        private AtomicRefValue<Result> _textWriteResult = new AtomicRefValue<Result>();
-        private ConcurrentQueue<Result> _textWriteAccumulatedResults = new ConcurrentQueue<Result>();
+        private readonly AtomicRefValue<Result> _textWriteResult = new AtomicRefValue<Result>();
+        private readonly ConcurrentQueue<Result> _textWriteAccumulatedResults = new ConcurrentQueue<Result>();
         private readonly AtomicReference<object> _stateHolder = new AtomicReference<object>();
         private readonly AtomicReference<Metadata> _metadataHolder = new AtomicReference<Metadata>();
         private readonly ConcurrentQueue<Exception> _errorCauses = new ConcurrentQueue<Exception>();
