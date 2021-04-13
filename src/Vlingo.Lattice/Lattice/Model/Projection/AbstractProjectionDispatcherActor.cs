@@ -42,7 +42,7 @@ namespace Vlingo.Lattice.Model.Projection
         // ProjectionDispatcher
         //=====================================
 
-        public void ProjectTo(IProjection projection, string[] whenMatchingCause) =>
+        public virtual void ProjectTo(IProjection projection, string[] whenMatchingCause) =>
             _matchableProjections.MayDispatchTo(projection, whenMatchingCause);
         
         //=====================================
