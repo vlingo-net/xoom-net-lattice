@@ -8,7 +8,7 @@
 using System;
 using Vlingo.Actors;
 using Vlingo.Common.Identity;
-using Vlingo.UUID;
+using Vlingo.Xoom.UUID;
 using Xunit;
 
 namespace Vlingo.Tests.Actors
