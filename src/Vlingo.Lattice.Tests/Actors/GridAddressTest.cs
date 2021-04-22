@@ -7,7 +7,7 @@
 
 using System;
 using Vlingo.Actors;
-using Vlingo.Common.Identity;
+using Vlingo.Xoom.Common.Identity;
 using Vlingo.Xoom.UUID;
 using Xunit;
 

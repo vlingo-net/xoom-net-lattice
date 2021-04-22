@@ -1,4 +1,4 @@
-using Vlingo.Common.Serialization;
+using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Symbio;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful

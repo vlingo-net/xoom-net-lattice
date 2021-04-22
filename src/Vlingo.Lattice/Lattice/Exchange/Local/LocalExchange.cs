@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Common.Message;
+using Vlingo.Xoom.Common.Message;
 
 namespace Vlingo.Lattice.Exchange.Local
 {
