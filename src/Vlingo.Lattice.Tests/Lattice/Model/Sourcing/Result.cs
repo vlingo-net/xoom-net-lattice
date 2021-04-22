@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using Vlingo.Actors.TestKit;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 
 namespace Vlingo.Tests.Lattice.Model.Sourcing
 {

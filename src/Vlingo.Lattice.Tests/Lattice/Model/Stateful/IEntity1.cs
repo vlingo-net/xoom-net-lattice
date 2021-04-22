@@ -1,4 +1,4 @@
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Vlingo.Actors;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.State;

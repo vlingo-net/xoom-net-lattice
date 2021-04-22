@@ -7,7 +7,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Grid.Application;
 using Vlingo.Lattice.Grid.Hashring;
 using Vlingo.Wire.Node;

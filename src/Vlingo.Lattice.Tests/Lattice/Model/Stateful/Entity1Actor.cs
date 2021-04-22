@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Stateful;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful

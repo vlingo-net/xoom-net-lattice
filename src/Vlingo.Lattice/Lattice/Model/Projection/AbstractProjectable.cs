@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Symbio;
 
 namespace Vlingo.Lattice.Model.Projection

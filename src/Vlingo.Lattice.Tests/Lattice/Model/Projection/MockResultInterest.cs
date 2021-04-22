@@ -9,7 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Vlingo.Actors.TestKit;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Dispatch;

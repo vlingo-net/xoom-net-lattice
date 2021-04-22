@@ -6,7 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System.Threading.Tasks;
-using Vlingo.Common;
+using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Sourcing;
 
 namespace Vlingo.Tests.Lattice.Model.Sourcing
