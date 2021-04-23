@@ -7,12 +7,12 @@
 
 using System;
 using System.Collections.Generic;
-using Vlingo.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Stateful;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.State;
 using Vlingo.Symbio.Store.State.InMemory;
+using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;

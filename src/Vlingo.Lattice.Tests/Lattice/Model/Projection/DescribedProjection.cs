@@ -5,11 +5,11 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Actors;
-using Vlingo.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Projection;
 using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 
 namespace Vlingo.Tests.Lattice.Model.Projection
 {

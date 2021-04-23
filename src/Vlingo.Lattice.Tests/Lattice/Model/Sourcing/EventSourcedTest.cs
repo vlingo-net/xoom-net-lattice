@@ -7,13 +7,13 @@
 
 using System;
 using System.Collections.Generic;
-using Vlingo.Actors;
-using Vlingo.Actors.TestKit;
 using Vlingo.Lattice.Model;
 using Vlingo.Lattice.Model.Sourcing;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Journal;
 using Vlingo.Symbio.Store.Journal.InMemory;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 using Xunit;
 using Xunit.Abstractions;
 

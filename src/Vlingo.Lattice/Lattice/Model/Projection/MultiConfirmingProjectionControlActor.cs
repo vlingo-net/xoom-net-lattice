@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Actors;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
 namespace Vlingo.Lattice.Model.Projection

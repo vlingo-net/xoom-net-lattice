@@ -11,6 +11,7 @@ using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Grid.Application;
 using Vlingo.Lattice.Grid.Hashring;
 using Vlingo.Wire.Node;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Actors
 {

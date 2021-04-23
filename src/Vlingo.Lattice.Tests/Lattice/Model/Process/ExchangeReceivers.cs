@@ -5,9 +5,9 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Exchange;
+using Vlingo.Xoom.Actors.TestKit;
 
 namespace Vlingo.Tests.Lattice.Model.Process
 {

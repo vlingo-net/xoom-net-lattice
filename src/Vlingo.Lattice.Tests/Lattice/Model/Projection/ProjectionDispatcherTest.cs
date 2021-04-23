@@ -6,12 +6,12 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Actors;
 using Vlingo.Lattice.Model.Projection;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.State;
 using Vlingo.Symbio.Store.State.InMemory;
+using Vlingo.Xoom.Actors;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 

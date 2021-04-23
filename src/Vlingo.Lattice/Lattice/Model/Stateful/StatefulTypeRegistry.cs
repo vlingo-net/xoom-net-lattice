@@ -7,8 +7,8 @@
 
 using System;
 using System.Collections.Concurrent;
-using Vlingo.Actors;
 using Vlingo.Symbio.Store.State;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Stateful
 {

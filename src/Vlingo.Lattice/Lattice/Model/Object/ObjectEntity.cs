@@ -8,11 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Vlingo.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Object
 {

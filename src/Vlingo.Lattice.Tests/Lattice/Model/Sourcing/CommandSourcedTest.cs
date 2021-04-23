@@ -6,10 +6,10 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Actors;
 using Vlingo.Lattice.Model.Sourcing;
 using Vlingo.Symbio.Store.Journal;
 using Vlingo.Symbio.Store.Journal.InMemory;
+using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
 

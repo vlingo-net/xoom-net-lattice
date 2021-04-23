@@ -6,8 +6,8 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Generic;
-using Vlingo.Actors;
 using Vlingo.Symbio;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model
 {

@@ -8,12 +8,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Vlingo.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Dispatch;
 using Vlingo.Symbio.Store.State;
+using Vlingo.Xoom.Actors.TestKit;
 
 namespace Vlingo.Tests.Lattice.Model.Projection
 {

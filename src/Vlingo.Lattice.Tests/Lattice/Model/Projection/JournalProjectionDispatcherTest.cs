@@ -7,8 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using Vlingo.Actors;
-using Vlingo.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Lattice.Model;
@@ -17,6 +15,8 @@ using Vlingo.Symbio;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Journal;
 using Vlingo.Symbio.Store.Journal.InMemory;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 using Xunit;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;

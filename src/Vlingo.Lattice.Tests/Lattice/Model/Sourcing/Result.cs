@@ -6,7 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Generic;
-using Vlingo.Actors.TestKit;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 
 namespace Vlingo.Tests.Lattice.Model.Sourcing

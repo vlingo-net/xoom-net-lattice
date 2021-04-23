@@ -7,7 +7,7 @@
 
 using System;
 using System.Collections.Concurrent;
-using Vlingo.Actors;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Process
 {

@@ -46,7 +46,7 @@
             <ItemGroup>
                 <PackageReference Include="Vlingo.Cluster" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Symbio" Version="$(VlingoVersion)" />
-                <PackageReference Include="Vlingo.Actors" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.Xoom.Actors" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Common" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Wire" Version="$(VlingoVersion)" />
             </ItemGroup>

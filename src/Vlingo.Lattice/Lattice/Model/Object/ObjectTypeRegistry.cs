@@ -7,9 +7,9 @@
 
 using System;
 using System.Collections.Generic;
-using Vlingo.Actors;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Object;
+using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Object
 {

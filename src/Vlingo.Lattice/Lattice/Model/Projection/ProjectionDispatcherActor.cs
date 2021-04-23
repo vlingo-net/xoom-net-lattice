@@ -8,9 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Actors;
 using Vlingo.Symbio.Store;
 using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Actors;
 using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Lattice.Model.Projection
