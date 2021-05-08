@@ -8,7 +8,7 @@
 using System;
 using System.Linq;
 using Vlingo.Lattice.Model;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Actors;
 using Xunit;
 

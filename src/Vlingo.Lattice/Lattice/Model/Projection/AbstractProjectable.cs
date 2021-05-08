@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Common;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Lattice.Model.Projection
 {

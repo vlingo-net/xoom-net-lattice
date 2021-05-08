@@ -7,7 +7,7 @@
 
 using System;
 using Vlingo.Xoom.Common.Serialization;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Lattice.Model.Process
 {

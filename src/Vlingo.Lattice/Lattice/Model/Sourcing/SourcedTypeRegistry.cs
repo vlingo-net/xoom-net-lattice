@@ -7,10 +7,10 @@
 
 using System;
 using System.Collections.Concurrent;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Journal;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store.Journal;
 using Vlingo.Xoom.Actors;
-using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
+using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Lattice.Model.Sourcing
 {

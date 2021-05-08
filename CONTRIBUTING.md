@@ -1,4 +1,4 @@
-## How to contribute to the vlingo-net-symbio
+## How to contribute to the xoom-net-lattice
 
 #### **Did you find a bug?**
 

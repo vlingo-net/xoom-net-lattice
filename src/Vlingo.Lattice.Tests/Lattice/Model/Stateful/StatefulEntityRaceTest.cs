@@ -9,13 +9,13 @@ using System;
 using System.Collections.Generic;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Stateful;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.State;
-using Vlingo.Symbio.Store.State.InMemory;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store.State;
+using Vlingo.Xoom.Symbio.Store.State.InMemory;
 using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
-using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
+using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {

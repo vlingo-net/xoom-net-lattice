@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Symbio.Store.Dispatch;
 
 namespace Vlingo.Tests.Lattice.Model.Object
 {

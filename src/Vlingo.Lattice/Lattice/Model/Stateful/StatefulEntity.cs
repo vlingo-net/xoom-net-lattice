@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Text;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Sourcing;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.State;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Stateful

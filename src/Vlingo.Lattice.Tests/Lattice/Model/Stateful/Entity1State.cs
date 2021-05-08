@@ -1,5 +1,5 @@
 using System;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Tests.Lattice.Model.Stateful
 {

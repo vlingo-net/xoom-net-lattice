@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using Vlingo.Lattice.Model.Projection;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 using Xunit;
 
 namespace Vlingo.Tests.Lattice.Model.Projection

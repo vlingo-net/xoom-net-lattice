@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Process;
-using Vlingo.Symbio.Store.Object;
+using Vlingo.Xoom.Symbio.Store.Object;
 
 namespace Vlingo.Tests.Lattice.Model.Process
 {

@@ -6,7 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Generic;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Lattice.Model.Projection
 {

@@ -9,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Common;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.State;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Projection

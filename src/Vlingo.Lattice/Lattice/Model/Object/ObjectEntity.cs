@@ -9,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Vlingo.Xoom.Common;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Object;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.Object;
 using Vlingo.Xoom.Actors;
 
 namespace Vlingo.Lattice.Model.Object

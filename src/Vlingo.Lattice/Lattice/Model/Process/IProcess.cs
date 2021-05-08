@@ -8,8 +8,8 @@
 using System;
 using System.Collections.Generic;
 using Vlingo.Xoom.Common;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Journal;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store.Journal;
 
 namespace Vlingo.Lattice.Model.Process
 {

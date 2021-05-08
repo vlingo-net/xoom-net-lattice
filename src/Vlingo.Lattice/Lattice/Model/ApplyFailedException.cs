@@ -6,13 +6,13 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Symbio;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Lattice.Model
 {
     /// <summary>
     /// An Exception used to indicate the failure of an attempt to <code>Apply()</code>
-    /// state and/or <see cref="Source"/> instances.
+    /// state and/or <see cref="ISource"/> instances.
     /// </summary>
     /// <typeparam name="T">The type of the state</typeparam>
     [Serializable]

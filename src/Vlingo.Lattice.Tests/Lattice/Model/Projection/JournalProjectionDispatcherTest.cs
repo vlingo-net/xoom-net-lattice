@@ -11,15 +11,15 @@ using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Lattice.Model;
 using Vlingo.Lattice.Model.Projection;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Journal;
-using Vlingo.Symbio.Store.Journal.InMemory;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.Journal;
+using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 using Xunit;
 using Xunit.Abstractions;
-using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
+using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Tests.Lattice.Model.Projection
 {

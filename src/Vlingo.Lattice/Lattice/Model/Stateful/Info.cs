@@ -6,8 +6,8 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.State;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store.State;
 
 namespace Vlingo.Lattice.Model.Stateful
 {

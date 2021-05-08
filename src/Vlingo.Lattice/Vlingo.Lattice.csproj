@@ -36,7 +36,7 @@
                 <ProjectReference Include="..\..\..\xoom-net-wire\src\Vlingo.Xoom.Wire\Vlingo.Xoom.Wire.csproj" />
             </ItemGroup>
             <ItemGroup>
-                <ProjectReference Include="..\..\..\vlingo-net-symbio\src\Vlingo.Symbio\Vlingo.Symbio.csproj" />
+                <ProjectReference Include="..\..\..\xoom-net-symbio\src\Vlingo.Xoom.Symbio\Vlingo.Xoom.Symbio.csproj" />
             </ItemGroup>
             <ItemGroup>
                 <ProjectReference Include="..\..\..\vlingo-net-cluster\src\Vlingo.Cluster\Vlingo.Cluster.csproj" />
@@ -45,7 +45,7 @@
         <Otherwise>
             <ItemGroup>
                 <PackageReference Include="Vlingo.Cluster" Version="$(VlingoVersion)" />
-                <PackageReference Include="Vlingo.Symbio" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.Xoom.Symbio" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Actors" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Common" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Wire" Version="$(VlingoVersion)" />

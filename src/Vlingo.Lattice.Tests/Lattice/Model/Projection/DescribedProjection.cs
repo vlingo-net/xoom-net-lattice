@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Model.Projection;
-using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Symbio.Store.Dispatch;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 

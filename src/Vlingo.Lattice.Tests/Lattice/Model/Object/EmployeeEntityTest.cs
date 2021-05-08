@@ -7,9 +7,9 @@
 
 using System;
 using Vlingo.Lattice.Model.Object;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Object;
-using Vlingo.Symbio.Store.Object.InMemory;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.Object;
+using Vlingo.Xoom.Symbio.Store.Object.InMemory;
 using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;

@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Symbio.Store.Dispatch;
 
 namespace Vlingo.Lattice.Model.Projection
 {

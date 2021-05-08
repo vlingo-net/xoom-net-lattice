@@ -8,10 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Symbio.Store;
-using Vlingo.Symbio.Store.Dispatch;
+using Vlingo.Xoom.Symbio.Store;
+using Vlingo.Xoom.Symbio.Store.Dispatch;
 using Vlingo.Xoom.Actors;
-using IDispatcher = Vlingo.Symbio.Store.Dispatch.IDispatcher;
+using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
 namespace Vlingo.Lattice.Model.Projection
 {

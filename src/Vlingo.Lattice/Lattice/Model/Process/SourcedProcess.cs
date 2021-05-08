@@ -11,9 +11,9 @@ using System.Linq;
 using Vlingo.Xoom.Common;
 using Vlingo.Lattice.Exchange;
 using Vlingo.Lattice.Model.Sourcing;
-using Vlingo.Symbio;
-using Vlingo.Symbio.Store.Journal;
-using Vlingo.Symbio.Store.Object;
+using Vlingo.Xoom.Symbio;
+using Vlingo.Xoom.Symbio.Store.Journal;
+using Vlingo.Xoom.Symbio.Store.Object;
 
 namespace Vlingo.Lattice.Model.Process
 {

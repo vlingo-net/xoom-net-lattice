@@ -7,8 +7,8 @@
 
 using System;
 using Vlingo.Lattice.Model.Sourcing;
-using Vlingo.Symbio.Store.Journal;
-using Vlingo.Symbio.Store.Journal.InMemory;
+using Vlingo.Xoom.Symbio.Store.Journal;
+using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
 using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
