@@ -5,8 +5,8 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Cluster.Model;
 using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Cluster.Model;
 
 namespace Vlingo.Lattice.Grid
 {

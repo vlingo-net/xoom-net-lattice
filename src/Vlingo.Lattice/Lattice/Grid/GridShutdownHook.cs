@@ -7,8 +7,8 @@
 
 using System;
 using System.Threading;
-using Vlingo.Cluster.Model;
 using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Cluster.Model;
 
 namespace Vlingo.Lattice.Grid
 {
