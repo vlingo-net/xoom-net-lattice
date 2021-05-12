@@ -33,7 +33,6 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
 
             var entityId = $"{_idGenerator.Next(10_000)}";
             var state = new Entity1State(entityId, "Sally", 23);
-            var access = _dispatcher.AfterCompleting(3);
 
             var entity1 = _world.ActorFor<IEntity1>(() => new Entity1Actor(RaceConditions, entityId));
             Assert.Equal(state, entity1.DefineWith(state.Name, state.Age).Await());
