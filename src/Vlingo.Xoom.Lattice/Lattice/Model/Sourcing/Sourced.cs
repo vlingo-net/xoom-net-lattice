@@ -391,7 +391,7 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         {
             try
             {
-                return Stage.World.ResolveDynamic<SourcedTypeRegistry>(SourcedTypeRegistry.InternalName).Info(GetType());
+                return SourcedTypeRegistry.ResolveSourcedTypeRegistry(Stage.World).Info(GetType());
             }
             catch (Exception e)
             {

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Xoom.Lattice.Model.Stateful
 {
@@ -30,21 +31,50 @@ namespace Vlingo.Xoom.Lattice.Model.Stateful
         /// <returns>The registry</returns>
         public static StatefulTypeRegistry RegisterAll(World world, IStateStore stateStore, params Type[] types)
         {
-            var registry = new StatefulTypeRegistry(world);
-            
-            foreach (var type in types)
-            {
-                registry.Register(new Info(stateStore, type, type.Name));
-            }
+            var registry = ResolveStatefulTypeRegistry(world);
+
+            registry.RegisterAll(stateStore, types);
 
             return registry;
+        }
+        
+        /// <summary>
+        /// Resolves the <see cref="StatefulTypeRegistry"/> held by the <paramref name="world"/>.
+        /// If the registry doesn't exist, a one is instantiated and registered.
+        /// </summary>
+        /// <param name="world">The <see cref="World"/> where the <see cref="StatefulTypeRegistry"/> is held</param>
+        /// <returns><see cref="StatefulTypeRegistry"/></returns>
+        public static StatefulTypeRegistry ResolveStatefulTypeRegistry(World world)
+        {
+            var registry = world.ResolveDynamic<StatefulTypeRegistry>(InternalName);
+
+            if (registry != null)
+            {
+                return registry;
+            }
+
+            return new StatefulTypeRegistry(world);
         }
 
         /// <summary>
         /// Construct my default state and register me with the <see cref="World"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
-        public StatefulTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
+        public StatefulTypeRegistry(World world)
+        {
+            world.RegisterDynamic(InternalName, this);
+            
+            StateAdapterProvider.Instance(world);
+        }
+
+        /// <summary>
+        /// Construct my default state and register it with the <paramref name="world"/>.
+        /// </summary>
+        /// <param name="world">The World to which I am registered</param>
+        /// <param name="stateStore">The state store</param>
+        /// <param name="types">Native type of states to be stored</param>
+        public StatefulTypeRegistry(World world, IStateStore stateStore, params Type[] types) : this(world) =>
+            RegisterAll(stateStore, types);
 
         public Info Info<T>() => Info(typeof(T));
         
@@ -72,6 +102,14 @@ namespace Vlingo.Xoom.Lattice.Model.Stateful
             StateTypeStateStoreMap.StateTypeToStoreName(info.StoreName, info.StoreType);
             _stores.AddOrUpdate(info.StoreType, info, (type, o) => info);
             return this;
+        }
+        
+        public void RegisterAll(IStateStore stateStore, Type[] types)
+        {
+            foreach (var type in types)
+            {
+                Register(new Info(stateStore, type, type.Name));
+            }
         }
     }
 }

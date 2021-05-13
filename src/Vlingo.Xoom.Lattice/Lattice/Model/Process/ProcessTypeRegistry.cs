@@ -20,6 +20,24 @@ namespace Vlingo.Xoom.Lattice.Model.Process
         private readonly ConcurrentDictionary<Type, Info> _stores = new ConcurrentDictionary<Type, Info>();
 
         /// <summary>
+        /// Gets the <see cref="ProcessTypeRegistry"/> held by the <paramref name="world"/>.
+        /// If the registry doesn't exist, a one is instantiated and registered.
+        /// </summary>
+        /// <param name="world">The <see cref="World"/> where the <see cref="ProcessTypeRegistry"/> is held</param>
+        /// <returns><see cref="ProcessTypeRegistry"/></returns>
+        public static ProcessTypeRegistry ResolveProcessTypeRegistry(World world)
+        {
+            var registry = world.ResolveDynamic<ProcessTypeRegistry>(InternalName);
+
+            if (registry != null)
+            {
+                return registry;
+            }
+
+            return new ProcessTypeRegistry(world);
+        }
+        
+        /// <summary>
         /// Construct my default state and register me with the <see cref="World"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>

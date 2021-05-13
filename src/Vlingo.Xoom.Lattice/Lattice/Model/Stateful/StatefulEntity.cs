@@ -389,9 +389,7 @@ namespace Vlingo.Xoom.Lattice.Model.Stateful
         {
             try
             {
-                var registry = Stage.World.ResolveDynamic<StatefulTypeRegistry>(StatefulTypeRegistry.InternalName);
-                var info = registry.Info(typeof(T));
-                return info;
+                return StatefulTypeRegistry.ResolveStatefulTypeRegistry(Stage.World).Info(typeof(T));
             }
             catch (Exception e)
             {

@@ -21,7 +21,8 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
     public class SourcedTypeRegistry
     {
         private Type? _sourcedType;
-        internal static readonly string InternalName = Guid.NewGuid().ToString();
+        internal static readonly string InternalName = nameof(SourcedTypeRegistry);
+        private readonly ConcurrentDictionary<Type, IJournal> _journals = new ConcurrentDictionary<Type, IJournal>();
         private readonly ConcurrentDictionary<Type, object> _stores = new ConcurrentDictionary<Type, object>();
 
         /// <summary>
@@ -32,13 +33,54 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         /// <param name="dispatcher"><see cref="IDispatcher"/> of the journal.</param>
         /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
         /// <returns>The registry</returns>
-        public static SourcedTypeRegistry Register<TActor, TEntry, TState>(World world,
-            IDispatcher dispatcher, params Type[] sourcedTypes)
+        public static SourcedTypeRegistry RegisterAll<TActor, TEntry>(
+            World world,
+            IDispatcher dispatcher,
+            params Type[] sourcedTypes)
             where TActor : Actor
         {
-            var journal = world.ActorFor<IJournal<TEntry>>(typeof(TActor), dispatcher);
+            var registry = ResolveSourcedTypeRegistry(world);
 
-            return new SourcedTypeRegistry(world, journal, sourcedTypes);
+            var journal = registry.JournalOf<IJournal<TEntry>>(typeof(TActor), world, dispatcher);
+
+            registry.RegisterAll(journal, sourcedTypes);
+
+            return registry;
+        }
+        
+        /// <summary>
+        /// Answer a new <see cref="SourcedTypeRegistry"/> with registered <paramref name="sourcedTypes"/>, creating
+        /// the <see cref="IJournal{TEntry}"/> of type <typeparamref name="TEntry"/>, registering me with the <paramref name="world"/>.
+        /// </summary>
+        /// <remarks>
+        /// Register() is an alias for RegisterAll()
+        /// </remarks>
+        /// <param name="world">The World to which I am registered</param>
+        /// <param name="dispatcher"><see cref="IDispatcher"/> of the journal.</param>
+        /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
+        /// <returns>The registry</returns>
+        public static SourcedTypeRegistry Register<TActor, TEntry>(
+            World world,
+            IDispatcher dispatcher,
+            params Type[] sourcedTypes)
+            where TActor : Actor =>
+            RegisterAll<TActor, TEntry>(world, dispatcher, sourcedTypes);
+
+        /// <summary>
+        /// Resolves the <see cref="SourcedTypeRegistry"/> held by the <paramref name="world"/>.
+        /// </summary>
+        /// <param name="world">The <see cref="World"/> where the <see cref="SourcedTypeRegistry"/> is held</param>
+        /// <returns>The <see cref="SourcedTypeRegistry"/></returns>
+        public static SourcedTypeRegistry ResolveSourcedTypeRegistry(World world)
+        {
+            var registry = world.ResolveDynamic<SourcedTypeRegistry>(InternalName);
+
+            if (registry != null)
+            {
+                return registry;
+            }
+
+            return new SourcedTypeRegistry(world);
         }
 
         /// <summary>
@@ -48,21 +90,19 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         /// <param name="world">The World to which I am registered</param>
         /// <param name="journal">The journal of this registry</param>
         /// <param name="sourcedTypes"><see cref="Sourced{T}"/> types of to register</param>
-        public SourcedTypeRegistry(World world, IJournal journal, params Type[] sourcedTypes) : this (world)
-        {
-            EntryAdapterProvider.Instance(world);
+        public SourcedTypeRegistry(World world, IJournal journal, params Type[] sourcedTypes) : this (world) =>
+            RegisterAll(journal, sourcedTypes);
 
-            foreach (var sourcedType in sourcedTypes)
-            {
-                Register(Sourcing.Info.RegisterSourced(journal, sourcedType));
-            }
-        }
-        
         /// <summary>
         /// Construct my default state and register me with the <see cref="World"/>.
         /// </summary>
         /// <param name="world">The World to which I am registered</param>
-        public SourcedTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
+        public SourcedTypeRegistry(World world)
+        {
+            world.RegisterDynamic(InternalName, this);
+
+            EntryAdapterProvider.Instance(world);
+        }
 
         /// <summary>
         /// Answer the <see cref="Info"/>.
@@ -86,6 +126,31 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
 
             return default;
         }
+        
+        /// <summary>
+        /// Resolves the <see cref="IJournal"/> of the registered <paramref name="journalType"/>
+        /// or a new <see cref="IJournal"/> if non-existing.
+        /// </summary>
+        /// <param name="journalType">The concrete <see cref="Actor"/> type of the Journal to create</param>
+        /// <param name="world">The <see cref="World"/> to which journal is registered</param>
+        /// <param name="dispatcher">The <see cref="IDispatcher"/> of the <paramref name="journalType"/></param>
+        /// <returns><see cref="IJournal"/></returns>
+        public IJournal JournalOf<TEntry>(Type journalType, World world, IDispatcher dispatcher)
+        {
+            foreach (var actorType in _journals.Keys)
+            {
+                if (actorType == journalType)
+                {
+                    return _journals[actorType];
+                }
+            }
+
+            var journal = world.ActorFor<IJournal<TEntry>>(journalType, dispatcher);
+
+            _journals.TryAdd(journalType, journal);
+
+            return journal;
+        }
 
         /// <summary>
         /// Answer myself after registering the <see cref="Info{T}"/>.
@@ -96,6 +161,14 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         {
             _stores.AddOrUpdate(info.SourcedType, info, (type, o) => info);
             return this;
+        }
+        
+        public void RegisterAll(IJournal journal, Type[] sourcedTypes)
+        {
+            foreach (var sourcedType in sourcedTypes)
+            {
+                Register(Sourcing.Info.RegisterSourced(journal, sourcedType));
+            }
         }
     }
 }

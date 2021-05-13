@@ -315,7 +315,7 @@ namespace Vlingo.Xoom.Lattice.Model.Object
         {
             try
             {
-                var registry = Stage.World.ResolveDynamic<ObjectTypeRegistry>(ObjectTypeRegistry.InternalName);
+                var registry = ObjectTypeRegistry.ResolveObjectTypeRegistry(Stage.World);
                 var info = registry.Info<T>();
                 return info;
             }

@@ -22,6 +22,14 @@ namespace Vlingo.Xoom.Lattice.Model.Object
     {
         internal static readonly string InternalName = Guid.NewGuid().ToString();
         private readonly Dictionary<Type, object> _stores = new Dictionary<Type, object>();
+        
+        /// <summary>
+        /// Gets <see cref="ObjectTypeRegistry"/> held by the <paramref name="world"/>
+        /// </summary>
+        /// <param name="world">The <see cref="World"/> where <see cref="ObjectTypeRegistry"/> is held</param>
+        /// <returns><see cref="ObjectTypeRegistry"/></returns>
+        public static ObjectTypeRegistry ResolveObjectTypeRegistry(World world) =>
+            world.ResolveDynamic<ObjectTypeRegistry>(InternalName);
 
         /// <summary>
         /// Construct my default state and register me with the <paramref name="world"/>.
