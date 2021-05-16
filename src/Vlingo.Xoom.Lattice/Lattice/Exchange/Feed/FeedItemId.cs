@@ -14,7 +14,7 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
     /// </summary>
     public sealed class FeedItemId
     {
-        private static readonly FeedItemId Unknown = new FeedItemId("");
+        internal static readonly FeedItemId Unknown = new FeedItemId("");
 
         private readonly string _value;
 
