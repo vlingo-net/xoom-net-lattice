@@ -35,15 +35,12 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         /// <param name="exchangeName">The name of the exchange I feed</param>
         /// <param name="feederType">The type of the <see cref="IFeeder"/></param>
         /// <param name="entryReaderType">The <see cref="IEntryReader{T}"/> used by the <see cref="IFeeder"/></param>
-        private DefaultFeed(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType)
+        internal DefaultFeed(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType)
         {
             _exchangeName = exchangeName;
             _feederType = feederType;
             _entryReaderType = entryReaderType;
             _feeder = stage.ActorFor<IFeeder>(feederType, this, entryReaderType);
         }
-        
-        public override Feed<TextEntry> DefaultFeedWith(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType) =>
-            new DefaultFeed(stage, exchangeName, feederType, entryReaderType);
     }
 }

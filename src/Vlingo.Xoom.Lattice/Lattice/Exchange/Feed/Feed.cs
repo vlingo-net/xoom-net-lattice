@@ -52,7 +52,8 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         /// <param name="feederType">The <see cref="Actor"/> type of this feeder</param>
         /// <param name="entryReaderType">The <see cref="IEntryReader{T}"/> that this feeder uses</param>
         /// <returns><see cref="Feed{T}"/></returns>
-        public abstract Feed<T> DefaultFeedWith(Stage stage, string exchangeName, Type feederType, IEntryReader<T> entryReaderType);
+        public static Feed<TextEntry> DefaultFeedWith(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType) =>
+            new DefaultFeed(stage, exchangeName, feederType, entryReaderType);
 
         /// <summary>
         /// Gets the encoded identity for the <see cref="FeedItemId"/>.
