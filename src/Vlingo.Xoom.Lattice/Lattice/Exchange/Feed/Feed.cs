@@ -13,16 +13,15 @@ using Vlingo.Xoom.Symbio.Store;
 namespace Vlingo.Xoom.Lattice.Exchange.Feed
 {
     /// <summary>
-    /// Provides support utilities for <see cref="Feed{T}"/> and related types.
-    /// Every <see cref="Feed{T}"/> has an <code>ExchangeName</code>.
+    /// Provides support utilities for <see cref="Feed"/> and related types.
+    /// Every <see cref="Feed"/> has an <code>ExchangeName</code>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class Feed<T>
+    public abstract class Feed
     {
         /// <summary>
-        /// Gets the <see cref="IEntryReader{T}"/> to provide entries to the <see cref="IFeeder"/>.
+        /// Gets the <see cref="IEntryReader"/> to provide entries to the <see cref="IFeeder"/>.
         /// </summary>
-        public abstract IEntryReader<T> EntryReaderType { get; }
+        public abstract IEntryReader EntryReaderType { get; }
 
         /// <summary>
         /// Gets the type to be used by the <see cref="IFeeder"/>.
@@ -45,14 +44,14 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         public abstract string ExchangeName { get; }
 
         /// <summary>
-        /// Gets a new <see cref="Feed{T}"/> with the given properties.
+        /// Gets a new <see cref="Feed"/> with the given properties.
         /// </summary>
         /// <param name="stage">The <see cref="Stage"/> used to create this feeder</param>
         /// <param name="exchangeName">The name of this exchange</param>
         /// <param name="feederType">The <see cref="Actor"/> type of this feeder</param>
-        /// <param name="entryReaderType">The <see cref="IEntryReader{T}"/> that this feeder uses</param>
-        /// <returns><see cref="Feed{T}"/></returns>
-        public static Feed<TextEntry> DefaultFeedWith(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType) =>
+        /// <param name="entryReaderType">The <see cref="IEntryReader"/> that this feeder uses</param>
+        /// <returns><see cref="Feed"/></returns>
+        public static Feed DefaultFeedWith(Stage stage, string exchangeName, Type feederType, IEntryReader entryReaderType) =>
             new DefaultFeed(stage, exchangeName, feederType, entryReaderType);
 
         /// <summary>
@@ -81,6 +80,6 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         /// </summary>
         /// <param name="source">the <see cref="Source{T}"/> used to determine the type name</param>
         /// <returns>The name of the message type</returns>
-        public virtual string MessageTypeNameFrom(Source<T> source) => source.TypeName;
+        public virtual string MessageTypeNameFrom(ISource source) => source.GetType().Name;
     }
 }

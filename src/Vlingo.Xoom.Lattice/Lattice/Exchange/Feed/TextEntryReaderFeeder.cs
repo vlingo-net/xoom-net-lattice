@@ -18,15 +18,15 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
     /// </summary>
     public class TextEntryReaderFeeder : Actor, IFeeder
     {
-        private readonly IEntryReader<TextEntry> _entryReader;
-        private readonly Feed<TextEntry> _feed;
+        private readonly IEntryReader _entryReader;
+        private readonly Feed _feed;
         
         /// <summary>
         /// Construct my default state.
         /// </summary>
-        /// <param name="feed">The <see cref="Feed{T}"/> that is served</param>
-        /// <param name="entryReader">The <see cref="IEntryReader{T}"/> from which content is read</param>
-        public TextEntryReaderFeeder(Feed<TextEntry> feed, IEntryReader<TextEntry> entryReader)
+        /// <param name="feed">The <see cref="Feed"/> that is served</param>
+        /// <param name="entryReader">The <see cref="IEntryReader"/> from which content is read</param>
+        public TextEntryReaderFeeder(Feed feed, IEntryReader entryReader)
         {
             _feed = feed;
             _entryReader = entryReader;
@@ -41,7 +41,7 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
                 .ReadNext(id.ToString(), _feed.MessagesPerFeedItem)
                 .AndThen(entries => {
                     var textEntries = entries.ToList();
-                    feedConsumer.ConsumeFeedItem(ToFeedItem(fromFeedItemId, textEntries));
+                    feedConsumer.ConsumeFeedItem(ToFeedItem(fromFeedItemId, textEntries.Cast<TextEntry>().ToList()));
                 return textEntries;
             });
         }

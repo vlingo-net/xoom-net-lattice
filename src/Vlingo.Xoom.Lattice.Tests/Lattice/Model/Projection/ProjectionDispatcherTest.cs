@@ -50,7 +50,7 @@ namespace Vlingo.Tests.Lattice.Model.Projection
             var storeProtocols =
                 World.ActorFor(
                     new[] {  StateStoreInterfaceType, typeof(IDispatcherControl) },
-                    typeof(InMemoryStateStoreActor<TextState, IEntry>), Dispatcher);
+                    typeof(InMemoryStateStoreActor<TextState>), Dispatcher);
 
             var storeWithControl = Protocols.Two<IStateStore, IDispatcherControl>(storeProtocols);
             Store = storeWithControl._1;

@@ -7,23 +7,22 @@
 
 using System;
 using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 
 namespace Vlingo.Xoom.Lattice.Exchange.Feed
 {
     /// <summary>
-    /// The default implementation of <see cref="Feed{T}"/>. See the default behaviors
-    /// in <see cref="Feed{T}"/> for specific defaults.
+    /// The default implementation of <see cref="Feed"/>. See the default behaviors
+    /// in <see cref="Feed"/> for specific defaults.
     /// </summary>
-    public class DefaultFeed : Feed<TextEntry>
+    public class DefaultFeed : Feed
     {
         private readonly string _exchangeName;
         private readonly Type _feederType;
-        private readonly IEntryReader<TextEntry> _entryReaderType;
+        private readonly IEntryReader _entryReaderType;
         private readonly IFeeder _feeder;
 
-        public override IEntryReader<TextEntry> EntryReaderType => _entryReaderType;
+        public override IEntryReader EntryReaderType => _entryReaderType;
         public override Type FeederType => _feederType;
         public override IFeeder Feeder => _feeder;
         public override string ExchangeName => _exchangeName;
@@ -34,8 +33,8 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         /// <param name="stage">This <see cref="Stage"/> of actors I create</param>
         /// <param name="exchangeName">The name of the exchange I feed</param>
         /// <param name="feederType">The type of the <see cref="IFeeder"/></param>
-        /// <param name="entryReaderType">The <see cref="IEntryReader{T}"/> used by the <see cref="IFeeder"/></param>
-        internal DefaultFeed(Stage stage, string exchangeName, Type feederType, IEntryReader<TextEntry> entryReaderType)
+        /// <param name="entryReaderType">The <see cref="IEntryReader"/> used by the <see cref="IFeeder"/></param>
+        internal DefaultFeed(Stage stage, string exchangeName, Type feederType, IEntryReader entryReaderType)
         {
             _exchangeName = exchangeName;
             _feederType = feederType;

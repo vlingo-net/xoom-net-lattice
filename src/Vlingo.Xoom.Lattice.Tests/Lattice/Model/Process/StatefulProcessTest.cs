@@ -55,7 +55,7 @@ namespace Vlingo.Tests.Lattice.Model.Process
             var queue = new AsyncMessageQueue(null);
             _exchange = new LocalExchange(queue);
             _dispatcher = new MockTextDispatcher();
-            var stateStore = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState, TextEntry>(new List<IDispatcher> {_dispatcher}));
+            var stateStore = _world.ActorFor<IStateStore>(() => new InMemoryStateStoreActor<TextState>(new List<IDispatcher> {_dispatcher}));
 
             var statefulTypeRegistry = new StatefulTypeRegistry(_world);
             
