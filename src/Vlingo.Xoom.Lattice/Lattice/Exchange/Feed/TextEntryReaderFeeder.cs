@@ -18,8 +18,8 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
     /// </summary>
     public class TextEntryReaderFeeder : Actor, IFeeder
     {
-        private IEntryReader<TextEntry> entryReader;
-        private Feed<TextEntry> feed;
+        private readonly IEntryReader<TextEntry> _entryReader;
+        private readonly Feed<TextEntry> _feed;
         
         /// <summary>
         /// Construct my default state.
@@ -28,17 +28,17 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
         /// <param name="entryReader">The <see cref="IEntryReader{T}"/> from which content is read</param>
         public TextEntryReaderFeeder(Feed<TextEntry> feed, IEntryReader<TextEntry> entryReader)
         {
-            this.feed = feed;
-            this.entryReader = entryReader;
+            _feed = feed;
+            _entryReader = entryReader;
         }
         
         public void FeedItemTo(FeedItemId fromFeedItemId, IFeedConsumer feedConsumer)
         {
             var feedId = fromFeedItemId.ToLong();
-            var id = (feedId - 1L) * feed.MessagesPerFeedItem + 1;
+            var id = (feedId - 1L) * _feed.MessagesPerFeedItem + 1;
 
-            entryReader
-                .ReadNext(id.ToString(), feed.MessagesPerFeedItem)
+            _entryReader
+                .ReadNext(id.ToString(), _feed.MessagesPerFeedItem)
                 .AndThen(entries => {
                     var textEntries = entries.ToList();
                     feedConsumer.ConsumeFeedItem(ToFeedItem(fromFeedItemId, textEntries));
@@ -62,7 +62,7 @@ namespace Vlingo.Xoom.Lattice.Exchange.Feed
                 messages.Add(message);
             }
 
-            if (feed.MessagesPerFeedItem == entries.Count)
+            if (_feed.MessagesPerFeedItem == entries.Count)
             {
                 return FeedItem.ArchivedFeedItemWith(feedItemId, feedItemId.Next(), feedItemId.Previous(), messages);
             }
