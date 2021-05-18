@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// A message body that is provided by <code>body</code>.

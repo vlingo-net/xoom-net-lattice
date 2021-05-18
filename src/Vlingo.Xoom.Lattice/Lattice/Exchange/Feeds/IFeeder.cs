@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// I provide <see cref="FeedItem"/> to a given <see cref="IFeedConsumer"/>.

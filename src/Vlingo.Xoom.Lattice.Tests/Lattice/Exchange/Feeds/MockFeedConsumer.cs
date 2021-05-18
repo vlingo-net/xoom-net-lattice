@@ -7,9 +7,9 @@
 
 using System.Collections.Generic;
 using Vlingo.Xoom.Actors.TestKit;
-using Vlingo.Xoom.Lattice.Exchange.Feed;
+using Vlingo.Xoom.Lattice.Exchange.Feeds;
 
-namespace Vlingo.Tests.Lattice.Exchange.Feed
+namespace Vlingo.Tests.Lattice.Exchange.Feeds
 {
     public class MockFeedConsumer : IFeedConsumer
     {

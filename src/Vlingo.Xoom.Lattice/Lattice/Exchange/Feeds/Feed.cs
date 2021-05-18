@@ -10,7 +10,7 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// Provides support utilities for <see cref="Feed"/> and related types.

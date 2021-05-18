@@ -12,7 +12,7 @@ using Vlingo.Tests.Lattice.Model;
 using Vlingo.Tests.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
-using Vlingo.Xoom.Lattice.Exchange.Feed;
+using Vlingo.Xoom.Lattice.Exchange.Feeds;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Journal;
@@ -21,7 +21,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Result = Vlingo.Xoom.Symbio.Store.Result;
 
-namespace Vlingo.Tests.Lattice.Exchange.Feed
+namespace Vlingo.Tests.Lattice.Exchange.Feeds
 {
     public class FeedTest : IDisposable
     {
@@ -35,7 +35,7 @@ namespace Vlingo.Tests.Lattice.Exchange.Feed
         [Fact]
         public void TestThatDefaultFeedIsCreated()
         {
-            var feed = Xoom.Lattice.Exchange.Feed.Feed.DefaultFeedWith(_world.Stage, "test",
+            var feed = Feed.DefaultFeedWith(_world.Stage, "test",
                 typeof(TextEntryReaderFeeder), _entryReader);
 
             Assert.NotNull(feed);
@@ -44,7 +44,7 @@ namespace Vlingo.Tests.Lattice.Exchange.Feed
         [Fact]
         public void TestThatDefaultFeedReadsFirstFeedItemIncomplete()
         {
-            var feed = Xoom.Lattice.Exchange.Feed.Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
+            var feed = Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
 
             var dispatcherAccess = _dispatcher.AfterCompleting(3);
 
@@ -69,7 +69,7 @@ namespace Vlingo.Tests.Lattice.Exchange.Feed
         [Fact]
         public void TestThatDefaultFeedReadsFirstFeedItemArchived()
         {
-            var feed = Xoom.Lattice.Exchange.Feed.Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
+            var feed = Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
 
             var dispatcherAccess = _dispatcher.AfterCompleting(feed.MessagesPerFeedItem);
 
@@ -96,7 +96,7 @@ namespace Vlingo.Tests.Lattice.Exchange.Feed
         [Fact]
         public void TestThatDefaultFeedReadsFirstFeedItemArchivedSecondFeedItemIncomplete()
         {
-            var feed = Xoom.Lattice.Exchange.Feed.Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
+            var feed = Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
 
             var extra = 3;
             var entries = feed.MessagesPerFeedItem + extra;
@@ -129,7 +129,7 @@ namespace Vlingo.Tests.Lattice.Exchange.Feed
         [Fact]
         public void TestThatDefaultFeedReadsThreeItems()
         {
-            var feed = Xoom.Lattice.Exchange.Feed.Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
+            var feed = Feed.DefaultFeedWith(_world.Stage, "test", typeof(TextEntryReaderFeeder), _entryReader);
 
             var extra = feed.MessagesPerFeedItem / 2;
             var entries = feed.MessagesPerFeedItem * 2 + extra;

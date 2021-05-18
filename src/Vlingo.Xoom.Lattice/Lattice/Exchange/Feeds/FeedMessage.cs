@@ -8,7 +8,7 @@
 using System;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// A message that is provided through a feed with a <code>body</code> that must be a <see cref="ISource"/>.

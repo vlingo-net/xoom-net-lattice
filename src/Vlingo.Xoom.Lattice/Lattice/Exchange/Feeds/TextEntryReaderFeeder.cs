@@ -11,7 +11,7 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// The <see cref="IFeeder"/> serving <see cref="TextEntry"/> instances.

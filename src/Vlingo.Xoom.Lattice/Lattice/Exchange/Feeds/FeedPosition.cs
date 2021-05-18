@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     ///     Holder of Feed exchange and subscriber position information.

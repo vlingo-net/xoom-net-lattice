@@ -9,7 +9,7 @@ using System;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Symbio.Store;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     /// The default implementation of <see cref="Feed"/>. See the default behaviors

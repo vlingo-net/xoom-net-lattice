@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feed
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds
 {
     /// <summary>
     ///     The identity of a <see cref="FeedItem" />.
