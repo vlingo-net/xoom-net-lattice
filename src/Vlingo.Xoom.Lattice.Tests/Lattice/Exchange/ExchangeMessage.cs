@@ -30,6 +30,6 @@ namespace Vlingo.Tests.Lattice.Exchange
         public string Version { get; }
         public SemanticVersion SemanticVersion { get; }
 
-        public override string ToString() => "ExchangeMessage[type=" + Type + " payload=" + _payload + "]";
+        public override string ToString() => $"ExchangeMessage[type={Type} payload={_payload}]";
     }
 }
