@@ -13,14 +13,14 @@ namespace Vlingo.Tests.Lattice.Exchange
 {
     public class ExternalType2 : IMessage
     {
-        private readonly string _field1;
-        private readonly string _field2;
-        
         public ExternalType2(string value1, int value2)
         {
-            _field1 = value1;
-            _field2 = value2.ToString();
+            Field1 = value1;
+            Field2 = value2.ToString();
         }
+        
+        public string Field1 { get; set; }
+        public string Field2 { get; set; }
         
         public string Id { get; }
         public DateTimeOffset OccurredOn { get; }
@@ -30,6 +30,6 @@ namespace Vlingo.Tests.Lattice.Exchange
         public string Version { get; }
         public SemanticVersion SemanticVersion { get; }
 
-        public override string ToString() => $"ExternalType[field1={_field1} field2={_field2}]";
+        public override string ToString() => $"ExternalType[field1={Field1} field2={Field2}]";
     }
 }
