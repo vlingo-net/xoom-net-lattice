@@ -182,25 +182,36 @@ namespace Vlingo.Xoom.Lattice.Query
             return (ICompletes<TResult>) Completes();
         }
 
-        public string DataIdFrom(string separator, params string[] idSegments)
-        {
-            throw new System.NotImplementedException();
-        }
+        public string DataIdFrom(string separator, params string[] idSegments) => CompositeIdentitySupport.DataIdFrom(separator, idSegments);
 
-        public IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId)
-        {
-            throw new System.NotImplementedException();
-        }
+        public IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId) => CompositeIdentitySupport.DataIdSegmentsFrom(separator, dataId);
 
+        //==================================
+        // ReadResultInterest
+        //==================================
+        
         public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, string? id, TState state, int stateVersion, Metadata? metadata, object? @object)
         {
-            throw new System.NotImplementedException();
+            outcome.AndThen(result =>
+            {
+                QueryResultHandler<TState>.From(@object!).CompleteFoundWith(id!, state, stateVersion, metadata!);
+                return result;
+            }).Otherwise(cause =>
+            {
+                if (cause.Result == Result.NotFound)
+                {
+                    QueryResultHandler<TState>.From(@object!).CompleteNotFound();
+                } 
+                else
+                {
+                    Logger.Info($"Query state not read for update because: {cause.Message}", cause);
+                }
+                return cause.Result;
+            });
         }
 
-        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, IEnumerable<TypedStateBundle> bundles, object? @object)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, IEnumerable<TypedStateBundle> bundles, object? @object) => 
+            throw new NotImplementedException();
 
         public void IntervalSignal(IScheduled<RetryContext<T>> scheduled, RetryContext<T> data) => QueryWithRetries(data);
         
