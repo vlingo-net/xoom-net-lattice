@@ -25,5 +25,7 @@ namespace Vlingo.Xoom.Lattice.Query
 
         public QueryAttempt<TObjectState, TOutcome, TResult> QueryAttempt<TObjectState, TOutcome, TResult>() => 
             (QueryAttempt<TObjectState, TOutcome, TResult>) _queryAttempt;
+        
+        public QueryAttemptBase QueryAttempt() => (QueryAttemptBase) _queryAttempt;
     }
 }
