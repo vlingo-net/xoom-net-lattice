@@ -44,10 +44,8 @@ namespace Vlingo.Tests.Lattice.Query
             _delegate.ReadAll<TState>(bundles, interest, @object);
         }
 
-        public void Write<TState>(string id, TState state, int stateVersion, IWriteResultInterest interest)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void Write<TState>(string id, TState state, int stateVersion, IWriteResultInterest interest) =>
+            _delegate.Write(id, state, stateVersion, interest);
 
         public void Write<TState, TSource>(string id, TState state, int stateVersion, IEnumerable<TSource> sources, IWriteResultInterest interest)
         {
@@ -84,5 +82,7 @@ namespace Vlingo.Tests.Lattice.Query
 
         public ICompletes<IStateStoreEntryReader> EntryReader<TEntry>(string name) where TEntry : IEntry => 
             _delegate.EntryReader<TEntry>(name);
+        
+        public void ExpectReadFailures(int count) => _expectedReadFailures.Set(count);
     }
 }
