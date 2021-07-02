@@ -34,7 +34,7 @@ namespace Vlingo.Tests.Lattice.Query
             }
             else
             {
-                interest.ReadResultedIn<IOutcome<StorageException, Result>>(Failure.Of<StorageException, Result>(new StorageException(Result.NotFound, "Not found.")), id, null, -1, null, @object);
+                interest.ReadResultedIn(Failure.Of<StorageException, Result>(new StorageException(Result.NotFound, "Not found.")), id, (TState)(object) null, -1, null, @object);
             }
         }
 
