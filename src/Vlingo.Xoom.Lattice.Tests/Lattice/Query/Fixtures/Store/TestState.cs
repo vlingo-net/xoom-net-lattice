@@ -55,4 +55,30 @@ namespace Vlingo.Tests.Lattice.Query.Fixtures.Store
 
         public override TextState ToRawState(TestState state, int stateVersion) => ToRawState(state, stateVersion, Metadata.With("value", "op"));
     }
+
+    public class ObjectTestStateAdapter : StateAdapter<ObjectState<TestState>, TextState>
+    {
+        public override int TypeVersion => 1;
+
+        public override ObjectState<TestState> FromRawState(TextState raw)
+            => JsonSerialization.Deserialized<ObjectState<TestState>>(raw.Data);
+
+        public override TOtherState FromRawState<TOtherState>(TextState raw)
+            => JsonSerialization.Deserialized<TOtherState>(raw.Data);
+        
+        public override TextState ToRawState(string id, ObjectState<TestState> state, int stateVersion, Metadata metadata)
+        {
+            var serialization = JsonSerialization.Serialized(state);
+            return new TextState(id, typeof(ObjectState<TestState>), TypeVersion, serialization, stateVersion, metadata);
+        }
+
+        public override TextState ToRawState(ObjectState<TestState> state, int stateVersion, Metadata metadata)
+        {
+            var serialization = JsonSerialization.Serialized(state);
+            return new TextState(state.Id, typeof(ObjectState<TestState>), TypeVersion, serialization, stateVersion, metadata);
+        }
+
+        public override TextState ToRawState(ObjectState<TestState> state, int stateVersion) => ToRawState(state, stateVersion, Metadata.With("value", "op"));
+
+    }
 }
