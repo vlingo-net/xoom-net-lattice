@@ -18,7 +18,7 @@ namespace Vlingo.Xoom.Lattice.Query
     /// <summary>
     /// A building-block <see cref="Actor"/> that queries asynchronously for state by id.
     /// </summary>
-    public abstract class StateStoreQueryActor<T> : Actor, ICompositeIdentitySupport, IReadResultInterest, IScheduled<RetryContext<T>>
+    public abstract class StateStoreQueryActor<T> : Actor, ICompositeIdentitySupport, IReadResultInterest, IScheduled<RetryContext<T>>, IScheduled<RetryContext<ObjectState<T>>>
     {
         private readonly IReadResultInterest _readInterest;
         private readonly IStateStore _stateStore;
@@ -215,6 +215,9 @@ namespace Vlingo.Xoom.Lattice.Query
 
         public void IntervalSignal(IScheduled<RetryContext<T>> scheduled, RetryContext<T> data) => QueryWithRetries(data);
         
+        public void IntervalSignal(IScheduled<RetryContext<ObjectState<T>>> scheduled, RetryContext<ObjectState<T>> data)
+            => QueryWithRetries(data);
+        
         private void QueryWithRetries<TResult>(RetryContext<TResult> context)
         {
             Action<TResult> answer = maybeFoundState =>
@@ -241,7 +244,7 @@ namespace Vlingo.Xoom.Lattice.Query
         }
 
         private void QueryFor<TResult>(string id, ResultType resultType, TResult notFoundState, Action<TResult> answer) => 
-            _stateStore.Read<T>(id, _readInterest, new QueryResultHandler<TResult>(answer, resultType, notFoundState));
+            _stateStore.Read<TResult>(id, _readInterest, new QueryResultHandler<TResult>(answer, resultType, notFoundState));
     }
 
     public enum ResultType
@@ -272,7 +275,8 @@ namespace Vlingo.Xoom.Lattice.Query
             switch (ResultType)
             {
                 case ResultType.ObjectState:
-                    Consumer((T)(object) new ObjectState<T>(id, typeof(T), 1, state, stateVersion, metadata));
+                    Consumer(state);
+                    //Consumer((T)(object) new ObjectState<T>(id, typeof(T), 1, state, stateVersion, metadata));
                     break;
                 case ResultType.Unwrapped:
                     Consumer(state);
@@ -300,6 +304,6 @@ namespace Vlingo.Xoom.Lattice.Query
         
         public RetryContext<T> NextTry() => new RetryContext<T>(Completes, Query, NotFoundState, RetryInterval, RetriesLeft - 1);
 
-        public bool NeedsRetry(T maybeFoundState) => RetriesLeft > 0 && maybeFoundState!.Equals(NotFoundState);
+        public bool NeedsRetry(T maybeFoundState) => maybeFoundState == null || RetriesLeft > 0 && maybeFoundState.Equals(NotFoundState);
     }
 }
