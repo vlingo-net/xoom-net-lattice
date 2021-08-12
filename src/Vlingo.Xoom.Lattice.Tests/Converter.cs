@@ -14,7 +14,7 @@ namespace Vlingo.Tests
 {
     public class Converter : TextWriter
     {
-        ITestOutputHelper _output;
+        private readonly ITestOutputHelper _output;
         
         public Converter(ITestOutputHelper output) => _output = output;
 
