@@ -9,7 +9,7 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class TestExchangeSender : DefaultExchangeSender<ExchangeMessage>
     {

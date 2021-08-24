@@ -7,7 +7,7 @@
 
 using System;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class LocalType1
     {

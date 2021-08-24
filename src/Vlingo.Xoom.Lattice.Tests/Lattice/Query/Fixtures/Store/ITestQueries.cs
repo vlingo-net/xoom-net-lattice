@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Query.Fixtures.Store
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store
 {
     public interface ITestQueries
     {

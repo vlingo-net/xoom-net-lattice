@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class Test1HappenedAdapter : EntryAdapter<Test1Happened, TextEntry>
     {

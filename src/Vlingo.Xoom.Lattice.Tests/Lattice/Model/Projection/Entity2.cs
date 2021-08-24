@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public class Entity2
     {

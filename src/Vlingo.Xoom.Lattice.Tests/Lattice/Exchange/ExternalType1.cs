@@ -9,7 +9,7 @@ using System;
 using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Common.Version;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class ExternalType1 : IMessage
     {

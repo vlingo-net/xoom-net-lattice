@@ -6,16 +6,16 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model.Projection;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Symbio.Store.State.InMemory;
-using Vlingo.Xoom.Actors;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public abstract class ProjectionDispatcherTest : IDisposable
     {

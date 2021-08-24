@@ -1,7 +1,7 @@
 using System;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful
 {
     public class Entity1State : BaseEntry<string>, IEquatable<Entity1State>
     {
@@ -29,7 +29,7 @@ namespace Vlingo.Tests.Lattice.Model.Stateful
 
         public Entity1State WithAge(int age) => new Entity1State(Id, Name, age);
 
-        public override IEntry<string> WithId(string id) => new Entity1State(id);
+        public override IEntry WithId(string id) => new Entity1State(id);
 
         public override bool Equals(object obj)
         {

@@ -7,12 +7,12 @@
 
 using System;
 using System.Linq;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model;
 using Vlingo.Xoom.Symbio;
-using Vlingo.Xoom.Actors;
 using Xunit;
 
-namespace Vlingo.Tests.Lattice.Model
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model
 {
     public class ApplyFailedExceptionTest
     {

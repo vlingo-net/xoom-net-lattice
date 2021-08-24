@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 
-namespace Vlingo.Tests.Lattice.Model.Object
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Object
 {
     public class MockDispatcher : IDispatcher
     {

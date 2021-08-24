@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class DoCommand1 : Command
     {

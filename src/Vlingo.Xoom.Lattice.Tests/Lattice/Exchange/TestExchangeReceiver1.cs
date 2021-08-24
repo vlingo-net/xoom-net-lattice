@@ -10,7 +10,7 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class TestExchangeReceiver1 : DefaultExchangeReceiver<LocalType1>
     {

@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Tests.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
     public class StepCountState : StateObject
     {

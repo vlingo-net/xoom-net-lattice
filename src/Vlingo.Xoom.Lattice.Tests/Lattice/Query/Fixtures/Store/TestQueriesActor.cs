@@ -11,7 +11,7 @@ using Vlingo.Xoom.Lattice.Query;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.State;
 
-namespace Vlingo.Tests.Lattice.Query.Fixtures.Store
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store
 {
     public class TestQueriesActor : StateStoreQueryActor<TestState>, ITestQueries
     {

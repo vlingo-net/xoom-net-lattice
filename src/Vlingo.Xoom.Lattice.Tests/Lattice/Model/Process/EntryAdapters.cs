@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
     public class DoStepOneAdapter : EntryAdapter<DoStepOne, TextEntry>
     {

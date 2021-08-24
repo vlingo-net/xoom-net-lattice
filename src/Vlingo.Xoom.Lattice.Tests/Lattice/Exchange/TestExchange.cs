@@ -12,7 +12,7 @@ using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Lattice.Exchange;
 using IMessage = Vlingo.Xoom.Common.Message.IMessage;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class TestExchange : IExchange, IMessageQueueListener
     {

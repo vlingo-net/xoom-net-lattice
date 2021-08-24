@@ -6,15 +6,15 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model.Object;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Object;
 using Vlingo.Xoom.Symbio.Store.Object.InMemory;
-using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Tests.Lattice.Model.Object
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Object
 {
     public class EmployeeEntityTest : IDisposable
     {

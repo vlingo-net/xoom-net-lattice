@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Query.Fixtures.Store
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store
 {
     public class TestState
     {

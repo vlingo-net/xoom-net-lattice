@@ -8,11 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vlingo.Tests.Lattice.Model;
-using Vlingo.Tests.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Exchange.Feeds;
+using Vlingo.Xoom.Lattice.Tests.Lattice.Model;
+using Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Journal;
@@ -21,7 +21,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Result = Vlingo.Xoom.Symbio.Store.Result;
 
-namespace Vlingo.Tests.Lattice.Exchange.Feeds
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange.Feeds
 {
     public class FeedTest : IDisposable
     {

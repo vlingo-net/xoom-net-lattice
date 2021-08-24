@@ -9,7 +9,7 @@ using System.Linq;
 using Vlingo.Xoom.Lattice.Model.Projection;
 using Xunit;
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public class MatchableProjectionsTest
     {

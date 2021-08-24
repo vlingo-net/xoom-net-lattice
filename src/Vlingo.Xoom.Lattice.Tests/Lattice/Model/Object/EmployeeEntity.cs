@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Object;
 
-namespace Vlingo.Tests.Lattice.Model.Object
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Object
 {
     public class EmployeeEntity : ObjectEntity<EmployeeState>, IEmployee
     {

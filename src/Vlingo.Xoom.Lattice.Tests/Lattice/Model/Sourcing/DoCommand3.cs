@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class DoCommand3 : Source<object>
     {

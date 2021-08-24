@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class TestExchangeMapper2 : IExchangeMapper<LocalType2, ExternalType2>
     {

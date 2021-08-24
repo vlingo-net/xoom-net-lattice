@@ -9,7 +9,7 @@ using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Process;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Tests.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
     public class FiveStepEmittingSourcedProcess : SourcedProcess<PorcessObjectState>, IFiveStepProcess
     {

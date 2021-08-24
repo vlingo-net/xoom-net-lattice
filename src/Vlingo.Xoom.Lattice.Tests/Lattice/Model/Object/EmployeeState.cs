@@ -8,7 +8,7 @@
 using System;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Tests.Lattice.Model.Object
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Object
 {
     public class EmployeeState : StateObject, IComparable<EmployeeState>
     {

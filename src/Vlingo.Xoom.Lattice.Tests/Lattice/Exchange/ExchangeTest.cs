@@ -13,7 +13,7 @@ using Vlingo.Xoom.Lattice.Exchange;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class ExchangeTest
     {

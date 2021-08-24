@@ -7,6 +7,8 @@
 
 using System;
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Lattice.Model;
@@ -15,13 +17,11 @@ using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Journal;
 using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
-using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Actors.TestKit;
 using Xunit;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public class JournalProjectionDispatcherTest : IDisposable
     {

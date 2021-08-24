@@ -6,11 +6,11 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Projection;
-using Vlingo.Xoom.Actors.TestKit;
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public class MockProjection : IProjection
     {

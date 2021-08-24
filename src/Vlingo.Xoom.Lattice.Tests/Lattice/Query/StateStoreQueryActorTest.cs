@@ -7,11 +7,10 @@
 
 using System;
 using System.Collections.Generic;
-using Vlingo.Tests.Lattice.Query.Fixtures.Store;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
-using Vlingo.Xoom.Lattice.Model.Stateful;
+using Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
@@ -19,9 +18,9 @@ using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Symbio.Store.State.InMemory;
 using Xunit;
 using Xunit.Abstractions;
-using TestState = Vlingo.Tests.Lattice.Query.Fixtures.Store.TestState;
+using TestState = Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store.TestState;
 
-namespace Vlingo.Tests.Lattice.Query
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
 {
     public class StateStoreQueryActorTest : IDisposable
     {

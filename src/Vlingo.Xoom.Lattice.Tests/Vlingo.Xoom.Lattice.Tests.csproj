@@ -7,8 +7,6 @@
         <IsPackable>false</IsPackable>
 
         <Configurations>Debug;Release;Debug With Project References</Configurations>
-
-        <RootNamespace>Vlingo.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -6,14 +6,14 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Symbio.Store.Journal;
 using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
-using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class CommandSourcedTest : IDisposable
     {

@@ -7,11 +7,12 @@
 
 using System.Collections.Generic;
 using Vlingo.Xoom.Common;
+using Vlingo.Xoom.Streams;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.State;
 
-namespace Vlingo.Tests.Lattice.Query
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
 {
     public class FailingStateStore : IStateStore
     {
@@ -42,6 +43,16 @@ namespace Vlingo.Tests.Lattice.Query
         {
             _readCount.IncrementAndGet();
             _delegate.ReadAll<TState>(bundles, interest, @object);
+        }
+
+        public ICompletes<IStream> StreamAllOf<TState>()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ICompletes<IStream> StreamSomeUsing(QueryExpression query)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void Write<TState>(string id, TState state, int stateVersion, IWriteResultInterest interest) =>

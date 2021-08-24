@@ -7,12 +7,12 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
-using Vlingo.Xoom.Actors.TestKit;
 
-namespace Vlingo.Tests.Lattice.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful
 {
     public class MockTextDispatcher : IDispatcher
     {

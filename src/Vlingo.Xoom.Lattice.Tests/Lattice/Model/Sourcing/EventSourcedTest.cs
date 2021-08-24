@@ -7,17 +7,17 @@
 
 using System;
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Lattice.Model;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Journal;
 using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
-using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Actors.TestKit;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class EventSourcedTest
     {

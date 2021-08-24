@@ -8,14 +8,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 using Vlingo.Xoom.Symbio.Store.State;
-using Vlingo.Xoom.Actors.TestKit;
 
-namespace Vlingo.Tests.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
 {
     public class MockResultInterest : IReadResultInterest, IWriteResultInterest, IConfirmDispatchedResultInterest
     {

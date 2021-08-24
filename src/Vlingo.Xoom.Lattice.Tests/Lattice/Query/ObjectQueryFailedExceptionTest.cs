@@ -11,7 +11,7 @@ using Vlingo.Xoom.Lattice.Query;
 using Vlingo.Xoom.Symbio.Store;
 using Xunit;
 
-namespace Vlingo.Tests.Lattice.Query
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
 {
     public class ObjectQueryFailedExceptionTest
     {

@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Tests.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange
 {
     public class TestExchangeAdapter1 : DefaultExchangeAdapter<LocalType1, ExternalType1, ExchangeMessage>
     {

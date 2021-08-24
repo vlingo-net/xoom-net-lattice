@@ -1,6 +1,6 @@
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Tests.Lattice.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful
 {
     public interface IEntity1
     {

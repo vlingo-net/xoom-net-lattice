@@ -8,7 +8,7 @@
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Tests.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
     public interface IFiveStepProcess
     {

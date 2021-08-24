@@ -1,7 +1,7 @@
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Tests.Lattice.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful
 {
     public class Entity1StateAdapter : StateAdapter<Entity1State, TextState>
     {

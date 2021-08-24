@@ -11,7 +11,7 @@ using System.Threading;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Stateful;
 
-namespace Vlingo.Tests.Lattice.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful
 {
     public class Entity1Actor : StatefulEntity<Entity1State>, IEntity1
     {

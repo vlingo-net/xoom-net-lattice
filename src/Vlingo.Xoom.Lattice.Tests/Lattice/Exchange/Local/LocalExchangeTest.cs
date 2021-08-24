@@ -12,7 +12,7 @@ using Vlingo.Xoom.Lattice.Exchange;
 using Vlingo.Xoom.Lattice.Exchange.Local;
 using Xunit;
 
-namespace Vlingo.Tests.Lattice.Exchange.Local
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Exchange.Local
 {
     public class LocalExchangeTest
     {

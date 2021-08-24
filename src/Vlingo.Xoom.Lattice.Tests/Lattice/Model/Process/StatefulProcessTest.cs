@@ -7,21 +7,21 @@
 
 using System;
 using System.Collections.Generic;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Lattice.Exchange;
 using Vlingo.Xoom.Lattice.Exchange.Local;
 using Vlingo.Xoom.Lattice.Model.Process;
 using Vlingo.Xoom.Lattice.Model.Stateful;
+using Vlingo.Xoom.Lattice.Tests.Lattice.Model.Stateful;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.State;
 using Vlingo.Xoom.Symbio.Store.State.InMemory;
-using Vlingo.Tests.Lattice.Model.Stateful;
-using Vlingo.Xoom.Actors;
 using Xunit;
 using Xunit.Abstractions;
 using IDispatcher = Vlingo.Xoom.Symbio.Store.Dispatch.IDispatcher;
 
-namespace Vlingo.Tests.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
     public class StatefulProcessTest : IDisposable
     {

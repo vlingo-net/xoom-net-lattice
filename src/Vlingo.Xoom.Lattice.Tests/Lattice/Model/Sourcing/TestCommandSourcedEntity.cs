@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 
-namespace Vlingo.Tests.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Sourcing
 {
     public class TestCommandSourcedEntity : CommandSourced, IEntity
     {
