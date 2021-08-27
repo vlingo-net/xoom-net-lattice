@@ -180,7 +180,7 @@ namespace Vlingo.Xoom.Lattice.Model.Projection
         /// <typeparam name="TSource">The source type</typeparam>
         /// <typeparam name="TEntry">The entry type</typeparam>
         /// <returns>Entry adapter if the instance used in construction can be casted. Otherwise throws an exception</returns>
-        protected IEntryAdapter<TSource, TEntry> EntryAdapter<TSource, TEntry>() => (IEntryAdapter<TSource, TEntry>) _entryAdapter;
+        protected IEntryAdapter EntryAdapter() => _entryAdapter;
 
         /// <summary>
         /// Answer the <typeparamref name="T"/> result of merging the <typeparamref name="T"/> typed <paramref name="previousData"/> and <paramref name="currentData"/>,

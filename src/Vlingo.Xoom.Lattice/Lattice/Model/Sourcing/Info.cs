@@ -44,15 +44,13 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
             EntryAdapterProvider = new EntryAdapterProvider();
             StateAdapterProvider = new StateAdapterProvider();
         }
-        
+
         /// <summary>
         /// Answer myself after registering the <paramref name="adapter"/>.
         /// </summary>
-        /// <param name="adapter"><see cref="IEntryAdapter{TSource,TEntry}"/> to register</param>
-        /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
-        /// <typeparam name="TEntry">The <see cref="IEntry{T}"/> extender being registered</typeparam>
+        /// <param name="adapter"><see cref="IEntryAdapter"/> to register</param>
         /// <returns><see cref="Info"/></returns>
-        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter) where TSource : ISource where TEntry : IEntry
+        public Info RegisterEntryAdapter(IEntryAdapter adapter)
         {
             EntryAdapterProvider.RegisterAdapter(adapter);
             return this;
@@ -61,12 +59,10 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         /// <summary>
         /// Answer myself after registering the <paramref name="adapter"/>.
         /// </summary>
-        /// <param name="adapter"><see cref="IEntryAdapter{TSource,TEntry}"/> to register</param>
+        /// <param name="adapter"><see cref="IEntryAdapter"/> to register</param>
         /// <param name="consumer">The consumer being registered</param>
-        /// <typeparam name="TSource">The <see cref="Source{T}"/> extender being registered</typeparam>
-        /// <typeparam name="TEntry">The <see cref="IEntry{T}"/> extender being registered</typeparam>
         /// <returns><see cref="Info"/></returns>
-        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<IEntryAdapter<TSource, TEntry>> consumer) where TSource : ISource where TEntry : IEntry
+        public Info RegisterEntryAdapter(IEntryAdapter adapter, Action<IEntryAdapter> consumer)
         {
             EntryAdapterProvider.RegisterAdapter(adapter, consumer);
             return this;

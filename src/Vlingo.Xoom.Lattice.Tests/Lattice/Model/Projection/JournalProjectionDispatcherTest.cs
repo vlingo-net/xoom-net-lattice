@@ -261,73 +261,79 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Projection
             }
         }
 
-        public class OneHappenedAdapter : EntryAdapter<OneHappened, TextEntry>
+        public class OneHappenedAdapter : EntryAdapter
         {
-            public override OneHappened FromEntry(TextEntry entry) => JsonSerialization.Deserialized<OneHappened>(entry.EntryData);
+            public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<OneHappened>(entry.EntryRawData);
 
-            public override TextEntry ToEntry(OneHappened source, Metadata metadata)
+            public override IEntry ToEntry(ISource source, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(OneHappened), 1, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(OneHappened source, int version, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(OneHappened), version, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(OneHappened source, int version, string id, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(id, typeof(OneHappened), version, serialization, metadata);
             }
+
+            public override Type SourceType { get; } = typeof(OneHappened);
         }
         
-        public class TwoHappenedAdapter : EntryAdapter<TwoHappened, TextEntry>
+        public class TwoHappenedAdapter : EntryAdapter
         {
-            public override TwoHappened FromEntry(TextEntry entry) => JsonSerialization.Deserialized<TwoHappened>(entry.EntryData);
+            public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<TwoHappened>(entry.EntryRawData);
 
-            public override TextEntry ToEntry(TwoHappened source, Metadata metadata)
+            public override IEntry ToEntry(ISource source, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(TwoHappened), 1, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(TwoHappened source, int version, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(TwoHappened), version, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(TwoHappened source, int version, string id, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(id, typeof(TwoHappened), version, serialization, metadata);
             }
+
+            public override Type SourceType { get; } = typeof(TwoHappened);
         }
         
-        public class ThreeHappenedAdapter : EntryAdapter<ThreeHappened, TextEntry>
+        public class ThreeHappenedAdapter : EntryAdapter
         {
-            public override ThreeHappened FromEntry(TextEntry entry) => JsonSerialization.Deserialized<ThreeHappened>(entry.EntryData);
+            public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<ThreeHappened>(entry.EntryRawData);
 
-            public override TextEntry ToEntry(ThreeHappened source, Metadata metadata)
+            public override IEntry ToEntry(ISource source, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(ThreeHappened), 1, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(ThreeHappened source, int version, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(typeof(ThreeHappened), version, serialization, metadata);
             }
 
-            public override TextEntry ToEntry(ThreeHappened source, int version, string id, Metadata metadata)
+            public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
             {
                 var serialization = JsonSerialization.Serialized(source);
                 return new TextEntry(id, typeof(ThreeHappened), version, serialization, metadata);
             }
+
+            public override Type SourceType { get; } = typeof(ThreeHappened);
         }
 
         public void Dispose()

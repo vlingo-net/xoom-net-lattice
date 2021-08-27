@@ -5,128 +5,139 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 {
-    public class DoStepOneAdapter : EntryAdapter<DoStepOne, TextEntry>
+    public class DoStepOneAdapter : EntryAdapter
     {
-        public override DoStepOne FromEntry(TextEntry entry) => 
+        public override ISource FromEntry(IEntry entry) => 
             JsonSerialization.Deserialized<DoStepOne>(entry.EntryRawData);
 
-        public override TextEntry ToEntry(DoStepOne source, Metadata metadata)
+        public override IEntry ToEntry(ISource source, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepOne), 1, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepOne source, int version, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepOne), version, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepOne source, int version, string id, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(id, typeof(DoStepOne), version, serialization, metadata);
         }
+
+        public override Type SourceType { get; } = typeof(DoStepOne);
     }
     
-    public class DoStepTwoAdapter : EntryAdapter<DoStepTwo, TextEntry>
+    public class DoStepTwoAdapter : EntryAdapter
     {
-        public override DoStepTwo FromEntry(TextEntry entry) => 
+        public override ISource FromEntry(IEntry entry) => 
             JsonSerialization.Deserialized<DoStepTwo>(entry.EntryRawData);
 
-        public override TextEntry ToEntry(DoStepTwo source, Metadata metadata)
+        public override IEntry ToEntry(ISource source, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepTwo), 1, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepTwo source, int version, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepTwo), version, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepTwo source, int version, string id, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(id, typeof(DoStepTwo), version, serialization, metadata);
         }
+
+        public override Type SourceType { get; } = typeof(DoStepTwo);
     }
     
-    public class DoStepThreeAdapter : EntryAdapter<DoStepThree, TextEntry>
+    public class DoStepThreeAdapter : EntryAdapter
     {
-        public override DoStepThree FromEntry(TextEntry entry) => 
+        public override ISource FromEntry(IEntry entry) => 
             JsonSerialization.Deserialized<DoStepThree>(entry.EntryRawData);
 
-        public override TextEntry ToEntry(DoStepThree source, Metadata metadata)
+        public override IEntry ToEntry(ISource source, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepThree), 1, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepThree source, int version, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepThree), version, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepThree source, int version, string id, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(id, typeof(DoStepThree), version, serialization, metadata);
         }
+
+        public override Type SourceType { get; } = typeof(DoStepThree);
     }
     
-    public class DoStepFourAdapter : EntryAdapter<DoStepFour, TextEntry>
+    public class DoStepFourAdapter : EntryAdapter
     {
-        public override DoStepFour FromEntry(TextEntry entry) => 
+        public override ISource FromEntry(IEntry entry) => 
             JsonSerialization.Deserialized<DoStepFour>(entry.EntryRawData);
 
-        public override TextEntry ToEntry(DoStepFour source, Metadata metadata)
+        public override IEntry ToEntry(ISource source, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepFour), 1, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepFour source, int version, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepFour), version, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepFour source, int version, string id, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(id, typeof(DoStepFour), version, serialization, metadata);
         }
+
+        public override Type SourceType { get; } = typeof(DoStepFour);
     }
     
-    public class DoStepFiveAdapter : EntryAdapter<DoStepFive, TextEntry>
+    public class DoStepFiveAdapter : EntryAdapter
     {
-        public override DoStepFive FromEntry(TextEntry entry) => 
+        public override ISource FromEntry(IEntry entry) => 
             JsonSerialization.Deserialized<DoStepFive>(entry.EntryRawData);
 
-        public override TextEntry ToEntry(DoStepFive source, Metadata metadata)
+        public override IEntry ToEntry(ISource source, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepFive), 1, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepFive source, int version, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(typeof(DoStepFive), version, serialization, metadata);
         }
 
-        public override TextEntry ToEntry(DoStepFive source, int version, string id, Metadata metadata)
+        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
             var serialization = JsonSerialization.Serialized(source);
             return new TextEntry(id, typeof(DoStepFive), version, serialization, metadata);
         }
+
+        public override Type SourceType { get; } = typeof(DoStepFive);
     }
 }

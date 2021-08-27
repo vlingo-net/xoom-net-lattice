@@ -11,13 +11,13 @@ using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Xoom.Lattice.Model.Process
 {
-    public class ProcessMessageTextAdapter : IEntryAdapter<ProcessMessage, TextEntry>
+    public class ProcessMessageTextAdapter : IEntryAdapter
     {
-        public ProcessMessage FromEntry(TextEntry entry)
+        public ISource FromEntry(IEntry entry)
         {
             try
             {
-                var serializedMessage = JsonSerialization.Deserialized<SerializableProcessMessage>(entry.EntryData);
+                var serializedMessage = JsonSerialization.Deserialized<SerializableProcessMessage>(entry.EntryRawData);
                 var source = JsonSerialization.Deserialized<ISource>(serializedMessage.Source);
                 return new ProcessMessage(source);
             }
@@ -27,38 +27,40 @@ namespace Vlingo.Xoom.Lattice.Model.Process
             }
         }
 
-        public TextEntry ToEntry(ProcessMessage source) => ToEntry(source, Metadata.NullMetadata());
+        public IEntry ToEntry(ISource source) => ToEntry(source, Metadata.NullMetadata());
 
-        public TextEntry ToEntry(ProcessMessage source, Metadata metadata)
+        public IEntry ToEntry(ISource source, Metadata metadata)
         {
-            var serializedMessage = new SerializableProcessMessage(source);
+            var serializedMessage = new SerializableProcessMessage((ProcessMessage) source);
             var serialization = JsonSerialization.Serialized(serializedMessage);
             return new TextEntry(typeof(ProcessMessage), 1, serialization, metadata);
         }
 
-        public TextEntry ToEntry(ProcessMessage source, int version, Metadata metadata)
+        public IEntry ToEntry(ISource source, int version, Metadata metadata)
         {
-            var serializedMessage = new SerializableProcessMessage(source);
+            var serializedMessage = new SerializableProcessMessage((ProcessMessage) source);
             var serialization = JsonSerialization.Serialized(serializedMessage);
             return new TextEntry(typeof(ProcessMessage), 1, serialization, version, metadata);
         }
 
-        public TextEntry ToEntry(ProcessMessage source, string id) => ToEntry(source, id, Metadata.NullMetadata());
+        public IEntry ToEntry(ISource source, string id) => ToEntry(source, id, Metadata.NullMetadata());
 
-        public TextEntry ToEntry(ProcessMessage source, string id, Metadata metadata)
+        public IEntry ToEntry(ISource source, string id, Metadata metadata)
         {
-            var serializedMessage = new SerializableProcessMessage(source);
+            var serializedMessage = new SerializableProcessMessage((ProcessMessage) source);
             var serialization = JsonSerialization.Serialized(serializedMessage);
             return new TextEntry(id, typeof(ProcessMessage), 1, serialization, metadata);
         }
 
-        public TextEntry ToEntry(ProcessMessage source, int version, string id, Metadata metadata)
+        public IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
         {
-            var serializedMessage = new SerializableProcessMessage(source);
+            var serializedMessage = new SerializableProcessMessage((ProcessMessage) source);
             var serialization = JsonSerialization.Serialized(serializedMessage);
             return new TextEntry(id, typeof(ProcessMessage), 1, serialization, version, metadata);
         }
-        
+
+        public Type SourceType { get; } = typeof(ProcessMessage);
+
         private sealed class SerializableProcessMessage
         {
             public string Source { get; }

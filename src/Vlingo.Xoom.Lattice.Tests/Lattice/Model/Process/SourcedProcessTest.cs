@@ -118,8 +118,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Model.Process
 
             _sourcedTypeRegistry.Register(Vlingo.Xoom.Lattice.Model.Sourcing.Info.RegisterSourced<TSourced>(_journal));
 
-            _sourcedTypeRegistry.Info<TSourced>()?
-                .RegisterEntryAdapter(new ProcessMessageTextAdapter(), 
+            _sourcedTypeRegistry.Info<TSourced>()?.RegisterEntryAdapter(new ProcessMessageTextAdapter(), 
                     adapter => entryAdapterProvider.RegisterAdapter(adapter))
                 .RegisterEntryAdapter(new DoStepOneAdapter(),
                     adapter => entryAdapterProvider.RegisterAdapter(adapter))

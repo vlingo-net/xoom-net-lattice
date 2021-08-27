@@ -327,7 +327,7 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
                 .AndThenConsume(stream =>
                 {
                     RestoreSnapshot(stream.Snapshot);
-                    RestoreFrom(_journalInfo.EntryAdapterProvider.AsSources<Source<T>, BaseEntry<T>>(stream.Entries.Cast<BaseEntry<T>>().ToList()).ToList(), stream.StreamVersion);
+                    RestoreFrom(_journalInfo.EntryAdapterProvider.AsSources<ISource, BaseEntry<T>>(stream.Entries.Cast<BaseEntry<T>>().ToList()).ToList(), stream.StreamVersion);
                     DisperseStowedMessages();
                 })
                 .OtherwiseConsume(stream => DisperseStowedMessages())
@@ -407,7 +407,7 @@ namespace Vlingo.Xoom.Lattice.Model.Sourcing
         /// </summary>
         /// <param name="stream">The <paramref name="stream"/> from which state is restored</param>
         /// <param name="currentVersion">The int to set as my currentVersion</param>
-        private void RestoreFrom(List<Source<T>> stream, int currentVersion)
+        private void RestoreFrom(List<ISource> stream, int currentVersion)
         {
             foreach (var source in stream)
             {

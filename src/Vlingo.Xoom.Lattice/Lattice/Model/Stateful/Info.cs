@@ -38,13 +38,13 @@ namespace Vlingo.Xoom.Lattice.Model.Stateful
             StateAdapterProvider = new StateAdapterProvider();
         }
         
-        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter) where TSource : ISource where TEntry : IEntry
+        public Info RegisterEntryAdapter(IEntryAdapter adapter)
         {
             EntryAdapterProvider.RegisterAdapter(adapter);
             return this;
         }
         
-        public Info RegisterEntryAdapter<TSource, TEntry>(IEntryAdapter<TSource, TEntry> adapter, Action<IEntryAdapter<TSource, TEntry>> consumer) where TSource : ISource where TEntry : IEntry
+        public Info RegisterEntryAdapter(IEntryAdapter adapter, Action<IEntryAdapter> consumer)
         {
             EntryAdapterProvider.RegisterAdapter(adapter, consumer);
             return this;
