@@ -131,7 +131,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
         public void ItStreamsEmptyStore()
         {
             var allStates = new List<TestState>();
-            var testStates = _queries.All(allStates).Await(TimeSpan.FromSeconds(15));
+            var testStates = _queries.All(allStates).Await(TimeSpan.FromMinutes(1));
         
             Assert.Empty(allStates);
             Assert.Empty(testStates);
