@@ -47,6 +47,7 @@
                 <PackageReference Include="Vlingo.Xoom.Cluster" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Symbio" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Actors" Version="$(VlingoVersion)" />
+                <PackageReference Include="Vlingo.Xoom.Streams" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Common" Version="$(VlingoVersion)" />
                 <PackageReference Include="Vlingo.Xoom.Wire" Version="$(VlingoVersion)" />
             </ItemGroup>
