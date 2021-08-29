@@ -30,18 +30,6 @@
         <None Include="..\..\vlingo-64x64.png" Pack="true" PackagePath="\" />
         <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Lattice\Exchange\Feeds" />
-      <Folder Include="Lattice\Exchange\Local" />
-      <Folder Include="Lattice\Grid\Application" />
-      <Folder Include="Lattice\Grid\Hashring" />
-      <Folder Include="Lattice\Model\Object" />
-      <Folder Include="Lattice\Model\Process" />
-      <Folder Include="Lattice\Model\Projection" />
-      <Folder Include="Lattice\Model\Sourcing" />
-      <Folder Include="Lattice\Model\Stateful" />
-      <Folder Include="Lattice\Query" />
-    </ItemGroup>
     <Choose>
         <When Condition="'$(Configuration)' == 'Debug With Project References'">
             <ItemGroup>
