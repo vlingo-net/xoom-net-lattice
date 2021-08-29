@@ -10,7 +10,7 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Identity;
 using Vlingo.Xoom.UUID;
 
-namespace Vlingo.Actors
+namespace Vlingo.Xoom.Lattice.Grid
 {
     public class GridAddressFactory : GuidAddressFactory
     {

@@ -7,13 +7,13 @@
 
 using System;
 using System.Threading.Tasks;
+using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Grid.Application;
 using Vlingo.Xoom.Lattice.Grid.Hashring;
-using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Actors
+namespace Vlingo.Xoom.Lattice.Grid
 {
     public class GridMailbox : IMailbox
     {

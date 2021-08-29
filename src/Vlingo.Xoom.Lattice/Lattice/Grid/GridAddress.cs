@@ -8,7 +8,7 @@
 using System;
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Actors
+namespace Vlingo.Xoom.Lattice.Grid
 {
     [Serializable]
     public class GridAddress : GuidAddress

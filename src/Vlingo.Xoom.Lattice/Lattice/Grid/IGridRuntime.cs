@@ -7,7 +7,7 @@
 
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Actors
+namespace Vlingo.Xoom.Lattice.Grid
 {
     public interface IGridRuntime
     {
