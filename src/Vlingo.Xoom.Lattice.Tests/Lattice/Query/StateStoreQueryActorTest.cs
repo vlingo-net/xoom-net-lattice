@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
@@ -28,7 +27,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
     {
         private readonly World _world;
         private readonly FailingStateStore _stateStore;
-        private ITestQueries _queries;
+        private readonly ITestQueries _queries;
 
         [Fact]
         public void ItFindsStateByIdAndType()
@@ -231,12 +230,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
             _queries = _world.ActorFor<ITestQueries>(() => new TestQueriesActor(_stateStore));
         }
 
-        public void Dispose()
-        {
-            _world?.Terminate();
-            _queries = null;
-            Thread.Sleep(100);
-        }
+        public void Dispose() => _world?.Terminate();
 
         private void GivenStateReadFailures(int failures) => _stateStore.ExpectReadFailures(failures);
 
