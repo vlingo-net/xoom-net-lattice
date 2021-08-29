@@ -22,15 +22,15 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store
         
         public string Name { get; set; }
 
-        private TestState(string name)
+        private TestState(string name, string id)
         {
             Name = name;
-            Id = "1";
+            Id = id;
         }
 
-        public static TestState Named(string name) => new TestState(name);
+        public static TestState NamedWithId(string name, string id) => new TestState(name, id);
 
-        public static TestState Missing() => new TestState(MISSING);
+        public static TestState Missing() => new TestState(MISSING, "-1");
     }
     
     public class TestStateAdapter : StateAdapter<TestState, TextState>

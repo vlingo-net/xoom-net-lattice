@@ -47,12 +47,14 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
 
         public ICompletes<IStream> StreamAllOf<TState>()
         {
-            throw new System.NotImplementedException();
+            _readCount.IncrementAndGet();
+            return _delegate.StreamAllOf<TState>();
         }
 
         public ICompletes<IStream> StreamSomeUsing(QueryExpression query)
         {
-            throw new System.NotImplementedException();
+            _readCount.IncrementAndGet();
+            return _delegate.StreamSomeUsing(query);
         }
 
         public void Write<TState>(string id, TState state, int stateVersion, IWriteResultInterest interest) =>
