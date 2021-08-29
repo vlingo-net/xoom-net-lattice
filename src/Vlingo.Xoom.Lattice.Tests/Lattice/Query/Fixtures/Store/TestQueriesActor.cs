@@ -35,6 +35,6 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query.Fixtures.Store
 
         public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState, int retryInterval, int retryCount) => QueryObjectStateFor(id, notFoundState, retryInterval, retryCount);
         
-        public ICompletes<IEnumerable<TestState>> All(IEnumerable<TestState> all) => AllOf(all);
+        public ICompletes<IEnumerable<TestState>> All(List<TestState> all) => AllOf(all);
     }
 }

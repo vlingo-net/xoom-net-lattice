@@ -118,9 +118,9 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
             var allStates = new List<TestState>();
             var testStates = _queries.All(allStates).Await(TimeSpan.FromMilliseconds(10000)).ToList();
         
-            //Assert.Equal(4, allStates.Count);
+            Assert.Equal(4, allStates.Count);
             Assert.Equal(4, testStates.Count);
-            //Assert.Equal(allStates, testStates);
+            Assert.Equal(allStates, testStates);
             Assert.Equal("Foo", testStates[0].Name);
             Assert.Equal("Bar", testStates[1].Name);
             Assert.Equal("Baz", testStates[2].Name);
@@ -131,7 +131,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
         public void ItStreamsEmptyStore()
         {
             var allStates = new List<TestState>();
-            var testStates = _queries.All(allStates).Await(TimeSpan.FromMilliseconds(1000));
+            var testStates = _queries.All(allStates).Await(TimeSpan.FromMilliseconds(10000));
         
             Assert.Empty(allStates);
             Assert.Empty(testStates);

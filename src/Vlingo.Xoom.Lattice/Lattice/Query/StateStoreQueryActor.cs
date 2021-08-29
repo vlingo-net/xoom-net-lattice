@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Streams.Sink;
@@ -117,7 +116,7 @@ namespace Vlingo.Xoom.Lattice.Query
             return (ICompletes<ObjectState<T>>) Completes();
         }
         
-        protected ICompletes<IEnumerable<TResult>> AllOf<TResult>(IEnumerable<TResult> all) => QueryAllOf(all.ToList());
+        protected ICompletes<IEnumerable<TResult>> AllOf<TResult>(List<TResult> all) => QueryAllOf(all);
 
         /// <summary>
         /// Gets a <see cref="ICompletes{TResult}"/> of the eventual result of querying
