@@ -30,4 +30,15 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Lattice\Exchange\Feeds" />
+      <Folder Include="Lattice\Exchange\Local" />
+      <Folder Include="Lattice\Model\Object" />
+      <Folder Include="Lattice\Model\Process" />
+      <Folder Include="Lattice\Model\Projection" />
+      <Folder Include="Lattice\Model\Sourcing" />
+      <Folder Include="Lattice\Model\Stateful" />
+      <Folder Include="Lattice\Query\Fixtures\Store" />
+    </ItemGroup>
+
 </Project>
