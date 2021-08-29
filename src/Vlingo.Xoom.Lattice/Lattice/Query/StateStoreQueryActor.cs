@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
+using Vlingo.Xoom.Streams.Sink;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.State;
@@ -251,15 +252,14 @@ namespace Vlingo.Xoom.Lattice.Query
         
         private ICompletes<IEnumerable<TResult>> QueryAllOf<TResult>(List<TResult> all)
         {
-            Action<StateBundle> populator = state => all.Add((TResult) state.Object!);
+            Action<TResult> populator = state => all.Add(state);
 
             var completes = CompletesEventually();
             Action<IEnumerable<TResult>> collector = collected => completes.With(collected);
 
-            // final TerminalOperationConsumerSink sink =
-            //     new TerminalOperationConsumerSink(populator, all, collector);
+            var sink = new TerminalOperationConsumerSink<TResult, List<TResult>>(populator, all, collector);
 
-            //_stateStore.ReadAll<TResult>( .andFinallyConsume(stream -> stream.flowInto(sink));
+            _stateStore.StreamAllOf<TResult>().AndThenConsume(stream => stream.FlowInto(sink));
 
             return (ICompletes<IEnumerable<TResult>>)Completes();
         }
