@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
@@ -27,7 +28,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
     {
         private readonly World _world;
         private readonly FailingStateStore _stateStore;
-        private readonly ITestQueries _queries;
+        private ITestQueries _queries;
 
         [Fact]
         public void ItFindsStateByIdAndType()
@@ -131,7 +132,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
         public void ItStreamsEmptyStore()
         {
             var allStates = new List<TestState>();
-            var testStates = _queries.All(allStates).Await(TimeSpan.FromMinutes(1));
+            var testStates = _queries.All(allStates).Await(TimeSpan.FromSeconds(10));
         
             Assert.Empty(allStates);
             Assert.Empty(testStates);
@@ -232,10 +233,9 @@ namespace Vlingo.Xoom.Lattice.Tests.Lattice.Query
 
         public void Dispose()
         {
-            if (_world != null)
-            {
-                _world.Terminate();
-            }
+            _world?.Terminate();
+            _queries = null;
+            Thread.Sleep(100);
         }
 
         private void GivenStateReadFailures(int failures) => _stateStore.ExpectReadFailures(failures);
