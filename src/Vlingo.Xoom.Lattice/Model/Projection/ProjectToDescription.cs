@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Symbio;
 
 namespace Vlingo.Xoom.Lattice.Model.Projection
 {

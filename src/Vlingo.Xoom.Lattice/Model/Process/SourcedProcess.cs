@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Common;
-using Vlingo.Xoom.Lattice.Exchange;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Journal;

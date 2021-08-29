@@ -10,12 +10,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Vlingo.Xoom.Actors;
+using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Journal;
-using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Actors.TestKit;
 
 namespace Vlingo.Xoom.Lattice.Model.Sourcing
 {
