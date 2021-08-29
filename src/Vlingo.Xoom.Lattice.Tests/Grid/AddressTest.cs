@@ -12,7 +12,7 @@ using Vlingo.Xoom.Lattice.Grid;
 using Vlingo.Xoom.UUID;
 using Xunit;
 
-namespace Vlingo.Xoom.Lattice.Tests.Actors
+namespace Vlingo.Xoom.Lattice.Tests.Grid
 {
     public class GridAddressTest
     {
