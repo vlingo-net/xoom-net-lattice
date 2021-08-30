@@ -100,10 +100,40 @@ namespace Vlingo.Xoom.Lattice.Util
             Atomic(() => GetDelegate().Enqueue(new WeakReference<T>(t)));
         }
 
+        public void EnqueueAll(IEnumerable<T> values)
+        {
+            foreach (var value in values)
+            {
+                Enqueue(value);
+            }
+        }
+
+        public T? Poll()
+        {
+            try
+            {
+                return Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+        
         public T Dequeue() => Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
 
-        public T Peek() => Atomic(() => ExpungeStaleEntryOnSupply(_delegate.Peek));
-        
+        public T? Peek()
+        {
+            try
+            {
+                return Atomic(() => ExpungeStaleEntryOnSupply(_delegate.Peek));
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
         public IEnumerator<T> GetEnumerator() => new ExpungingEnumerator(this, _delegate.GetEnumerator());
 
         private class ExpungingEnumerator : IEnumerator<T>
