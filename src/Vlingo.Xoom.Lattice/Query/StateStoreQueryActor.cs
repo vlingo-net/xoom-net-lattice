@@ -251,7 +251,7 @@ namespace Vlingo.Xoom.Lattice.Query
         
         private ICompletes<IEnumerable<TResult>> QueryAllOf<TResult>(List<TResult> all)
         {
-            Action<TResult> populator = state => all.Add(state);
+            Action<TResult> populator = all.Add;
 
             var completes = CompletesEventually();
             Action<IEnumerable<TResult>> collector = collected => completes.With(collected);
