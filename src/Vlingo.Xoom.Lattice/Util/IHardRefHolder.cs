@@ -5,7 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Tests.Util
+namespace Vlingo.Xoom.Lattice.Util
 {
     public interface IHardRefHolder
     {

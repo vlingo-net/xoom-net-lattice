@@ -8,10 +8,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Vlingo.Xoom.Lattice.Util;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Xoom.Lattice.Tests.Util
+namespace Vlingo.Xoom.Lattice.Util
 {
     public class OutBuffers
     {
