@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model;
 
@@ -24,7 +25,7 @@ namespace Vlingo.Xoom.Lattice.Router
 
         public void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command
         {
-            var partition = command.GetHashCode() % _totalRoutees;
+            var partition = Math.Abs(command.GetHashCode()) % _totalRoutees;
             _currentRoutee = RouteeAt(partition);
             DispatchCommand((router, cmd) => router.Route(cmd), command);
         }

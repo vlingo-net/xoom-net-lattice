@@ -187,6 +187,17 @@ namespace Vlingo.Xoom.Lattice.Router
             return (RoutableCommand<TNewProtocol, TNewCommand, TNewAnswer>)(object) this;
         }
         
+        public RoutableCommand<TProtocol, TCommand, TAnswer> Answers(ICompletes<TAnswer> answer)
+        {
+            if (answer == null)
+            {
+                throw new ArgumentNullException(nameof(answer), "The answer cannot be null");
+            }
+            
+            Answer = answer;
+            return this;
+        }
+        
         /// <summary>
         /// Gets myself after assigning my <paramref name="handler"/>.
         /// </summary>
