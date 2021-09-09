@@ -218,7 +218,7 @@ namespace Vlingo.Xoom.Lattice.Router
         {
             Check();
 
-            var actorAddress = stage.AddressFactory.From(_address, _name);
+            var actorAddress = stage.AddressFactory.From(_address!, _name);
 
             stage.ActorOf<TProtocol>(actorAddress)
                 .AndThenConsume(_timeout, actor =>
