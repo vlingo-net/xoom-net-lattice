@@ -16,66 +16,66 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
     [Serializable]
     public class Deliver<T> : IMessage
     {
-        public IAddress address;
-        public Definition.SerializationProxy<T> definition;
-        public Expression<Action<T>> consumer;
-        public Guid answerCorrelationId;
-        public string representation;
-        
+        public IAddress Address { get; }
+        public Definition.SerializationProxy<T> Definition { get; }
+        public Expression<Action<T>> Consumer { get; }
+        public Guid AnswerCorrelationId { get; }
+        public string Representation { get; }
+
         public static Func<Actors.IMessage, Deliver<T>> From(Action<Guid, UnAckMessage<T>> correlation, Id receiver)
         {
             return message =>
             {
-                // var __message = (LocalMessage<T>) message;
-                // var returns = Optional.OfNullable(__message.Returns());
-                //
-                // var answerCorrelationId = returns
-                //     .Map(_return => Guid.NewGuid())
-                //     .OrElse(Guid.Empty);
-                //
-                // var deliver = new Deliver(
-                //     __message.Protocol,
-                //     __message.Actor.Address,
-                //     Definition.SerializationProxy<T>.From(__message.Actor.Definition),
-                //     __message.Consumer(),
-                //     answerCorrelationId,
-                //     __message.Representation);
-                //
-                // if (answerCorrelationId != null)
-                // {
-                //     correlation(answerCorrelationId, new UnAckMessage(receiver, returns.get(), deliver));
-                // }
+                var localMessage = (LocalMessage<T>) message;
+                var returns = Optional.OfNullable(localMessage.Completes);
+                
+                var answerCorrelationId = returns
+                    .Map(completes => Guid.NewGuid())
+                    .OrElse(Guid.Empty);
+                
+                var deliver = new Deliver<T>(
+                    localMessage.Protocol,
+                    localMessage.Actor.Address,
+                    Vlingo.Xoom.Actors.Definition.SerializationProxy<T>.From(localMessage.Actor.Definition),
+                    localMessage.SerializableConsumer!,
+                    answerCorrelationId,
+                    localMessage.Representation);
+                
+                if (answerCorrelationId != null)
+                {
+                    correlation(answerCorrelationId, new UnAckMessage<T>(receiver, (ICompletes<T>) returns.Get(), deliver));
+                }
 
-                // return deliver;
-
-                return null; // TODO: replace with concrete implementation (commented above)
+                return deliver;
             };
         }
         
         public Deliver(
+            Type protocol,
             IAddress address,
             Definition.SerializationProxy<T> definition,
             Expression<Action<T>> consumer,
-            string representation) : this(address, definition, consumer, Guid.Empty, representation)
+            string representation) : this(protocol, address, definition, consumer, Guid.Empty, representation)
         {
         }
 
         public Deliver(
+            Type protocol,
             IAddress address,
             Definition.SerializationProxy<T> definition,
             Expression<Action<T>> consumer,
             Guid answerCorrelationId,
             string representation) {
-            this.address = address;
-            this.definition = definition;
-            this.consumer = consumer;
-            this.answerCorrelationId = answerCorrelationId;
-            this.representation = representation;
+            Address = address;
+            Definition = definition;
+            Consumer = consumer;
+            AnswerCorrelationId = answerCorrelationId;
+            Representation = representation;
         }
         
         public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
 
         public override string ToString() =>
-            $"Deliver(protocol='{typeof(T).Name}', address='{address}', definitionProxy='{definition}', consumer='{consumer}', representation='{representation}')";
+            $"Deliver(protocol='{typeof(T).Name}', address='{Address}', definitionProxy='{Definition}', consumer='{Consumer}', representation='{Representation}')";
     }
 }

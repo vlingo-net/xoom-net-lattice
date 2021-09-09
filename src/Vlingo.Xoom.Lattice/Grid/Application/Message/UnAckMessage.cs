@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Wire.Nodes;
 
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
@@ -16,13 +17,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
     public class UnAckMessage<T>
     {
         public Id Receiver { get; }
-        //public Returns<T> Returns { get; }
+        public ICompletes<T> Completes { get; }
         public Deliver<T> Message { get; }
 
-        public UnAckMessage(Id receiver/*, Returns<T> returns*/, Deliver<T> message)
+        public UnAckMessage(Id receiver, ICompletes<T> completes, Deliver<T> message)
         {
             Receiver = receiver;
-            //Returns = returns;
+            Completes = completes;
             Message = message;
         }
     }
