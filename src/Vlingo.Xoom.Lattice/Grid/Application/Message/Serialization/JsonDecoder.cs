@@ -5,10 +5,10 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization
 {
-    public interface IDecoder
+    public class JsonDecoder
     {
-        TMessage Decode<TMessage>(byte[] bytes) where TMessage : IMessage;
+        
     }
 }
