@@ -9,6 +9,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 {
     public interface IQuorumObserver
     {
-        
+        void QuorumAchieved();
+        void QuorumLost();
     }
 }
