@@ -5,10 +5,15 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using Vlingo.Xoom.Wire.Message;
+using Vlingo.Xoom.Wire.Nodes;
+
 namespace Vlingo.Xoom.Lattice.Grid.Application
 {
     public interface IApplicationMessageHandler
     {
-        
+        void Handle(RawMessage message);
+
+        void InformNodeIsHealthy(Id id, bool isHealthy);
     }
 }
