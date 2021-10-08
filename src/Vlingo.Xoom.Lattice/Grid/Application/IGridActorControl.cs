@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Grid.Application.Message;
+using Vlingo.Xoom.Wire.Fdx.Outbound;
 using Vlingo.Xoom.Wire.Nodes;
 using IMessage = Vlingo.Xoom.Lattice.Grid.Application.Message.IMessage;
 
@@ -40,6 +41,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             IAddress address,
             object snapshot,
             IEnumerable<IMessage> pending);
+        
+        void InformNodeIsHealthy(Id id, bool isHealthy);
     }
 
     public interface IInbound : IGridActorControl
@@ -48,5 +51,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 
     public interface IOutbound : IGridActorControl
     {
+        void UseStream(IApplicationOutboundStream outbound);
     }
 }
