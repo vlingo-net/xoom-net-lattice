@@ -14,7 +14,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
     /// This class represents an unacknowledged message which has been sent to recipient.
     /// </summary>
     /// <typeparam name="T">The type of the message.</typeparam>
-    public class UnAckMessage<T>
+    public class UnAckMessage<T> : IMessage
     {
         public Id Receiver { get; }
         public ICompletes<T> Completes { get; }
@@ -25,6 +25,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             Receiver = receiver;
             Completes = completes;
             Message = message;
+        }
+
+        public void Accept(Id receiver, Id sender, IVisitor visitor)
+        {
         }
     }
 }
