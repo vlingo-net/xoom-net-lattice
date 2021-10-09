@@ -25,8 +25,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization
             NullValueHandling = NullValueHandling.Ignore
         };
         
-        public TMessage Decode<TMessage>(byte[] bytes) where TMessage : IMessage =>
-            JsonSerialization.Deserialized<TMessage>(Encoding.UTF8.GetString(bytes), _settings);
+        public object? Decode(byte[] bytes) =>
+            JsonSerialization.Deserialized(Encoding.UTF8.GetString(bytes), _settings);
     }
     
     public class MessageConverter : JsonConverter<LambdaExpression>

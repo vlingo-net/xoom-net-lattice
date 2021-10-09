@@ -9,6 +9,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     public interface IDecoder
     {
-        TMessage Decode<TMessage>(byte[] bytes) where TMessage : IMessage;
+        object? Decode(byte[] bytes);
     }
 }

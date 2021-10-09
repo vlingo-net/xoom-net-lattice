@@ -17,7 +17,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization
         private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
             Converters = new List<JsonConverter> { new MessageConverter() },
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.Objects,
             Formatting = Formatting.Indented,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };

@@ -29,7 +29,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(answer);
 
-            var decoded = decoder.Decode<Answer<int>>(encoded);
+            var decoded = (Answer<int>) decoder.Decode(encoded);
             
             Assert.Equal(answer.CorrelationId, decoded.CorrelationId);
             Assert.Equal(answer.Result, decoded.Result);
@@ -45,7 +45,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(answer);
 
-            var decoded = decoder.Decode<Answer<int>>(encoded);
+            var decoded = (Answer<int>)decoder.Decode(encoded);
             
             Assert.Equal(answer.CorrelationId, decoded.CorrelationId);
             Assert.Equal(answer.Error.Message, decoded.Error.Message);
@@ -69,7 +69,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(deliver);
 
-            var decoded = decoder.Decode<Deliver<ISimpleParametersInterface>>(encoded);
+            var decoded = (Deliver<ISimpleParametersInterface>) decoder.Decode(encoded);
             
             Assert.Equal(deliver.Address, decoded.Address);
             Assert.Equal(deliver.Representation, decoded.Representation);
@@ -87,7 +87,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(forward);
 
-            var decoded = decoder.Decode<Forward>(encoded);
+            var decoded = (Forward) decoder.Decode(encoded);
 
             var decodedAnswer = (Answer<int>)decoded.Message;
             
@@ -115,7 +115,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(forward);
 
-            var decoded = decoder.Decode<Forward>(encoded);
+            var decoded = (Forward) decoder.Decode(encoded);
 
             var decodedDeliver = (Deliver<ISimpleParametersInterface>)decoded.Message;
             
@@ -162,7 +162,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(relocate);
 
-            var decoded = decoder.Decode<Relocate<ISimpleParametersInterface>>(encoded);
+            var decoded = (Relocate<ISimpleParametersInterface>)decoder.Decode(encoded);
 
             Assert.Equal(relocate.Address, decoded.Address);
             Assert.Equal(relocate.Definition, decoded.Definition);
@@ -192,7 +192,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(start);
 
-            var decoded = decoder.Decode<Start<ISimpleParametersInterface>>(encoded);
+            var decoded = (Start<ISimpleParametersInterface>)decoder.Decode(encoded);
 
             Assert.Equal(start.Address, decoded.Address);
             Assert.Equal(start.Definition, decoded.Definition);
@@ -217,7 +217,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var encoded = encoder.Encode(unack);
 
-            var decoded = decoder.Decode<UnAckMessage<ISimpleParametersInterface>>(encoded);
+            var decoded = (UnAckMessage<ISimpleParametersInterface>) decoder.Decode(encoded);
 
             var decodedDeliver = decoded.Message;
             
