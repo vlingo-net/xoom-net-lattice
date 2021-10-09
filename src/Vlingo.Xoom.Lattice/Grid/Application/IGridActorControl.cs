@@ -24,7 +24,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         void Deliver<T>(
                 Id recipient,
                 Id sender,
-                ICompletes<T> returns,
+                ICompletes<T>? returns,
                 IAddress address,
                 Definition.SerializationProxy<T> definitionProxy,
                 Expression<Action<T>> consumer,
@@ -40,7 +40,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             Definition.SerializationProxy<T> definitionProxy,
             IAddress address,
             object snapshot,
-            IEnumerable<IMessage> pending);
+            IEnumerable<Vlingo.Xoom.Actors.IMessage> pending);
         
         void InformNodeIsHealthy(Id id, bool isHealthy);
     }
