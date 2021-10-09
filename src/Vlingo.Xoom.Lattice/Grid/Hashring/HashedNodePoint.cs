@@ -5,9 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Xoom.Lattice.Grid.Hashring;
-
-namespace Vlingo.Xoom.Lattice.Grid.Cache
+namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
     public abstract class HashedNodePoint<T> : HashedIdentity
     {
