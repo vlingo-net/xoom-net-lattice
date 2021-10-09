@@ -16,6 +16,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
     [Serializable]
     public class Deliver<T> : IMessage
     {
+        public Type Protocol { get; }
         public IAddress Address { get; }
         public Definition.SerializationProxy<T> Definition { get; }
         public Expression<Action<T>> Consumer { get; }
@@ -65,7 +66,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             Definition.SerializationProxy<T> definition,
             Expression<Action<T>> consumer,
             Guid answerCorrelationId,
-            string representation) {
+            string representation)
+        {
+            Protocol = protocol;
             Address = address;
             Definition = definition;
             Consumer = consumer;

@@ -65,10 +65,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             {
                 var message = (IMessage) _decoder.Decode(raw.AsBinaryMessage)!;
                 var sender = Id.Of(raw.Header().NodeId);
-                _logger.Debug("Buffering message {} from {}", message, sender);
+                _logger.Debug($"Buffering message {message} from {sender}");
                 ThreadStart runnable = () =>
                 {
-                    _logger.Debug("Handling message {} from {}", message, sender);
+                    _logger.Debug($"Handling message {message} from {sender}");
                     message.Accept(_localNode, sender, _visitor);
                 };
 
@@ -113,7 +113,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
                 return;
             }
             
-            _logger.Debug("Disbursing {} buffered messages", _buffer.Count);
+            _logger.Debug($"Disbursing {_buffer.Count} buffered messages");
             
             ThreadStart? next;
             do
