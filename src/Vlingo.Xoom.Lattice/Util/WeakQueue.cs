@@ -136,6 +136,8 @@ namespace Vlingo.Xoom.Lattice.Util
 
         public IEnumerator<T> GetEnumerator() => new ExpungingEnumerator(this, _delegate.GetEnumerator());
 
+        public int Count => _delegate.Count;
+
         private class ExpungingEnumerator : IEnumerator<T>
         {
             private readonly WeakQueue<T> _queue;
