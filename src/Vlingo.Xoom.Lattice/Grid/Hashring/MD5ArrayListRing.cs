@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
