@@ -29,6 +29,9 @@
         <None Include="..\..\vlingo-64x64.png" Pack="true" PackagePath="\" />
         <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="MurmurHash-net-core" Version="1.0.0" />
+    </ItemGroup>
     <Choose>
         <When Condition="'$(Configuration)' == 'Debug With Project References'">
             <ItemGroup>
