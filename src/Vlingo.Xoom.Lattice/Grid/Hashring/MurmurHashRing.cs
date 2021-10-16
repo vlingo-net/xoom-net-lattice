@@ -8,20 +8,21 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using Murmur;
 
 namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
-    public abstract class MD5HashRing<T> : IHashRing<T>
+    public abstract class MurmurHashRing<T> : IHashRing<T>
     {
         protected readonly Func<int, T, HashedNodePoint<T>> Factory;
-        protected readonly MD5 Hasher;
+        protected readonly HashAlgorithm Hasher;
         protected int PointsPerNode;
 
-        public MD5HashRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory)
+        public MurmurHashRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory, uint seed)
         {
             PointsPerNode = pointsPerNode;
             Factory = factory;
-            Hasher = MD5.Create();
+            Hasher = MurmurHash.Create32(seed);
         }
 
         protected int Hashed(object id)
