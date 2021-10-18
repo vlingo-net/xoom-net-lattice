@@ -10,11 +10,12 @@ using System.Collections.Generic;
 
 namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
-    public class MD5ArrayListRing<T> : MD5HashRing<T>
+    public class MurmurSortedMapHashRing<T> : MurmurHashRing<T>
     {
-        private List<HashedNodePoint<T>> _hashedNodePoints;
+        private readonly List<HashedNodePoint<T>> _hashedNodePoints;
+        private static uint DefaultSeed = 31;
         
-        public MD5ArrayListRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory) : base(pointsPerNode, factory) => 
+        public MurmurSortedMapHashRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory) : base(pointsPerNode, factory, DefaultSeed) => 
             _hashedNodePoints = new List<HashedNodePoint<T>>();
 
         public override void Dump()
