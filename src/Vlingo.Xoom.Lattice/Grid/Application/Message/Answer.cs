@@ -6,7 +6,6 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using Vlingo.Xoom.Wire.Nodes;
 
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
@@ -32,8 +31,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             Error = error;
         }
             
-        public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
-
         public override string ToString() => $"Answer(correlationId='{CorrelationId}', result='{Result}', error='{Error}')";
     }
 }
