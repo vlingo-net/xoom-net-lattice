@@ -14,37 +14,36 @@ using Vlingo.Xoom.Wire.Nodes;
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     [Serializable]
-    public class Deliver<T> : IMessage
+    public class Deliver : IMessage
     {
         public Type Protocol { get; }
         public IAddress Address { get; }
-        public Definition.SerializationProxy<T> Definition { get; }
-        public Expression<Action<T>> Consumer { get; }
+        public Definition.SerializationProxy Definition { get; }
+        public LambdaExpression Consumer { get; }
         public Guid AnswerCorrelationId { get; }
         public string Representation { get; }
 
-        public static Func<Actors.IMessage, Deliver<T>> From(Action<Guid, UnAckMessage<T>> correlation, Id receiver)
+        public static Func<Actors.IMessage, Deliver> From(Action<Guid, UnAckMessage> correlation, Id receiver)
         {
             return message =>
             {
-                var localMessage = (LocalMessage<T>) message;
-                var returns = Optional.OfNullable(localMessage.Completes);
+                var returns = Optional.OfNullable(message.Completes);
                 
                 var answerCorrelationId = returns
                     .Map(completes => Guid.NewGuid())
                     .OrElse(Guid.Empty);
                 
-                var deliver = new Deliver<T>(
-                    localMessage.Protocol,
-                    localMessage.Actor.Address,
-                    Vlingo.Xoom.Actors.Definition.SerializationProxy<T>.From(localMessage.Actor.Definition),
-                    localMessage.SerializableConsumer!,
+                var deliver = new Deliver(
+                    message.Protocol,
+                    message.Actor.Address,
+                    Vlingo.Xoom.Actors.Definition.SerializationProxy.From(message.Actor.Definition),
+                    message.SerializableConsumer!,
                     answerCorrelationId,
-                    localMessage.Representation);
+                    message.Representation);
                 
                 if (answerCorrelationId != null)
                 {
-                    correlation(answerCorrelationId, new UnAckMessage<T>(receiver, (ICompletes<T>) returns.Get(), deliver));
+                    correlation(answerCorrelationId, new UnAckMessage(message.Protocol, receiver, returns.Get(), deliver));
                 }
 
                 return deliver;
@@ -54,8 +53,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         public Deliver(
             Type protocol,
             IAddress address,
-            Definition.SerializationProxy<T> definition,
-            Expression<Action<T>> consumer,
+            Definition.SerializationProxy definition,
+            LambdaExpression consumer,
             string representation) : this(protocol, address, definition, consumer, Guid.Empty, representation)
         {
         }
@@ -63,8 +62,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         public Deliver(
             Type protocol,
             IAddress address,
-            Definition.SerializationProxy<T> definition,
-            Expression<Action<T>> consumer,
+            Definition.SerializationProxy definition,
+            LambdaExpression consumer,
             Guid answerCorrelationId,
             string representation)
         {
@@ -76,9 +75,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             Representation = representation;
         }
         
-        public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
-
         public override string ToString() =>
-            $"Deliver(protocol='{typeof(T).Name}', address='{Address}', definitionProxy='{Definition}', consumer='{Consumer}', representation='{Representation}')";
+            $"Deliver(protocol='{Protocol.Name}', address='{Address}', definitionProxy='{Definition}', consumer='{Consumer}', representation='{Representation}')";
     }
 }
