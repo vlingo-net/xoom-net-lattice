@@ -8,28 +8,27 @@
 using System;
 using System.Collections.Generic;
 using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Wire.Nodes;
 
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     [Serializable]
-    public class Relocate<T> : IMessage
+    public class Relocate : IMessage
     {
+        public Type Protocol { get; }
         public IAddress Address { get; }
-        public Definition.SerializationProxy<T> Definition { get; }
+        public Definition.SerializationProxy Definition { get; }
         public object Snapshot { get; }
-        public List<Deliver<T>> Pending { get; }
+        public List<Deliver> Pending { get; }
 
-        public Relocate(IAddress address, Definition.SerializationProxy<T> definition, object snapshot, List<Deliver<T>> pending)
+        public Relocate(Type protocol, IAddress address, Definition.SerializationProxy definition, object snapshot, List<Deliver> pending)
         {
+            Protocol = protocol;
             Address = address;
             Definition = definition;
             Snapshot = snapshot;
             Pending = pending;
         }
         
-        public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
-
         public override string ToString() =>
             $"Relocate(address='{Address}', definitionProxy='{Definition}', snapshot='{Snapshot}', pending='{Pending}')";
     }
