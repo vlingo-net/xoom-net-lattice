@@ -22,8 +22,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             Message = message;
         }
         
-        public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
-
         public override string ToString() => $"Forward(originalSender='{OriginalSender}', message='{Message}')";
     }
 }
