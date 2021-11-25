@@ -5,12 +5,9 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-using Vlingo.Xoom.Wire.Nodes;
-
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     public interface IMessage
     {
-        void Accept(Id receiver, Id sender, IVisitor visitor);
     }
 }
