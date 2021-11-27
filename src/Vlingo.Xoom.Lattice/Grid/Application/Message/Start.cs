@@ -7,24 +7,23 @@
 
 using System;
 using Vlingo.Xoom.Actors;
-using Vlingo.Xoom.Wire.Nodes;
 
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     [Serializable]
-    public class Start<T> : IMessage
+    public class Start : IMessage
     {
+        public Type Protocol { get; }
         public IAddress Address { get; }
-        public Definition.SerializationProxy<T> Definition { get; }
+        public Definition.SerializationProxy Definition { get; }
 
-        public Start(IAddress address, Definition.SerializationProxy<T> definition)
+        public Start(Type protocol, IAddress address, Definition.SerializationProxy definition)
         {
+            Protocol = protocol;
             Address = address;
             Definition = definition;
         }
         
-        public void Accept(Id receiver, Id sender, IVisitor visitor) => visitor.Visit(receiver, sender, this);
-
-        public override string ToString() => $"Start(protocol='{typeof(T).Name}', address='{Address}', definition='{Definition}')";
+        public override string ToString() => $"Start(protocol='{Protocol.Name}', address='{Address}', definition='{Definition}')";
     }
 }
