@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Wire.Nodes;
 
@@ -13,22 +14,19 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
     /// <summary>
     /// This class represents an unacknowledged message which has been sent to recipient.
     /// </summary>
-    /// <typeparam name="T">The type of the message.</typeparam>
-    public class UnAckMessage<T> : IMessage
+    public class UnAckMessage : IMessage
     {
+        public Type Protocol { get; }
         public Id Receiver { get; }
-        public ICompletes<T> Completes { get; }
-        public Deliver<T> Message { get; }
+        public ICompletes Completes { get; }
+        public Deliver Message { get; }
 
-        public UnAckMessage(Id receiver, ICompletes<T> completes, Deliver<T> message)
+        public UnAckMessage(Type protocol, Id receiver, ICompletes completes, Deliver message)
         {
+            Protocol = protocol;
             Receiver = receiver;
             Completes = completes;
             Message = message;
-        }
-
-        public void Accept(Id receiver, Id sender, IVisitor visitor)
-        {
         }
     }
 }
