@@ -6,7 +6,9 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
@@ -22,15 +24,19 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 {
     public class GridApplicationMessageHandler : IApplicationMessageHandler
     {
+        private readonly IHashRing<Id> _hashRing;
+        private readonly IInbound _inbound;
+        private readonly IOutbound _outbound;
         private readonly Id _localNode;
         private readonly AtomicBoolean _isClusterHealthy = new AtomicBoolean(false);
         private readonly IDecoder _decoder;
-        private readonly IVisitor _visitor;
         private readonly ILogger _logger;
         
         private readonly IHardRefHolder _holder;
+        private readonly Scheduler _scheduler;
         private readonly WeakQueue<ThreadStart> _buffer = new WeakQueue<ThreadStart>(); // buffer messages when cluster is not healthy
-        
+        private IEnumerable<MethodInfo> _privateHandleMethods;
+
         public GridApplicationMessageHandler(
             Id localNode,
             IHashRing<Id> hashRing,
@@ -40,6 +46,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             Scheduler scheduler,
             ILogger logger) : this(localNode, hashRing, inbound, outbound, new JsonDecoder(), holder, scheduler, logger)
         {
+            _hashRing = hashRing;
+            _inbound = inbound;
+            _outbound = outbound;
         }
 
         public GridApplicationMessageHandler(
@@ -53,10 +62,16 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             ILogger logger)
         {
             _localNode = localNode;
+            _hashRing = hashRing;
+            _inbound = inbound;
+            _outbound = outbound;
             _decoder = decoder;
             _holder = holder;
+            _scheduler = scheduler;
             _logger = logger;
-            _visitor = new ControlMessageVisitor(inbound, outbound, hashRing, scheduler);
+
+            _privateHandleMethods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(m => m.IsGenericMethod && m.Name.StartsWith("Handle"));
         }
         
         public void Handle(RawMessage raw)
@@ -69,7 +84,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
                 ThreadStart runnable = () =>
                 {
                     _logger.Debug($"Handling message {message} from {sender}");
-                    message.Accept(_localNode, sender, _visitor);
+                    //message.Accept(_localNode, sender, _visitor);
+                    ConcreteHandler(_localNode, sender, message);
                 };
 
                 if (_isClusterHealthy.Get())
@@ -126,96 +142,108 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             } while (next != null);
         }
         
-        private class ControlMessageVisitor : IVisitor
+        private void HandleAnswer<T>(Id receiver, Id sender, Answer<T> answer) => _inbound.Answer(receiver, sender, answer);
+
+        private void HandleDeliver<T>(Id receiver, Id sender, Deliver deliver)
         {
-            private readonly IInbound _inbound;
-            private readonly IOutbound _outbound;
-            private readonly IHashRing<Id> _hashRing;
-            private readonly Scheduler _scheduler;
-
-            public ControlMessageVisitor(IInbound inbound, IOutbound outbound, IHashRing<Id> hashRing, Scheduler scheduler)
+            var recipient = Receiver(receiver, deliver.Address);
+            if (recipient.Equals(receiver))
             {
-                _inbound = inbound;
-                _outbound = outbound;
-                _hashRing = hashRing;
-                _scheduler = scheduler;
+                _inbound.Deliver(
+                    receiver, sender,
+                    ReturnsAnswer<T>(receiver, sender, deliver),
+                    deliver.Protocol,
+                    deliver.Address, deliver.Definition, deliver.Consumer, deliver.Representation);
+            }
+            else
+            {
+                _outbound.Forward(recipient, sender, deliver);
+            }
+        }
+
+        private void HandleStart<T>(Id receiver, Id sender, Start start)
+        {
+            var recipient = Receiver(receiver, start.Address);
+            if (recipient == receiver)
+            {
+                _inbound.Start(receiver, sender, start.Protocol, start.Address, start.Definition);
+            }
+            else
+            {
+                _outbound.Forward(recipient, sender, start);
+            }
+        }
+
+        private void HandleRelocate<T>(Id receiver, Id sender, Relocate relocate)
+        {
+            var recipient = Receiver(receiver, relocate.Address);
+            if (recipient == receiver)
+            {
+                var pending = relocate.Pending
+                    .Select(deliver =>
+                        new LocalMessage<T>(null, (Action<T>) deliver.Consumer.Compile(),
+                            ReturnsAnswer<T>(receiver, sender, deliver), deliver.Representation));
+                _inbound.Relocate(receiver, sender, relocate.Definition, relocate.Address, relocate.Snapshot, pending);
+            }
+            else
+            {
+                _outbound.Forward(recipient, sender, relocate);
+            }
+        }
+
+        private void HandleForward<T>(Id receiver, Id sender, Forward forward) => ConcreteHandler(receiver, forward.OriginalSender, forward.Message);
+
+        private Id Receiver(Id receiver, IAddress address)
+        {
+            var recipient = _hashRing.NodeOf(address.IdString);
+            if (recipient == null || recipient.Equals(receiver))
+            {
+                return receiver;
             }
             
-            public void Visit<T>(Id receiver, Id sender, Answer<T> answer) => _inbound.Answer(receiver, sender, answer);
-
-            public void Visit<T>(Id receiver, Id sender, Deliver<T> deliver)
+            return recipient;
+        }
+        
+        private ICompletes ReturnsAnswer<T>(Id receiver, Id sender, Deliver deliver)
+        {
+            if (deliver.AnswerCorrelationId == Guid.Empty)
             {
-                var recipient = Receiver(receiver, deliver.Address);
-                if (recipient.Equals(receiver))
-                {
-                    _inbound.Deliver(
-                        receiver, sender,
-                        ReturnsAnswer(receiver, sender, deliver),
-                        deliver.Address, deliver.Definition, deliver.Consumer, deliver.Representation);
-                }
-                else
-                {
-                    _outbound.Forward(recipient, sender, deliver);
-                }
+                return null!;
             }
 
-            public void Visit<T>(Id receiver, Id sender, Start<T> start)
+            var completes = Completes.Using<T>(_scheduler);
+            completes.AndThen(result => new Answer<T>(deliver.AnswerCorrelationId, result))
+                .RecoverFrom(error => new Answer<T>(deliver.AnswerCorrelationId, error))
+                .Otherwise<Answer<T>>(ignored => new Answer<T>(deliver.AnswerCorrelationId, new TimeoutException()))
+                .AndThenConsume(TimeSpan.FromMilliseconds(4000), answer => _outbound.Answer(sender, receiver, answer));
+
+            return completes;
+        }
+
+        private void ConcreteHandler(Id receiver, Id sender, IMessage message)
+        {
+            switch (message)
             {
-                var recipient = Receiver(receiver, start.Address);
-                if (recipient == receiver)
-                {
-                    _inbound.Start(receiver, sender, start.Address, start.Definition);
-                }
-                else
-                {
-                    _outbound.Forward(recipient, sender, start);
-                }
-            }
-
-            public void Visit<T>(Id receiver, Id sender, Relocate<T> relocate)
-            {
-                var recipient = Receiver(receiver, relocate.Address);
-                if (recipient == receiver)
-                {
-                    var pending = relocate.Pending
-                        .Select(deliver =>
-                            new LocalMessage<T>(null, deliver.Consumer.Compile(),
-                                ReturnsAnswer(receiver, sender, deliver), deliver.Representation));
-                    _inbound.Relocate(receiver, sender, relocate.Definition, relocate.Address, relocate.Snapshot, pending);
-                }
-                else
-                {
-                    _outbound.Forward(recipient, sender, relocate);
-                }
-            }
-
-            public void Visit(Id receiver, Id sender, Forward forward) => forward.Message.Accept(receiver, forward.OriginalSender, this);
-
-            private Id Receiver(Id receiver, IAddress address)
-            {
-                var recipient = _hashRing.NodeOf(address.IdString);
-                if (recipient == null || recipient.Equals(receiver))
-                {
-                    return receiver;
-                }
-                
-                return recipient;
-            }
-            
-            private ICompletes<T>? ReturnsAnswer<T>(Id receiver, Id sender, Deliver<T> deliver)
-            {
-                if (deliver.AnswerCorrelationId == Guid.Empty)
-                {
-                    return null;
-                }
-
-                var completes = Completes.Using<T>(_scheduler);
-                completes.AndThen(result => new Answer<T>(deliver.AnswerCorrelationId, result))
-                    .RecoverFrom(error => new Answer<T>(deliver.AnswerCorrelationId, error))
-                    .Otherwise<Answer<T>>(ignored => new Answer<T>(deliver.AnswerCorrelationId, new TimeoutException()))
-                    .AndThenConsume(TimeSpan.FromMilliseconds(4000), answer => _outbound.Answer(sender, receiver, answer));
-
-                return completes;
+                case Deliver d:
+                    _privateHandleMethods.First(m => m.Name.Contains("Deliver"))
+                        .Invoke(this, new object[] { receiver, sender, d });
+                    break;
+                case Start s:
+                    _privateHandleMethods.First(m => m.Name.Contains("Start"))
+                        .Invoke(this, new object[] { receiver, sender, s });
+                    break;
+                case Relocate r:
+                    _privateHandleMethods.First(m => m.Name.Contains("Relocate"))
+                        .Invoke(this, new object[] { receiver, sender, r });
+                    break;
+                case Forward f:
+                    _privateHandleMethods.First(m => m.Name.Contains("Forward"))
+                        .Invoke(this, new object[] { receiver, sender, f });
+                    break;
+                default:
+                    _privateHandleMethods.First(m => m.Name.Contains("Answer"))
+                        .Invoke(this, new object[] { receiver, sender, message });
+                    break;
             }
         }
     }
