@@ -56,21 +56,21 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             _nodesHealth = new ConcurrentDictionary<Id, bool>();
         }
         
-        public void Start<T>(Id recipient, Id sender, IAddress address, Definition.SerializationProxy<T> definitionProxy) => 
-            Send(recipient, new Start<T>(address, definitionProxy));
+        public void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy) => 
+            Send(recipient, new Start(protocol, address, definitionProxy));
 
-        public void Deliver<T>(Id recipient, Id sender, ICompletes<T>? returns, IAddress address, Definition.SerializationProxy<T> definitionProxy, Expression<Action<T>> consumer, string representation)
+        public void Deliver(Id recipient, Id sender, ICompletes? returns, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy, LambdaExpression consumer, string representation)
         {
-            Deliver<T> deliver;
+            Deliver deliver;
             if (returns == null)
             {
-                deliver = new Deliver<T>(typeof(T), address, definitionProxy, consumer, representation);
+                deliver = new Deliver(protocol, address, definitionProxy, consumer, representation);
             } 
             else
             {
                 var answerCorrelationId = Guid.NewGuid();
-                deliver = new Deliver<T>(typeof(T), address, definitionProxy, consumer, answerCorrelationId, representation);
-                _correlation(answerCorrelationId, new UnAckMessage<T>(recipient, returns, deliver));
+                deliver = new Deliver(protocol, address, definitionProxy, consumer, answerCorrelationId, representation);
+                _correlation(answerCorrelationId, new UnAckMessage(protocol, recipient, returns, deliver));
             }
             Send(recipient, deliver);
         }
@@ -79,14 +79,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 
         public void Forward(Id receiver, Id sender, IMessage message) => Send(receiver, new Forward(sender, message));
 
-        public void Relocate<T>(Id receiver, Id sender, Definition.SerializationProxy<T> definitionProxy, IAddress address, object snapshot, IEnumerable<Actors.IMessage> pending)
+        public void Relocate(Id receiver, Id sender, Definition.SerializationProxy definitionProxy, IAddress address, object snapshot, IEnumerable<Actors.IMessage> pending)
         {
             var messages =
                 pending
-                    .Select(Message.Deliver<T>.From(_correlation, receiver))
+                    .Select(Message.Deliver.From(_correlation, receiver))
                     .ToList();
 
-            Send(receiver, new Relocate<T>(address, definitionProxy, snapshot, messages));
+            Send(receiver, new Relocate(messages.GetType().GetGenericArguments().First(), address, definitionProxy, snapshot, messages));
         }
 
         public void InformNodeIsHealthy(Id id, bool isHealthy)
