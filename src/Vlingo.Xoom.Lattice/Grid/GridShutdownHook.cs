@@ -18,7 +18,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         private readonly ILogger _logger;
         private readonly string _nodeName;
 
-        internal GridShutdownHook(string nodeName, (IClusterSnapshotControl, ILogger) _)
+        internal GridShutdownHook(string nodeName, Tuple<IClusterSnapshotControl, ILogger> _)
         {
             _nodeName = nodeName;
             (_control, _logger) = _;
