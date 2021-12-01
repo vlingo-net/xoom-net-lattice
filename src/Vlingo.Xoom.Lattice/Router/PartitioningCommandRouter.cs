@@ -30,7 +30,7 @@ namespace Vlingo.Xoom.Lattice.Router
             DispatchCommand((router, cmd) => router.Route(cmd), command);
         }
 
-        protected override Routing<ICommandRouter> ComputeRouting() => Routing.With(_currentRoutee);
+        protected internal override Routing<ICommandRouter> ComputeRouting() => Routing.With(_currentRoutee);
 
         public CommandRouterType CommandRouterType => CommandRouterType.Partitioning;
     }
