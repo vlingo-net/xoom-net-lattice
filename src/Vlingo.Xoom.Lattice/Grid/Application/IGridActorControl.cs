@@ -19,25 +19,26 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 {
     public interface IGridActorControl
     {
-        void Start<T>(Id recipient, Id sender, IAddress address, Definition.SerializationProxy<T> definitionProxy);
+        void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy);
         
-        void Deliver<T>(
+        void Deliver(
                 Id recipient,
                 Id sender,
-                ICompletes<T>? returns,
+                ICompletes? returns,
+                Type protocol,
                 IAddress address,
-                Definition.SerializationProxy<T> definitionProxy,
-                Expression<Action<T>> consumer,
+                Definition.SerializationProxy definitionProxy,
+                LambdaExpression consumer,
                 string representation);
-        
+
         void Answer<T>(Id receiver, Id sender, Answer<T> answer);
         
         void Forward(Id receiver, Id sender, IMessage message);
         
-        void Relocate<T>(
+        void Relocate(
             Id receiver,
             Id sender,
-            Definition.SerializationProxy<T> definitionProxy,
+            Definition.SerializationProxy definitionProxy,
             IAddress address,
             object snapshot,
             IEnumerable<Vlingo.Xoom.Actors.IMessage> pending);
