@@ -6,6 +6,8 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
@@ -17,60 +19,145 @@ namespace Vlingo.Xoom.Lattice.Grid
 {
     public class GridMailbox : IMailbox
     {
-        private ILogger _log;
-        private IMailbox _local;
-        private Id _localId;
-        private Address _address;
+        private readonly ILogger _logger;
+        private readonly IMailbox _local;
+        private readonly Id _localId;
+        private readonly IAddress _address;
 
-        private IHashRing<Id> _hashRing;
+        private readonly IHashRing<Id> _hashRing;
 
-        private IOutbound _outbound;
+        private readonly IOutbound _outbound;
+        
+        private static readonly ISet<Type> Overrides = new HashSet<Type> {typeof(IStoppable) };
+        
+        public GridMailbox(IMailbox local, Id localId, IAddress address, IHashRing<Id> hashRing, IOutbound outbound, ILogger logger)
+        {
+            _local = local;
+            _localId = localId;
+            _address = address;
+            _hashRing = hashRing;
+            _outbound = outbound;
+            _logger = logger;
+        }
+        
+        private void DelegateUnlessIsRemote(Action<Id> remote, ThreadStart consumer)
+        {
+            if (!_address.IsDistributable)
+            {
+                var t = new Thread(consumer);
+                t.Start();
+                return;
+            }
+            
+            Id nodeOf = _hashRing.NodeOf(_address.IdString);
+            if (nodeOf == null || nodeOf.Equals(_localId))
+            {
+                var t = new Thread(consumer);
+                t.Start();
+            }
+            else
+            {
+                remote(nodeOf);
+            }
+        }
+        
+        private TResult DelegateUnlessIsRemote<TResult>(Func<Id, TResult> remote, Func<TResult> supplier)
+        {
+            if (!_address.IsDistributable)
+            {
+                return supplier();
+            }
+            
+            Id nodeOf = _hashRing.NodeOf(_address.IdString);
+            if (nodeOf == null || nodeOf.Equals(_localId))
+            {
+                return supplier();
+            }
+
+            return remote(nodeOf);
+        }
         
         public void Run()
         {
-            throw new NotImplementedException();
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Run on: {nodeOf}");
+                _local.Run();
+            }, () => _local.Run());
         }
 
         public void Close()
         {
-            throw new NotImplementedException();
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Close on: {nodeOf}");
+                _local.Close();
+            }, _local.Close);
         }
-        
-        public TaskScheduler TaskScheduler { get; }
 
-        public bool IsClosed { get; }
-        public bool IsDelivering { get; }
-        public void Resume(string name)
-        {
-            throw new NotImplementedException();
-        }
+        public TaskScheduler TaskScheduler => _local.TaskScheduler;
+
+        public bool IsClosed => DelegateUnlessIsRemote(nodeOf => {
+            _logger.Debug($"Remote.IsClosed on: {nodeOf}");
+            return _local.IsClosed;
+        }, () => _local.IsClosed);
+        
+        public bool IsDelivering => DelegateUnlessIsRemote(nodeOf => {
+            _logger.Debug($"Remote.IsDelivering on: {nodeOf}");
+            return _local.IsDelivering;
+        }, () => _local.IsDelivering);
+        
+        public void Resume(string name) =>
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Resume on: {nodeOf}");
+                _local.Resume(name);
+            }, () => _local.Resume(name));
 
         public void Send(IMessage message)
         {
-            throw new NotImplementedException();
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Send(Message) on: {nodeOf}");
+                if (Overrides.Contains(message.Protocol))
+                {
+                    _local.Send(message);
+                }
+                _outbound.Deliver(
+                    nodeOf, _localId, message.Completes, message.Protocol,
+                    _address, Definition.SerializationProxy.From(message.Actor.Definition),
+                    message.SerializableConsumer, message.Representation);
+            }, () => _local.Send(message));
         }
+        
+        public void SuspendExceptFor(string name, params Type[] overrides) => _local.SuspendExceptFor(name, overrides);
 
-        public void SuspendExceptFor(string name, params Type[] overrides)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsSuspendedFor(string name) => _local.IsSuspendedFor(name);
+        
+        public bool IsSuspended => DelegateUnlessIsRemote(nodeOf => false, () => _local.IsSuspended);
 
-        public bool IsSuspendedFor(string name)
-        {
-            throw new NotImplementedException();
-        }
+        public IMessage Receive() =>
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Receive on: {nodeOf}");
+                return _local.Receive();
+            }, () => _local.Receive())!;
 
-        public bool IsSuspended { get; }
-        public IMessage? Receive()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int PendingMessages { get; }
-        public bool IsPreallocated { get; }
+        public int PendingMessages =>
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.PendingMessages on: {nodeOf}");
+                return _local.PendingMessages;
+            }, () => _local.PendingMessages);
+        
+        public bool IsPreallocated => _local.IsPreallocated;
+        
         public void Send<T>(Actor actor, Action<T> consumer, ICompletes? completes, string representation)
         {
-            throw new NotImplementedException();
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Send(Actor, ...) on: {nodeOf}");
+                if (Overrides.Contains(typeof(T)))
+                {
+                    _local.Send(actor, consumer, completes, representation);
+                }
+                _outbound.Deliver(nodeOf, _localId, completes, typeof(T),
+                    _address, Definition.SerializationProxy.From(actor.Definition),
+                    consumer.ToSerializableExpression(), representation);
+            }, () => _local.Send(actor, consumer, completes, representation));
         }
     }
 }
