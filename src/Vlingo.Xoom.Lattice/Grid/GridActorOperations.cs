@@ -13,7 +13,7 @@ namespace Vlingo.Xoom.Lattice.Grid
 {
     public class GridActorOperations
     {
-        private const string Resume = "GridActor.Resume";
+        internal const string Resume = "GridActor.Resume";
         
         public static void ApplyRelocationSnapshot<S>(Stage stage, Actor actor, S snapshot)
         {

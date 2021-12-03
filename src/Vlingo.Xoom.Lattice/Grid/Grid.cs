@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Compiler;
 using Vlingo.Xoom.Common.Identity;
@@ -17,25 +18,26 @@ using Vlingo.Xoom.Wire.Nodes;
 
 namespace Vlingo.Xoom.Lattice.Grid
 {
-    public class Grid : Stage, IGridRuntime
+    public class Grid : Stage, IGridRuntime, IDisposable
     {
-        private static int GridStageBuckets = 32;
-        private static int GridStageInitialCapacity = 16_384;
+        private const int GridStageBuckets = 32;
+        private const int GridStageInitialCapacity = 16_384;
 
         private readonly ILogger _logger;
 
-        private static string INSTANCE_NAME = Guid.NewGuid().ToString();
-        
-        private GridNodeBootstrap gridNodeBootstrap;
-        private IHashRing<Id> hashRing;
+        private static readonly string InstanceName = Guid.NewGuid().ToString();
 
-        private Id nodeId;
-        private IOutbound outbound;
+        private readonly IHashRing<Id> _hashRing;
 
-        private volatile bool hasQuorum;
-        private long clusterHealthCheckInterval;
+        private Id? _nodeId;
+        private IOutbound? _outbound;
+
+        private volatile bool _hasQuorum;
+        private readonly long _clusterHealthCheckInterval;
+
+        private Thread _runnableThread;
         
-        public static Grid Instance(World world) => world.ResolveDynamic<Grid>(INSTANCE_NAME);
+        public static Grid Instance(World world) => world.ResolveDynamic<Grid>(InstanceName);
         
         public static Grid Start(string worldName, string gridNodeName) => 
             Start(worldName, Configuration.Define(), Cluster.Model.Properties.Instance, gridNodeName);
@@ -70,24 +72,25 @@ namespace Vlingo.Xoom.Lattice.Grid
             : base(world, addressFactory, name, directoryBuckets, directoryInitialCapacity)
         {
             _logger = logger;
-            this.hashRing = new MurmurSortedMapHashRing<Id>(100, (i, id) => new CacheNodePoint<Id>(Cache.Cache.Of(name), i, id));
+            _hashRing = new MurmurSortedMapHashRing<Id>(100, (i, id) => new CacheNodePoint<Id>(Cache.Cache.Of(name), i, id));
             ExtenderStartDirectoryScanner();
-            this.gridNodeBootstrap = GridNodeBootstrap.Boot(this, name, clusterProperties, false);
-            this.hasQuorum = false;
+            GridNodeBootstrap = GridNodeBootstrap.Boot(this, name, clusterProperties, false);
+            _hasQuorum = false;
+            WorldClassLoader = new DynaClassLoader();
 
-            this.clusterHealthCheckInterval = clusterProperties.ClusterHealthCheckInterval();
+            _clusterHealthCheckInterval = clusterProperties.ClusterHealthCheckInterval();
 
-            world.RegisterDynamic(INSTANCE_NAME, this);
+            world.RegisterDynamic(InstanceName, this);
         }
 
         protected override Func<IAddress?, IMailbox?, IMailbox?> MailboxWrapper() => 
-            (a, m) => new GridMailbox(m!, nodeId, a!, hashRing, outbound, _logger);
+            (a, m) => new GridMailbox(m!, _nodeId!, a!, _hashRing, _outbound!, _logger);
         
         public void Terminate() => World.Terminate();
         
-        public void QuorumAchieved() => this.hasQuorum = true;
+        public void QuorumAchieved() => _hasQuorum = true;
 
-        public void QuorumLost() => this.hasQuorum = false;
+        public void QuorumLost() => _hasQuorum = false;
 
         //====================================
         // GridRuntime
@@ -102,48 +105,71 @@ namespace Vlingo.Xoom.Lattice.Grid
 
         public void RelocateActors()
         {
-            var copy = this.hashRing.Copy();
-            this.hashRing.ExcludeNode(nodeId);
+            var copy = _hashRing.Copy();
+            _hashRing.ExcludeNode(_nodeId!);
 
             AllActorAddresses(this)
-                .Where(address => address.IsDistributable && IsAssignedTo(copy, address, nodeId))
+                .Where(address => address.IsDistributable && IsAssignedTo(copy, address, _nodeId!))
                 .ToList()
                 .ForEach(address => {
                     var actor = ActorOf(this, address);
-                    var toNode = hashRing.NodeOf(address.IdString);
+                    var toNode = _hashRing.NodeOf(address.IdString);
                     if (toNode != null)
                     {
                         // last node in the cluster?
-                        RelocateActorTo(actor, address, toNode);
+                        RelocateActorTo(actor!, address, toNode);
                     }
                 });
         }
 
-        public Stage AsStage()
-        {
-            throw new System.NotImplementedException();
-        }
+        public Stage AsStage() => this;
 
         public void NodeJoined(Id newNode)
         {
-            throw new System.NotImplementedException();
+            if (_nodeId!.Equals(newNode))
+            {
+                // self is added to the hash-ring on GridNode#start
+                return;
+            }
+
+            var copy = _hashRing.Copy();
+            _hashRing.IncludeNode(newNode);
+
+            AllActorAddresses(this)
+                .Where(address =>
+                    address.IsDistributable && ShouldRelocateTo(copy, address, newNode)).ToList()
+                .ForEach(address => {
+                    var actor = ActorOf(this, address);
+                    RelocateActorTo(actor!, address, newNode);
+                });
         }
 
-        public void SetNodeId(Id nodeId)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void SetNodeId(Id nodeId) => _nodeId = nodeId;
 
-        public void SetOutbound(IOutbound outbound)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void SetOutbound(IOutbound outbound) => _outbound = outbound;
 
         public GridNodeBootstrap GridNodeBootstrap { get; }
-        public IHashRing<Id> HashRing { get; }
-        public IQuorumObserver QuorumObserver { get; }
+
+        public IHashRing<Id> HashRing => _hashRing;
+        public IQuorumObserver QuorumObserver => this;
         public DynaClassLoader WorldClassLoader { get; }
         
+        protected override T ActorThunkFor<T>(Definition definition, IAddress? address)
+        {
+            var actorMailbox = AllocateMailbox(definition, address, null);
+            actorMailbox.SuspendExceptFor(GridActorOperations.Resume, typeof(IRelocatable));
+            var actor =
+                ActorProtocolFor<T>(
+                    definition,
+                    definition.ParentOr(World.DefaultParent),
+                    address,
+                    actorMailbox,
+                    definition.Supervisor,
+                    definition.LoggerOr(World.DefaultLogger));
+
+            return actor!.ProtocolActor;
+        }
+
         private void RelocateActorTo(Actor actor, IAddress address, Id toNode)
         {
             if (!GridActorOperations.IsSuspendedForRelocation(actor))
@@ -151,9 +177,9 @@ namespace Vlingo.Xoom.Lattice.Grid
                 _logger.Debug($"Relocating actor [{address}] to [{toNode}]");
                 //actor.suspendForRelocation();
                 GridActorOperations.SuspendForRelocation(actor);
-                outbound.Relocate(
+                _outbound?.Relocate(
                     toNode,
-                    nodeId,
+                    _nodeId!,
                     Definition.SerializationProxy.From(actor.Definition),
                     address,
                     GridActorOperations.SupplyRelocationSnapshot(actor) /*actor.provideRelocationSnapshot()*/,
@@ -161,7 +187,97 @@ namespace Vlingo.Xoom.Lattice.Grid
             }
         }
         
+        private bool ShouldRelocateTo(IHashRing<Id> previous, IAddress address, Id newNode) =>
+            IsAssignedTo(previous, address, _nodeId!)
+            && IsAssignedTo(_hashRing, address, newNode);
+
         private static bool IsAssignedTo(IHashRing<Id> ring, IAddress a, Id node) => 
             node.Equals(ring.NodeOf(a.IdString));
+        
+        //====================================
+        // Internal implementation
+        //====================================
+        
+        internal override ActorProtocolActor<T>? ActorProtocolFor<T>(
+            Definition definition,
+            Actor? parent,
+            IAddress? maybeAddress,
+            IMailbox? maybeMailbox,
+            ISupervisor? maybeSupervisor,
+            ILogger logger)
+        {
+            var address = maybeAddress == null ? AddressFactory.Unique() : maybeAddress;
+            var node = _hashRing.NodeOf(address.IdString);
+            var mailbox = MaybeRemoteMailbox(address, definition, maybeMailbox!, () => {
+                _outbound?.Start(node, _nodeId!, typeof(T), address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
+            });
+            
+            return base.ActorProtocolFor<T>(definition, parent, maybeAddress, mailbox, maybeSupervisor, logger);
+        }
+
+        internal override ActorProtocolActor<object>[]? ActorProtocolFor(
+            Type[] protocols,
+            Definition definition,
+            Actor? parent,
+            IAddress? maybeAddress,
+            IMailbox? maybeMailbox,
+            ISupervisor? maybeSupervisor,
+            ILogger logger)
+        {
+            var address = maybeAddress == null ? AddressFactory.Unique() : maybeAddress;
+            var node = _hashRing.NodeOf(address.IdString);
+            var mailbox = MaybeRemoteMailbox(address, definition, maybeMailbox!, () => {
+                _outbound?.Start(node, _nodeId!, protocols[0], address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
+            });
+            
+            return base.ActorProtocolFor(protocols, definition, parent, maybeAddress, mailbox, maybeSupervisor, logger);
+        }
+        
+        private IMailbox MaybeRemoteMailbox(IAddress address, Definition definition, IMailbox maybeMailbox, ThreadStart @out)
+        {
+            while (!_hasQuorum && address.IsDistributable)
+            {
+                _logger.Debug("Mailbox allocation waiting for cluster quorum...");
+                try
+                {
+                    Thread.Sleep(TimeSpan.FromMilliseconds(_clusterHealthCheckInterval));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    throw new Exception("The thread was interrupted", e);
+                }
+            }
+
+            var node = _hashRing.NodeOf(address.IdString);
+            IMailbox mailbox;
+            if (node != null && !node.Equals(_nodeId))
+            {
+                _runnableThread = new Thread(@out);
+                _runnableThread.Start();
+                mailbox = AllocateMailbox(definition, address, maybeMailbox);
+                if (!mailbox.IsSuspendedFor(GridActorOperations.Resume))
+                {
+                    mailbox.SuspendExceptFor(GridActorOperations.Resume, typeof(IRelocatable));
+                }
+            }
+            else
+            {
+                mailbox = maybeMailbox;
+            }
+            
+            return mailbox;
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                _runnableThread.Abort();
+            }
+            catch
+            {
+                // nothing new
+            }
+        }
     }
 }
