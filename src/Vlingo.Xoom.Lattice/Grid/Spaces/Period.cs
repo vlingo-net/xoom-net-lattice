@@ -28,7 +28,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
         protected Period(TimeSpan duration) => Duration = duration;
         
-        private static long GetCurrentMillis(DateTime dateTime)
+        protected static long GetCurrentMillis(DateTime dateTime)
         {
             var jan1970 = new DateTime(1970, 1, 1, 0, 0,0, DateTimeKind.Utc);
             var javaSpan = dateTime - jan1970;
