@@ -6,12 +6,13 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using Vlingo.Xoom.Common;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
     public class Period
     {
-        public static Period Forever = Of(GetCurrentMillis(DateTime.MaxValue));
+        public static Period Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
         public static Period None = Of(0);
 
         public TimeSpan Duration { get; }
@@ -27,12 +28,5 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         public long ToMilliseconds() => Convert.ToInt64(Duration.TotalMilliseconds);
 
         protected Period(TimeSpan duration) => Duration = duration;
-        
-        protected static long GetCurrentMillis(DateTime dateTime)
-        {
-            var jan1970 = new DateTime(1970, 1, 1, 0, 0,0, DateTimeKind.Utc);
-            var javaSpan = dateTime - jan1970;
-            return Convert.ToInt64(javaSpan.TotalSeconds);
-        }
     }
 }

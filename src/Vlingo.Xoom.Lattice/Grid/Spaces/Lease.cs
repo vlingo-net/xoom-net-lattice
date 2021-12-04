@@ -6,12 +6,13 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using Vlingo.Xoom.Common;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
     public class Lease : Period
     {
-        public new static Lease Forever = Of(GetCurrentMillis(DateTime.MaxValue));
+        public new static Lease Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
         public new static Lease None = Of(0);
 
         public new static Lease Of(TimeSpan duration) => new Lease(duration);
