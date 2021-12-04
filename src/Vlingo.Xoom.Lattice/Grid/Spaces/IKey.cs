@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    public interface IKey : IEqualityComparer<IKey>
+    public interface IKey : IComparer<IKey>
     {
         bool Matches(IKey other);
     }
