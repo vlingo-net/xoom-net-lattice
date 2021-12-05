@@ -13,7 +13,11 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         void ScheduleBy(IScheduledScannable<T> scannable);
     }
 
-    public interface IScheduledScannable<T>
+    public interface IScheduledScannable
+    {
+    }
+
+    public interface IScheduledScannable<out T> : IScheduledScannable
     {
         T Scannable();
     }

@@ -23,7 +23,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
         public bool IsForever() => ToMilliseconds() == Forever.ToMilliseconds();
 
-        public DateTime ToNow() => IsForever() ? DateTime.MaxValue : DateTime.Now.Add(Duration);
+        public DateTime ToFutureDateTime() => IsForever() ? DateTime.MaxValue : DateTime.Now.Add(Duration);
 
         public long ToMilliseconds() => Convert.ToInt64(Duration.TotalMilliseconds);
 
