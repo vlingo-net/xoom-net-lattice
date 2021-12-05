@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Vlingo.Xoom.Actors;
@@ -158,6 +159,20 @@ namespace Vlingo.Xoom.Lattice.Grid
                     _address, Definition.SerializationProxy.From(actor.Definition),
                     consumer.ToSerializableExpression(), representation);
             }, () => _local.Send(actor, consumer, completes, representation));
+        }
+        
+        public void Send(Actor actor, Type protocol, LambdaExpression consumer, ICompletes? completes, string representation)
+        {
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Send(Actor, ...) on: {nodeOf}");
+                if (Overrides.Contains(protocol))
+                {
+                    _local.Send(actor, protocol, consumer, completes, representation);
+                }
+                _outbound.Deliver(nodeOf, _localId, completes, protocol,
+                    _address, Definition.SerializationProxy.From(actor.Definition),
+                    consumer, representation);
+            }, () => _local.Send(actor, protocol, consumer, completes, representation));
         }
     }
 }
