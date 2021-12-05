@@ -35,7 +35,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         private volatile bool _hasQuorum;
         private readonly long _clusterHealthCheckInterval;
 
-        private Thread _runnableThread;
+        private Thread? _runnableThread;
         
         public static Grid Instance(World world) => world.ResolveDynamic<Grid>(InstanceName);
         
