@@ -37,6 +37,8 @@ namespace Vlingo.Xoom.Lattice.Grid
             }
         }
         
+        public static void ResumeFromRelocation(Actor actor) => actor.ActorMailbox(actor).Resume(Resume);
+
         public static bool IsSuspendedForRelocation(Actor actor) => actor.ActorMailbox(actor).IsSuspendedFor(Resume);
         
         public static void SuspendForRelocation(Actor actor) =>
