@@ -13,15 +13,15 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
     public class Accessor
     {
-        private static long DefaultScanInterval = 15_000;
-        private static int DefaultTotalPartitions = 5;
+        private static readonly long DefaultScanInterval = 15_000;
+        private static readonly int DefaultTotalPartitions = 5;
         
-        private static Accessor NullAccessor = new Accessor(null, null);
-        private Grid grid;
-        private ConcurrentDictionary<string, ISpace> spaces = new ConcurrentDictionary<string, ISpace>();
-        private static volatile object syncLock = new object();
+        private static readonly Accessor NullAccessor = new Accessor(null, null);
+        private readonly Grid? _grid;
+        private readonly ConcurrentDictionary<string, ISpace> _spaces = new ConcurrentDictionary<string, ISpace>();
+        private static volatile object _syncLock = new object();
         
-        public string name;
+        public string? Name { get; }
 
         public static Accessor Named(Grid grid, string name)
         {
@@ -37,7 +37,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         
         public static Accessor Using(Grid grid, string name)
         {
-            lock (syncLock)
+            lock (_syncLock)
             {
                 var accessor = grid.World.ResolveDynamic<Accessor>(name);
 
@@ -51,7 +51,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             }
         }
         
-        public bool IsDefined => grid != null && name != null;
+        public bool IsDefined => _grid != null && Name != null;
 
         public bool IsNotDefined => !IsDefined;
         
@@ -59,18 +59,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return SpaceFor(name, DefaultTotalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
         }
 
-        public ISpace SpaceFor(string name, int totalPartitions)
-        {
-            return SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
-        }
+        public ISpace SpaceFor(string name, int totalPartitions) => 
+            SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
 
-        public ISpace SpaceFor(string name, long defaultScanInterval) {
-            return SpaceFor(name, DefaultTotalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
-        }
+        public ISpace SpaceFor(string name, long defaultScanInterval) => 
+            SpaceFor(name, DefaultTotalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
 
-        public ISpace SpaceFor(string name, int totalPartitions, long defaultScanInterval) {
-            return SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
-        }
+        public ISpace SpaceFor(string name, int totalPartitions, long defaultScanInterval) => 
+            SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
 
         public ISpace SpaceFor(string name, int totalPartitions, TimeSpan defaultScanInterval)
         {
@@ -84,23 +80,23 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 throw new InvalidOperationException("Accessor is invalid.");
             }
 
-            var spaceExist = spaces.TryGetValue(name, out var space);
+            var spaceExist = _spaces.TryGetValue(name, out var space);
 
             if (!spaceExist)
             {
-                // var definition = Definition.Has(PartitioningSpaceRouter.class, new PartitioningSpaceRouterInstantiator(totalPartitions, defaultScanInterval), name);
-                // final Space internalSpace = grid.actorFor(Space.class, definition);
-                // space = new SpaceItemFactoryRelay(grid, internalSpace);
-                // spaces.put(name, space);
+                var definition = Definition.Has(() => new PartitioningSpaceRouter(totalPartitions, defaultScanInterval), name);
+                var internalSpace = _grid?.ActorFor<ISpace>(definition);
+                space = new SpaceItemFactoryRelay(_grid!, internalSpace!);
+                _spaces.AddOrUpdate(name, s => space, (s, update) => space);
             }
 
-            return space;
+            return space!;
         }
 
-        private Accessor(Grid grid, string name)
+        private Accessor(Grid? grid, string? name)
         {
-            this.grid = grid;
-            this.name = name;
+            _grid = grid;
+            Name = name;
         }
     }
 }
