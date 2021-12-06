@@ -52,6 +52,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
 
     public interface IOutbound : IGridActorControl
     {
-        void UseStream(IApplicationOutboundStream outbound);
+        void UseStream(IApplicationOutboundStream? outbound);
     }
 }

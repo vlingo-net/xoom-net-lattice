@@ -98,7 +98,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             }
         }
 
-        public void UseStream(IApplicationOutboundStream outbound) => _stream = outbound;
+        public void UseStream(IApplicationOutboundStream? outbound) => _stream = outbound;
 
         private void Send(Id recipient, IMessage message)
         {
