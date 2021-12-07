@@ -48,7 +48,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 
         public override IHashRing<T> IncludeNode(T nodeIdentifier)
         {
-            for (var element = 0; element < _hashedNodePoints.Count; ++element)
+            for (var element = 0; element < PointsPerNode; ++element)
             {
                 var hash = Hashed(nodeIdentifier!.ToString() + element);
                 var hashedNodePoint = Factory(hash, nodeIdentifier);

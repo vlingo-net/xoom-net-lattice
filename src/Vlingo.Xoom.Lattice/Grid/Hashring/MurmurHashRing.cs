@@ -6,32 +6,27 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
-using System.Security.Cryptography;
-using System.Text;
-using Murmur;
+using System.IO;
 
 namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
     public abstract class MurmurHashRing<T> : IHashRing<T>
     {
         protected readonly Func<int, T, HashedNodePoint<T>> Factory;
-        protected readonly HashAlgorithm Hasher;
-        protected int PointsPerNode;
+        protected readonly MurmurHash3 Hasher;
+        protected readonly int PointsPerNode;
 
         public MurmurHashRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory, uint seed)
         {
             PointsPerNode = pointsPerNode;
             Factory = factory;
-            Hasher = MurmurHash.Create32(seed);
+            Hasher = new MurmurHash3(seed);
         }
 
         protected int Hashed(object id)
         {
-            Hasher.Clear();
-            var inputBytes = Encoding.ASCII.GetBytes(id.ToString()!);
-            var hashBytes = Hasher.ComputeHash(inputBytes);
-            var hash = hashBytes.GetHashCode();
-            return hash;
+            using var stream = new MemoryStream(ByteConverter.ConvertToByteArray(id));
+            return Hasher.Hash(stream);
         }
         
         protected HashedNodePoint<T> HashedNodePointOf(object id)
