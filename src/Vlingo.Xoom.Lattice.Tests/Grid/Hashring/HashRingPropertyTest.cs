@@ -87,7 +87,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Hashring
         
         private static IHashRing<string> ExcludeAll(IHashRing<string> ring, params string[] nodes)
         {
-            foreach (string node in nodes)
+            foreach (var node in nodes)
             {
                 ring.ExcludeNode(node);
             }
