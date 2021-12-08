@@ -26,10 +26,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 
         protected int Hashed(object id)
         {
-            Hasher.Clear();
             var inputBytes = Encoding.ASCII.GetBytes(id.ToString()!);
             var hashBytes = Hasher.ComputeHash(inputBytes);
-            var hash = hashBytes.GetHashCode();
+            var hash = BitConverter.ToInt32(hashBytes, 0);
             return hash;
         }
         

@@ -12,7 +12,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
     public class MD5ArrayListRing<T> : MD5HashRing<T>
     {
-        private List<HashedNodePoint<T>> _hashedNodePoints;
+        private readonly List<HashedNodePoint<T>> _hashedNodePoints;
         
         public MD5ArrayListRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory) : base(pointsPerNode, factory) => 
             _hashedNodePoints = new List<HashedNodePoint<T>>();
@@ -47,7 +47,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 
         public override IHashRing<T> IncludeNode(T nodeIdentifier)
         {
-            for (var element = 0; element < _hashedNodePoints.Count; ++element)
+            for (var element = 0; element < PointsPerNode; ++element)
             {
                 var hash = Hashed(nodeIdentifier!.ToString() + element);
                 var hashedNodePoint = Factory(hash, nodeIdentifier);
