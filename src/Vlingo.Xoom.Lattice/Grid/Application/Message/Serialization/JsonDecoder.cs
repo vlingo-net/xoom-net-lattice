@@ -66,7 +66,12 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization
             var mi = info.Parameters[0].Type.GetMethod(info.MethodName);
 
             var call = Expression.Call(parameter, mi!, callExpressions.ToArray());
-            return Expression.Lambda(objectType.GetGenericArguments()[0], call, parameter);
+            if (objectType.IsGenericType)
+            {
+                return Expression.Lambda(objectType.GetGenericArguments()[0], call, parameter);
+            }
+            
+            return Expression.Lambda(call, parameter);
         }
     }
 }
