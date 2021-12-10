@@ -15,7 +15,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
     {
         protected readonly Func<int, T, HashedNodePoint<T>> Factory;
         protected readonly MD5 Hasher;
-        protected int PointsPerNode;
+        protected readonly int PointsPerNode;
 
         public MD5HashRing(int pointsPerNode, Func<int, T, HashedNodePoint<T>> factory)
         {
