@@ -74,7 +74,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
                     index = 0;
                 }
             }
-            return _hashedNodePoints[index].NodeIdentifier;
+            
+            if (_hashedNodePoints.Length > 0 && index >= 0 && index < _hashedNodePoints.Length)
+            {
+                return _hashedNodePoints[index].NodeIdentifier;   
+            }
+
+            return default!;
         }
 
         public override IHashRing<T> Copy()
