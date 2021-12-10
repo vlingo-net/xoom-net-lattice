@@ -6,6 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Linq;
 
 namespace Vlingo.Xoom.Lattice.Grid.Hashring
 {
@@ -27,24 +28,33 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 
         public override IHashRing<T> ExcludeNode(T nodeIdentifier)
         {
-            var exclusive = Less();
-            var index = 0;
-            var element = 0;
-            var hash = Hashed(nodeIdentifier!.ToString() + element);
-            foreach (var hashedNodePoint in _hashedNodePoints)
-            {
-                if (hashedNodePoint.Hash == hash)
-                {
-                    hash = Hashed(nodeIdentifier.ToString() + ++element);
-                } 
-                else
-                {
-                    exclusive[index++] = hashedNodePoint;
-                }
-            }
-
-            _hashedNodePoints = exclusive;
-
+            // initial implementation
+            // var exclusive = Less();
+            // var index = 0;
+            // var element = 0;
+            // var hash = Hashed(nodeIdentifier!.ToString() + element);
+            // foreach (var hashedNodePoint in _hashedNodePoints)
+            // {
+            //     if (hashedNodePoint.Hash == hash)
+            //     {
+            //         hash = Hashed(nodeIdentifier.ToString() + ++element);
+            //     } 
+            //     else
+            //     {
+            //         if (index + 1 <= exclusive.Length)
+            //         {
+            //             exclusive[index++] = hashedNodePoint;
+            //         }
+            //     }
+            // }
+            //
+            // _hashedNodePoints = exclusive;
+            
+            _hashedNodePoints = _hashedNodePoints
+                .Where(p => !p.NodeIdentifier!.Equals(nodeIdentifier))
+                .ToArray();
+            Array.Sort(_hashedNodePoints, new HashNodePointComparer<T>());
+            
             return this;
         }
 
@@ -73,7 +83,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
                     index = 0;
                 }
             }
-            return _hashedNodePoints[index].NodeIdentifier;
+
+            if (_hashedNodePoints.Length > 0 && index >= 0 && index < _hashedNodePoints.Length)
+            {
+                return _hashedNodePoints[index].NodeIdentifier;   
+            }
+
+            return default!;
         }
 
         public override IHashRing<T> Copy()
