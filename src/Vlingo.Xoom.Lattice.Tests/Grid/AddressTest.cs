@@ -94,5 +94,19 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid
             Array.Sort(ordered);
             Assert.Equal(reversed, ordered);
         }
+        
+        [Fact]
+        public void TestItCreatesDistributableAddresses()
+        {
+            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+
+            var address = addressFactory.Unique();
+            var namedAddress = addressFactory.UniqueWith("test-address");
+            var prefixedAddress = addressFactory.UniquePrefixedWith("test-prefix");
+
+            Assert.True(address.IsDistributable);
+            Assert.True(namedAddress.IsDistributable);
+            Assert.True(prefixedAddress.IsDistributable);
+        }
     }
 }
