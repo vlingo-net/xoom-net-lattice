@@ -15,17 +15,17 @@ using Vlingo.Xoom.Lattice.Grid.Hashring;
 using Vlingo.Xoom.Wire.Nodes;
 using Xunit;
 
-namespace Vlingo.Xoom.Lattice.Tests.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Tests.Grid
 {
     public class GridMailboxTest
     {
-        private static Cache cache = Cache.DefaultCache();
-        private Func<int, Id, HashedNodePoint<Id>> factory =  (hash, node) => new CacheNodePoint<Id>(cache, hash, node);
+        private static readonly Cache Cache = Cache.DefaultCache();
+        private readonly Func<int, Id, HashedNodePoint<Id>> _factory =  (hash, node) => new CacheNodePoint<Id>(Cache, hash, node);
         
         [Fact]
         public void TestMurmurArrayHashRing()
         {
-            var hashRing = new MurmurArrayHashRing<Id>(100, factory);
+            var hashRing = new MurmurArrayHashRing<Id>(100, _factory);
 
             var localId = Id.Of(1);
             var localMailbox = new TestMailbox();
@@ -47,7 +47,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Spaces
         [Fact]
         public void TestMD5ArrayHashRing()
         {
-            var hashRing = new MD5ArrayHashRing<Id>(100, factory);
+            var hashRing = new MD5ArrayHashRing<Id>(100, _factory);
 
             var localId = Id.Of(1);
             var localMailbox = new TestMailbox();
