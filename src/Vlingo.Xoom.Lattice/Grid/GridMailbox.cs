@@ -50,7 +50,7 @@ namespace Vlingo.Xoom.Lattice.Grid
                 return;
             }
             
-            Id nodeOf = _hashRing.NodeOf(_address.IdString);
+            var nodeOf = _hashRing.NodeOf(_address.IdString);
             if (nodeOf == null || nodeOf.Equals(_localId))
             {
                 var t = new Thread(consumer);
@@ -105,7 +105,12 @@ namespace Vlingo.Xoom.Lattice.Grid
             _logger.Debug($"Remote.IsDelivering on: {nodeOf}");
             return _local.IsDelivering;
         }, () => _local.IsDelivering);
-        
+
+        public int ConcurrencyCapacity => DelegateUnlessIsRemote(nodeOf => {
+            _logger.Debug($"Remote.ConcurrencyCapacity on: {nodeOf}");
+            return _local.ConcurrencyCapacity;
+        }, () => _local.ConcurrencyCapacity);
+
         public void Resume(string name) =>
             DelegateUnlessIsRemote(nodeOf => {
                 _logger.Debug($"Remote.Resume on: {nodeOf}");
