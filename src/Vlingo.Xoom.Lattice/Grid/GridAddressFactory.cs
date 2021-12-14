@@ -14,7 +14,7 @@ namespace Vlingo.Xoom.Lattice.Grid
 {
     public class GridAddressFactory : GuidAddressFactory
     {
-        private static IAddress Empty = new GridAddress(Guid.Empty, "(Empty)");
+        private static readonly IAddress Empty = new GridAddress(Guid.Empty, "(Empty)");
 
         public GridAddressFactory(IdentityGeneratorType type) : base(type)
         {
@@ -35,10 +35,17 @@ namespace Vlingo.Xoom.Lattice.Grid
                 new GridAddress(parsed) :
                 new GridAddress(long.Parse(idString).ToGuid());
 
-        public override IAddress From(string idString, string name) =>
+        public override IAddress From(string idString, string? name) =>
             Guid.TryParse(idString, out var parsed) ? 
                 new GridAddress(parsed, name) :
                 new GridAddress(long.Parse(idString).ToGuid(), name);
+
+        public override IAddress Unique() => From(base.Unique().IdString);
+
+        public override IAddress UniqueWith(string? name) => From(base.UniqueWith(name).IdString, name);
+
+        public override IAddress UniquePrefixedWith(string prefixedWith) => 
+            new GridAddress(base.UniquePrefixedWith(prefixedWith).IdTyped(s => new Guid(s)), prefixedWith, true);
 
         public override IAddress None() => Empty;
 
