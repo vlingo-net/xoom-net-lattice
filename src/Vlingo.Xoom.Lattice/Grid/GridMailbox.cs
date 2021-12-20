@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
@@ -41,20 +40,37 @@ namespace Vlingo.Xoom.Lattice.Grid
             _logger = logger;
         }
         
-        private void DelegateUnlessIsRemote(Action<Id> remote, ThreadStart consumer)
+        private void DelegateUnlessIsRemote(Action<Id> remote, IRunnable consumer)
         {
             if (!_address.IsDistributable)
             {
-                var t = new Thread(consumer);
-                t.Start();
+                consumer.Run();
                 return;
             }
             
             var nodeOf = _hashRing.NodeOf(_address.IdString);
             if (nodeOf == null || nodeOf.Equals(_localId))
             {
-                var t = new Thread(consumer);
-                t.Start();
+                consumer.Run();
+            }
+            else
+            {
+                remote(nodeOf);
+            }
+        }
+        
+        private void DelegateUnlessIsRemote(Action<Id> remote, Action consumer)
+        {
+            if (!_address.IsDistributable)
+            {
+                consumer();
+                return;
+            }
+            
+            var nodeOf = _hashRing.NodeOf(_address.IdString);
+            if (nodeOf == null || nodeOf.Equals(_localId))
+            {
+                consumer();
             }
             else
             {
@@ -69,7 +85,7 @@ namespace Vlingo.Xoom.Lattice.Grid
                 return supplier();
             }
             
-            Id nodeOf = _hashRing.NodeOf(_address.IdString);
+            var nodeOf = _hashRing.NodeOf(_address.IdString);
             if (nodeOf == null || nodeOf.Equals(_localId))
             {
                 return supplier();
@@ -77,13 +93,13 @@ namespace Vlingo.Xoom.Lattice.Grid
 
             return remote(nodeOf);
         }
-        
+
         public void Run()
         {
             DelegateUnlessIsRemote(nodeOf => {
                 _logger.Debug($"Remote.Run on: {nodeOf}");
                 _local.Run();
-            }, () => _local.Run());
+            }, _local);
         }
 
         public void Close()
@@ -91,7 +107,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             DelegateUnlessIsRemote(nodeOf => {
                 _logger.Debug($"Remote.Close on: {nodeOf}");
                 _local.Close();
-            }, _local.Close);
+            }, () => _local.Close());
         }
 
         public TaskScheduler TaskScheduler => _local.TaskScheduler;
@@ -128,8 +144,22 @@ namespace Vlingo.Xoom.Lattice.Grid
                 _outbound.Deliver(
                     nodeOf, _localId, message.Completes, message.Protocol,
                     _address, Definition.SerializationProxy.From(message.Actor.Definition),
-                    message.SerializableConsumer, message.Representation);
+                    message.SerializableConsumer!, message.Representation);
             }, () => _local.Send(message));
+        }
+        
+        public void Send<T>(Actor actor, Action<T> consumer, ICompletes? completes, string representation)
+        {
+            DelegateUnlessIsRemote(nodeOf => {
+                _logger.Debug($"Remote.Send(Actor, ...) on: {nodeOf}");
+                if (Overrides.Contains(typeof(T)))
+                {
+                    _local.Send(actor, consumer, completes, representation);
+                }
+                _outbound.Deliver(nodeOf, _localId, completes, typeof(T),
+                    _address, Definition.SerializationProxy.From(actor.Definition),
+                    consumer.ToSerializableExpression(), representation);
+            }, () => _local.Send(actor, consumer, completes, representation));
         }
         
         public void SuspendExceptFor(string name, params Type[] overrides) => _local.SuspendExceptFor(name, overrides);
@@ -151,21 +181,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             }, () => _local.PendingMessages);
         
         public bool IsPreallocated => _local.IsPreallocated;
-        
-        public void Send<T>(Actor actor, Action<T> consumer, ICompletes? completes, string representation)
-        {
-            DelegateUnlessIsRemote(nodeOf => {
-                _logger.Debug($"Remote.Send(Actor, ...) on: {nodeOf}");
-                if (Overrides.Contains(typeof(T)))
-                {
-                    _local.Send(actor, consumer, completes, representation);
-                }
-                _outbound.Deliver(nodeOf, _localId, completes, typeof(T),
-                    _address, Definition.SerializationProxy.From(actor.Definition),
-                    consumer.ToSerializableExpression(), representation);
-            }, () => _local.Send(actor, consumer, completes, representation));
-        }
-        
+
         public void Send(Actor actor, Type protocol, LambdaExpression consumer, ICompletes? completes, string representation)
         {
             DelegateUnlessIsRemote(nodeOf => {
