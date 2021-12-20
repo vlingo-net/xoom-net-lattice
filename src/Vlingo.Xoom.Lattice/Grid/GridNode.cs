@@ -24,24 +24,26 @@ namespace Vlingo.Xoom.Lattice.Grid
     public class GridNode : ClusterApplicationAdapter
     {
         // Sent messages waiting for continuation (answer) onto current node
-        private static ConcurrentDictionary<Guid, UnAckMessage> correlationMessages = new ConcurrentDictionary<Guid, UnAckMessage>();
+        private static readonly ConcurrentDictionary<Guid, UnAckMessage> CorrelationMessages = new ConcurrentDictionary<Guid, UnAckMessage>();
 
-        private IAttributesProtocol client;
-        private IGridRuntime gridRuntime;
-        private Node localNode;
+        private IAttributesProtocol? _client;
+        private readonly IGridRuntime _gridRuntime;
+        private readonly Node _localNode;
 
-        private IOutbound outbound;
+        private readonly IOutbound _outbound;
 
-        private IInbound inbound;
+        private readonly IInbound _inbound;
 
-        private IApplicationMessageHandler applicationMessageHandler;
+        private readonly IApplicationMessageHandler _applicationMessageHandler;
 
-        private List<IQuorumObserver> quorumObservers;
+        private readonly List<IQuorumObserver> _quorumObservers;
         
         public GridNode(IGridRuntime gridRuntime, Node localNode)
         {
-            this.gridRuntime = gridRuntime;
-            this.localNode = localNode;
+            _gridRuntime = gridRuntime;
+            _localNode = localNode;
+            
+            _gridRuntime.SetNodeId(localNode.Id);
 
             //var conf = FSTConfiguration.createDefaultConfiguration();
             // set classloader with available proxy classes
@@ -49,51 +51,51 @@ namespace Vlingo.Xoom.Lattice.Grid
 
             var holder = gridRuntime.World.ActorFor<IHardRefHolder>(Actors.Definition.Has(() => new ExpiringHardRefHolder()));
 
-            this.outbound =
+            _outbound =
                 Stage.ActorFor<IOutbound>(
                     () => new OutboundGridActorControl(
-            localNode.Id,
-                new JsonEncoder(),
-            (id, message) => correlationMessages.AddOrUpdate(id, i => (UnAckMessage) message, (i, v) => (UnAckMessage) message),
-                new OutBuffers(holder)));
+                        localNode.Id,
+                        new JsonEncoder(),
+                        (id, message) => CorrelationMessages.AddOrUpdate(id, i => (UnAckMessage) message, (i, v) => (UnAckMessage) message),
+                        new OutBuffers(holder)));
 
-            this.gridRuntime.SetOutbound(outbound);
+            _gridRuntime.SetOutbound(_outbound);
 
-            this.inbound =
+            _inbound =
                 Stage.ActorFor<IInbound>(
                     () => 
             new InboundGridActorControl(
                 gridRuntime,
-                id => correlationMessages.Remove(id)));
+                id => CorrelationMessages.Remove(id)));
 
-            this.applicationMessageHandler =
+            _applicationMessageHandler =
                 new GridApplicationMessageHandler(
                     localNode.Id,
                     gridRuntime.HashRing,
-                    inbound,
-                    outbound,
+                    _inbound,
+                    _outbound,
                     new JsonDecoder(),
                     holder,
                     Scheduler,
                     Logger);
 
-            this.quorumObservers = new List<IQuorumObserver>(3);
+            _quorumObservers = new List<IQuorumObserver>(3);
 
             RegisterQuorumObserver(gridRuntime);
         }
 
         public override void Start()
         {
-            Logger.Debug($"GRID: Started on node: {localNode}");
-            gridRuntime.HashRing.IncludeNode(localNode.Id);
+            Logger.Debug($"GRID: Started on node: {_localNode}");
+            _gridRuntime.HashRing.IncludeNode(_localNode.Id);
         }
 
-        public void RegisterQuorumObserver(IQuorumObserver observer) => this.quorumObservers.Add(observer);
+        public void RegisterQuorumObserver(IQuorumObserver observer) => _quorumObservers.Add(observer);
 
         public override void HandleApplicationMessage(RawMessage message)
         {
             Logger.Debug($"GRID: Received application message: {message.AsTextMessage()}");
-            applicationMessageHandler.Handle(message);
+            _applicationMessageHandler.Handle(message);
         }
 
         public override void InformAllLiveNodes(IEnumerable<Node> liveNodes, bool isHealthyCluster) => 
@@ -123,43 +125,43 @@ namespace Vlingo.Xoom.Lattice.Grid
         public override void InformNodeIsHealthy(Id nodeId, bool isHealthyCluster)
         {
             Logger.Debug($"GRID: Node reported healthy: {nodeId} and is healthy: {isHealthyCluster}");
-            outbound.InformNodeIsHealthy(nodeId, isHealthyCluster);
-            applicationMessageHandler.InformNodeIsHealthy(nodeId, isHealthyCluster);
+            _outbound.InformNodeIsHealthy(nodeId, isHealthyCluster);
+            _applicationMessageHandler.InformNodeIsHealthy(nodeId, isHealthyCluster);
         }
 
         public override void InformNodeJoinedCluster(Id nodeId, bool isHealthyCluster)
         {
             Logger.Debug($"GRID: Node joined: {nodeId} and is healthy: {isHealthyCluster}");
-            gridRuntime.NodeJoined(nodeId);
+            _gridRuntime.NodeJoined(nodeId);
         }
 
         public override void InformNodeLeftCluster(Id nodeId, bool isHealthyCluster)
         {
             Logger.Debug($"GRID: Node left: {nodeId} and is healthy: {isHealthyCluster}");
-            outbound.InformNodeIsHealthy(nodeId, isHealthyCluster);
-            applicationMessageHandler.InformNodeIsHealthy(nodeId, isHealthyCluster);
-            gridRuntime.HashRing.ExcludeNode(nodeId);
+            _outbound.InformNodeIsHealthy(nodeId, isHealthyCluster);
+            _applicationMessageHandler.InformNodeIsHealthy(nodeId, isHealthyCluster);
+            _gridRuntime.HashRing.ExcludeNode(nodeId);
             RetryUnAckMessagesOn(nodeId);
         }
 
         public override void InformQuorumAchieved()
         {
             Logger.Debug("GRID: Quorum achieved");
-            quorumObservers.ForEach(quorumObserver => quorumObserver.QuorumAchieved());
+            _quorumObservers.ForEach(quorumObserver => quorumObserver.QuorumAchieved());
         }
 
         public override void InformQuorumLost()
         {
             Logger.Debug("GRID: Quorum lost");
-            quorumObservers.ForEach(quorumObserver => quorumObserver.QuorumLost());
+            _quorumObservers.ForEach(quorumObserver => quorumObserver.QuorumLost());
         }
 
-        public override void InformResponder(IApplicationOutboundStream? responder) => this.outbound.UseStream(responder);
+        public override void InformResponder(IApplicationOutboundStream? responder) => _outbound.UseStream(responder);
 
         public override void InformAttributesClient(IAttributesProtocol client)
         {
             Logger.Debug("GRID: Attributes Client received.");
-            this.client = client;
+            _client = client;
         }
 
         public override void InformAttributeSetCreated(string? attributeSetName) => 
@@ -167,13 +169,13 @@ namespace Vlingo.Xoom.Lattice.Grid
 
         public override void InformAttributeAdded(string attributeSetName, string? attributeName)
         {
-            var attr = client.Attribute<string>(attributeSetName, attributeName);
-            Logger.Debug($"GRID: Attribute Set {attributeSetName} Attribute Added: {attributeName} Value: {attr.Value}");
+            var attr = _client?.Attribute<string>(attributeSetName, attributeName);
+            Logger.Debug($"GRID: Attribute Set {attributeSetName} Attribute Added: {attributeName} Value: {attr?.Value}");
         }
 
         public override void InformAttributeRemoved(string attributeSetName, string? attributeName)
         {
-            var attr = client.Attribute<string>(attributeSetName, attributeName);
+            var attr = _client?.Attribute<string>(attributeSetName, attributeName);
             Logger.Debug($"GRID: Attribute Set {attributeSetName} Attribute Removed: {attributeName} Attribute: {attr}");
         }
 
@@ -182,8 +184,8 @@ namespace Vlingo.Xoom.Lattice.Grid
 
         public override void InformAttributeReplaced(string attributeSetName, string? attributeName)
         {
-            var attr = client.Attribute<string>(attributeSetName, attributeName);
-            Logger.Debug($"GRID: Attribute Set {attributeSetName} Attribute Replaced: {attributeName} Value: {attr.Value}");
+            var attr = _client?.Attribute<string>(attributeSetName, attributeName);
+            Logger.Debug($"GRID: Attribute Set {attributeSetName} Attribute Replaced: {attributeName} Value: {attr?.Value}");
         }
 
         public override void Stop()
@@ -191,7 +193,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             if (!IsStopped)
             {
                 Logger.Debug("GRID: Stopping...");
-                gridRuntime.RelocateActors();
+                _gridRuntime.RelocateActors();
                 base.Stop();
             }
         }
@@ -202,20 +204,20 @@ namespace Vlingo.Xoom.Lattice.Grid
         /// <param name="leftNode">The node that left the cluster</param>
         private void RetryUnAckMessagesOn(Id leftNode)
         {
-            var retryMessages = correlationMessages
+            var retryMessages = CorrelationMessages
                 .Where(entry => leftNode.Equals(entry.Value.Receiver))
                 .ToDictionary(kv => kv.Key, pair => pair.Value);
 
-            retryMessages.Keys.ToList().ForEach(id => correlationMessages.Remove(id));
+            retryMessages.Keys.ToList().ForEach(id => CorrelationMessages.Remove(id));
 
             foreach (var retryMessage in retryMessages.Values)
             {
                 var deliver = retryMessage.Message;
-                var newRecipient = gridRuntime.HashRing.NodeOf(deliver.Address.IdString);
+                var newRecipient = _gridRuntime.HashRing.NodeOf(deliver.Address.IdString);
 
-                if (newRecipient.Equals(localNode.Id))
+                if (newRecipient.Equals(_localNode.Id))
                 {
-                    inbound.Deliver(newRecipient,
+                    _inbound.Deliver(newRecipient,
                         newRecipient,
                         retryMessage.Completes,
                         deliver.Protocol,
@@ -226,8 +228,8 @@ namespace Vlingo.Xoom.Lattice.Grid
                 }
                 else
                 {
-                    outbound.Deliver(newRecipient,
-                        localNode.Id,
+                    _outbound.Deliver(newRecipient,
+                        _localNode.Id,
                         retryMessage.Completes,
                         deliver.Protocol,
                         deliver.Address,
