@@ -63,7 +63,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
         private ISpace SpaceOf(IKey key)
         {
-            var partition = key.GetHashCode() % _totalPartitions;
+            var partition = Math.Abs(key.GetHashCode()) % _totalPartitions;
             return _partitions[partition];
         }
     }
