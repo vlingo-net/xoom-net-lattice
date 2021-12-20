@@ -14,6 +14,8 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Spaces
     {
         public string Id { get; }
 
+        public Key1(string id) => Id = id;
+
         public int Compare(IKey x, IKey y)
         {
             var k1 = (Key1) x;
