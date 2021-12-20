@@ -24,6 +24,7 @@ namespace Vlingo.Xoom.Lattice.Grid
 
             var controlLogger = Cluster.Model.Cluster.ControlFor(
                 grid.World,
+                node => new GridNode(grid, node),
                 properties,
                 nodeName);
 
