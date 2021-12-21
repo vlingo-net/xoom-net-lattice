@@ -29,10 +29,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return Completes.WithSuccess(actor);
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item item) => _space.Put<T>(key, item);
+        public ICompletes<KeyItem> Put(IKey key, Item item) => _space.Put(key, item);
 
-        public ICompletes<Optional<KeyItem<T>>> Get<T>(IKey key, Period until) => _space.Get<T>(key, until);
+        public ICompletes<Optional<KeyItem>> Get(IKey key, Period until) => _space.Get(key, until);
 
-        public ICompletes<Optional<KeyItem<T>>> Take<T>(IKey key, Period until) => _space.Take<T>(key, until);
+        public ICompletes<Optional<KeyItem>> Take(IKey key, Period until) => _space.Take(key, until);
     }
 }

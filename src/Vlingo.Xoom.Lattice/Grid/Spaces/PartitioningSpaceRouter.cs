@@ -30,25 +30,25 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return Completes().With<T>(default!);
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item item)
+        public ICompletes<KeyItem> Put(IKey key, Item item)
         {
             var completes = CompletesEventually();
-            SpaceOf(key).Put<T>(key, item).AndThenConsume(keyItem => completes.With(keyItem));
-            return Completes<KeyItem<T>>();
+            SpaceOf(key).Put(key, item).AndThenConsume(keyItem => completes.With(keyItem));
+            return Completes<KeyItem>();
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Get<T>(IKey key, Period until)
+        public ICompletes<Optional<KeyItem>> Get(IKey key, Period until)
         {
             var completes = CompletesEventually();
-            SpaceOf(key).Get<T>(key, until).AndThenConsume(keyItem => completes.With(keyItem));
-            return Completes<Optional<KeyItem<T>>>();
+            SpaceOf(key).Get(key, until).AndThenConsume(keyItem => completes.With(keyItem));
+            return Completes<Optional<KeyItem>>();
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Take<T>(IKey key, Period until)
+        public ICompletes<Optional<KeyItem>> Take(IKey key, Period until)
         {
             var completes = CompletesEventually();
-            SpaceOf(key).Take<T>(key, until).AndThenConsume(keyItem => completes.With(keyItem));
-            return Completes<Optional<KeyItem<T>>>();
+            SpaceOf(key).Take(key, until).AndThenConsume(keyItem => completes.With(keyItem));
+            return Completes<Optional<KeyItem>>();
         }
         
         private void Initialize(TimeSpan defaultScanInterval)

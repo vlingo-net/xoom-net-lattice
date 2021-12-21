@@ -51,13 +51,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return null;
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key, Item item)
+        public ICompletes<KeyItem> Put(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key, Item item)
         {
             if (!this.actor.IsStopped)
             {
                 ActorProxyBase self = this;
-                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons262655915 = a => a.Put<T>(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, item));
-                var completes = Completes.Using<KeyItem<T>>(this.actor.Scheduler);
+                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons262655915 = a => a.Put(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, item));
+                var completes = Completes.Using<KeyItem>(this.actor.Scheduler);
                 if (this.mailbox.IsPreallocated)
                 {
                     this.mailbox.Send(this.actor, cons262655915, completes, PutRepresentation2);
@@ -78,14 +78,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return null;
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Get<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
+        public ICompletes<Optional<KeyItem>> Get(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
             Vlingo.Xoom.Lattice.Grid.Spaces.Period until)
         {
             if (!this.actor.IsStopped)
             {
                 ActorProxyBase self = this;
-                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1247307923 = a => a.Get<T>(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, until));
-                var completes = Completes.Using<Optional<KeyItem<T>>>(this.actor.Scheduler);
+                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1247307923 = a => a.Get(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, until));
+                var completes = Completes.Using<Optional<KeyItem>>(this.actor.Scheduler);
                 if (this.mailbox.IsPreallocated)
                 {
                     this.mailbox.Send(this.actor, cons1247307923, completes, GetRepresentation3);
@@ -106,13 +106,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return null;
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Take<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
+        public ICompletes<Optional<KeyItem>> Take(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
             Vlingo.Xoom.Lattice.Grid.Spaces.Period until)
         {
             if (!this.actor.IsStopped)
             {
-                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1640817233 = __ => __.Take<T>(key, until);
-                var completes = new BasicCompletes<Optional<KeyItem<T>>>(this.actor.Scheduler);
+                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1640817233 = __ => __.Take(key, until);
+                var completes = new BasicCompletes<Optional<KeyItem>>(this.actor.Scheduler);
                 if (this.mailbox.IsPreallocated)
                 {
                     this.mailbox.Send(this.actor, cons1640817233, completes, TakeRepresentation4);

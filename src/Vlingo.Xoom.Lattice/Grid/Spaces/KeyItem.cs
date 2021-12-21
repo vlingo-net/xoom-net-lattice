@@ -7,12 +7,12 @@
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    public class KeyItem<T> : Item
+    public class KeyItem : Item
     {
         public IKey Key { get; }
 
-        public static KeyItem<T> Of(IKey key, T @object, Lease lease) => new KeyItem<T>(key, @object, lease);
+        public static KeyItem Of(IKey key, object @object, Lease lease) => new KeyItem(key, @object, lease);
 
-        protected KeyItem(IKey key, T @object, Lease lease) : base(@object, lease) => Key = key;
+        protected KeyItem(IKey key, object @object, Lease lease) : base(@object, lease) => Key = key;
     }
 }

@@ -43,14 +43,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return Completes().With<T>(default!);
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item item)
+        public ICompletes<KeyItem> Put(IKey key, Item item)
         {
-            Manage<T>(key, item);
+            Manage(key, item);
 
-            return Completes().With(KeyItem<T>.Of(key, (T) item.Object, item.Lease));
+            return Completes().With(KeyItem.Of(key, item.Object, item.Lease));
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Get<T>(IKey key, Period until)
+        public ICompletes<Optional<KeyItem>> Get(IKey key, Period until)
         {
             var item = Item(key, true);
 
@@ -58,13 +58,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 PeriodicQuery(key, true, until);
 
-                return Completes<Optional<KeyItem<T>>>();
+                return Completes<Optional<KeyItem>>();
             }
 
-            return Completes().With(Optional.Of(KeyItem<T>.Of(key, (T) item.Object, item.Lease)));
+            return Completes().With(Optional.Of(KeyItem.Of(key, item.Object, item.Lease)));
         }
 
-        public ICompletes<Optional<KeyItem<T>>> Take<T>(IKey key, Period until)
+        public ICompletes<Optional<KeyItem>> Take(IKey key, Period until)
         {
             var item = Item(key, false);
             
@@ -72,10 +72,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 PeriodicQuery(key, false, until);
 
-                return Completes<Optional<KeyItem<T>>>();
+                return Completes<Optional<KeyItem>>();
             }
 
-            return Completes().With(Optional.Of(KeyItem<T>.Of(key, (T) item.Object, item.Lease)));
+            return Completes().With(Optional.Of(KeyItem.Of(key, item.Object, item.Lease)));
         }
 
         public void IntervalSignal(IScheduled<IScheduledScanner<IScheduledScannable>> scheduled, IScheduledScanner<IScheduledScannable> data) => 
@@ -99,7 +99,12 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
             if (retain)
             {
-                return itemMap[key];
+                if (itemMap.TryGetValue(key, out var expirableItem))
+                {
+                    return expirableItem;
+                }
+
+                return null;
             }
 
             if (itemMap.TryGetValue(key, out var removed))
@@ -139,7 +144,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         private void PutItemMap(Type type, Dictionary<IKey, ExpirableItem> itemMap) =>
             _registry.Add(type, itemMap.ToDictionary(p => p.Key, pair => pair.Value));
         
-        private void Manage<T>(IKey key, Item item)
+        private void Manage(IKey key, Item item)
         {
             var expiringItem = ExpiringItem(key, item);
 
@@ -152,7 +157,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 _expirableItems.Add(expiringItem);
 
-                _scheduledSweeper.ScheduleBy(Spaces.Item.Of(item.Object!, item.Lease));
+                _scheduledSweeper.ScheduleBy(Spaces.Item.Of(item.Object, item.Lease));
             }
         }
         
@@ -169,7 +174,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         // ScheduledQueryRunnerEvictor
         //================================
 
-        private class ScheduledQueryRunnerEvictor : IScheduledScanner<ExpirableQuery>
+        private class ScheduledQueryRunnerEvictor : IScheduledScanner<IScheduledScannable>
         {
             private readonly SpaceActor _spaceActor;
             private Optional<ICancellable> _cancellable;
@@ -194,7 +199,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
                     if (item != null)
                     {
-                        expirableQuery.Completes.With(Optional.Of(KeyItem<object>.Of(item.Key, item.Object, item.Lease)));
+                        expirableQuery.Completes.With(Optional.Of(KeyItem.Of(item.Key, item.Object, item.Lease)));
                         confirmedExpirables.Add(expirableQuery);
                     }
                     else if (item == null)
@@ -202,7 +207,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                         if (now > expirableQuery.ExpiresOn)
                         {
                             confirmedExpirables.Add(expirableQuery);
-                            expirableQuery.Completes.With(Optional.Empty<object>());
+                            expirableQuery.Completes.With(Optional.Empty<KeyItem>());
                         }
                     }
                 }
@@ -230,14 +235,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 iterator.Dispose();
             }
 
-            public void ScheduleBy(IScheduledScannable<ExpirableQuery> scannable)
+            public void ScheduleBy(IScheduledScannable<IScheduledScannable> scannable)
             {
                 var query = scannable.Scannable();
-                var rounded = query.Period.ToMilliseconds() + _rounding;
+                var rounded = ((ExpirableQuery) query).Period.ToMilliseconds() + _rounding;
 
                 if (rounded < _currentDuration.TotalMilliseconds)
                 {
-                    _currentDuration = Min(query.Period.Duration, _spaceActor._defaultScanInterval);
+                    _currentDuration = Min(((ExpirableQuery) query).Period.Duration, _spaceActor._defaultScanInterval);
                 }
 
                 Schedule();
@@ -249,7 +254,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 _cancellable.IfPresent(canceller => canceller.Cancel());
 
-                _cancellable = Optional.Of(_spaceActor.Scheduler.ScheduleOnce(_spaceActor._scheduled, (IScheduledScanner<IScheduledScannable>) this, TimeSpan.Zero, _currentDuration));
+                _cancellable = Optional.Of(_spaceActor.Scheduler.ScheduleOnce(_spaceActor._scheduled, this, TimeSpan.Zero, _currentDuration));
             }
         }
         
