@@ -30,10 +30,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return Completes().With<T>(default!);
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item<T> item)
+        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item item)
         {
             var completes = CompletesEventually();
-            SpaceOf(key).Put(key, item).AndThenConsume(keyItem => completes.With(keyItem));
+            SpaceOf(key).Put<T>(key, item).AndThenConsume(keyItem => completes.With(keyItem));
             return Completes<KeyItem<T>>();
         }
 

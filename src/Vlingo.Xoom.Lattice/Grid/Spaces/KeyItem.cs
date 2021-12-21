@@ -7,7 +7,7 @@
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    public class KeyItem<T> : Item<T>
+    public class KeyItem<T> : Item
     {
         public IKey Key { get; }
 

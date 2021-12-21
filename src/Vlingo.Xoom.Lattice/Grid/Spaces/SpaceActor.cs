@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
@@ -17,10 +18,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         private static readonly long _brief = 5;
         private static readonly long _rounding = 100;
 
-        private readonly SortedSet<ExpirableItem<object>> _expirableItems;
+        private readonly SortedSet<ExpirableItem> _expirableItems;
         private readonly SortedSet<ExpirableQuery> _expirableQueries;
         private readonly TimeSpan _defaultScanInterval;
-        private readonly Dictionary<Type, Dictionary<IKey, ExpirableItem<object>>> _registry;
+        private readonly Dictionary<Type, Dictionary<IKey, ExpirableItem>> _registry;
         private readonly ScheduledQueryRunnerEvictor _scheduledQueryRunnerEvictor;
         private readonly ScheduledSweeper _scheduledSweeper;
         private readonly IScheduled<IScheduledScanner<IScheduledScannable>> _scheduled;
@@ -28,9 +29,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         public SpaceActor(TimeSpan defaultScanInterval)
         {
             _defaultScanInterval = defaultScanInterval;
-            _expirableItems = new SortedSet<ExpirableItem<object>>();
+            _expirableItems = new SortedSet<ExpirableItem>();
             _expirableQueries = new SortedSet<ExpirableQuery>();
-            _registry = new Dictionary<Type, Dictionary<IKey, ExpirableItem<object>>>();
+            _registry = new Dictionary<Type, Dictionary<IKey, ExpirableItem>>();
             _scheduled = SelfAs<IScheduled<IScheduledScanner<IScheduledScannable>>>();
             _scheduledQueryRunnerEvictor = new ScheduledQueryRunnerEvictor(this);
             _scheduledSweeper = new ScheduledSweeper(this);
@@ -42,11 +43,11 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return Completes().With<T>(default!);
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item<T> item)
+        public ICompletes<KeyItem<T>> Put<T>(IKey key, Item item)
         {
-            Manage(key, (Item<object>) (object) item);
+            Manage<T>(key, item);
 
-            return Completes().With(KeyItem<T>.Of(key, item.Object, item.Lease));
+            return Completes().With(KeyItem<T>.Of(key, (T) item.Object, item.Lease));
         }
 
         public ICompletes<Optional<KeyItem<T>>> Get<T>(IKey key, Period until)
@@ -80,10 +81,10 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         public void IntervalSignal(IScheduled<IScheduledScanner<IScheduledScannable>> scheduled, IScheduledScanner<IScheduledScannable> data) => 
             data.Scan();
 
-        private ExpirableItem<T> ExpiringItem<T>(IKey key, Item<T> item)
+        private ExpirableItem ExpiringItem(IKey key, Item item)
         {
             var expiration = item.Lease.ToFutureDateTime();
-            return new ExpirableItem<T>(key, item.Object, expiration, item.Lease);
+            return new ExpirableItem(key, item.Object!, expiration, item.Lease);
         }
         
         private ExpirableQuery ExpiringQuery(IKey key, bool retainItem, Period period)
@@ -92,7 +93,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return new ExpirableQuery(key, retainItem, expiration, period, CompletesEventually());
         }
         
-        private ExpirableItem<object>? Item(IKey key, bool retain)
+        private ExpirableItem? Item(IKey key, bool retain)
         {
             var itemMap = ItemMap(key);
 
@@ -110,7 +111,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return null;
         }
         
-        private Dictionary<IKey, ExpirableItem<object>> ItemMap(IKey key)
+        private Dictionary<IKey, ExpirableItem> ItemMap(IKey key)
         {
             var keyClass = key.GetType();
 
@@ -118,38 +119,40 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
             if (itemMap == null)
             {
-                itemMap = new Dictionary<IKey, ExpirableItem<object>>();
+                itemMap = new Dictionary<IKey, ExpirableItem>();
                 PutItemMap(keyClass, itemMap);
             }
 
             return itemMap;
         }
         
-        private Dictionary<IKey, ExpirableItem<object>>? GetItemMap(Type type)
+        private Dictionary<IKey, ExpirableItem>? GetItemMap(Type type)
         {
             if (_registry.TryGetValue(type, out var map))
             {
-                return map;
+                return map.ToDictionary(m => m.Key, pair => pair.Value);
             }
 
             return null;
         }
         
-        private void PutItemMap(Type type, Dictionary<IKey, ExpirableItem<object>> itemMap) => _registry.Add(type, itemMap);
+        private void PutItemMap(Type type, Dictionary<IKey, ExpirableItem> itemMap) =>
+            _registry.Add(type, itemMap.ToDictionary(p => p.Key, pair => pair.Value));
         
-        private void Manage(IKey key, Item<object> item)
+        private void Manage<T>(IKey key, Item item)
         {
             var expiringItem = ExpiringItem(key, item);
 
             var itemMap = ItemMap(expiringItem.Key);
 
             itemMap.Add(expiringItem.Key, expiringItem);
+            _registry[key.GetType()] = itemMap.ToDictionary(k => k.Key, pair => pair.Value);
 
             if (!expiringItem.IsMaximumExpiration)
             {
                 _expirableItems.Add(expiringItem);
 
-                _scheduledSweeper.ScheduleBy(item);
+                _scheduledSweeper.ScheduleBy(Spaces.Item.Of(item.Object!, item.Lease));
             }
         }
         
@@ -254,7 +257,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         // ScheduledSweeper
         //================================
         
-        private class ScheduledSweeper : IScheduledScanner<Item<object>>
+        private class ScheduledSweeper : IScheduledScanner<IScheduledScannable>
         {
             private readonly SpaceActor _spaceActor;
             private Optional<ICancellable> _cancellable;
@@ -271,7 +274,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 var now = DateTime.Now;
 
-                var confirmedExpirables = new List<ExpirableItem<object>>();
+                var confirmedExpirables = new List<ExpirableItem>();
 
                 foreach (var expirableItem in _spaceActor._expirableItems)
                 {
@@ -280,6 +283,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                         var itemMap = _spaceActor.ItemMap(expirableItem.Key);
                         if (itemMap != null && itemMap.Remove(expirableItem.Key))
                         {
+                            _spaceActor._registry[expirableItem.Key.GetType()] = itemMap;
                             confirmedExpirables.Add(expirableItem);
                         }
                     }
@@ -307,14 +311,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 iterator.Dispose();
             }
 
-            public void ScheduleBy(IScheduledScannable<Item<object>> scannable)
+            public void ScheduleBy(IScheduledScannable<IScheduledScannable> scannable)
             {
                 var item = scannable.Scannable();
-                var rounded = item.Lease.Duration.TotalMilliseconds + _rounding;
+                var rounded = ((Item) item).Lease.Duration.TotalMilliseconds + _rounding;
 
                 if (rounded < _currentDuration.TotalMilliseconds)
                 {
-                    _currentDuration = item.Lease.Duration;
+                    _currentDuration = ((Item) item).Lease.Duration;
 
                     Schedule();
                 }
@@ -324,7 +328,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             {
                 _cancellable.IfPresent(canceller => canceller.Cancel());
 
-                _cancellable = Optional.Of(_spaceActor.Scheduler.ScheduleOnce(_spaceActor._scheduled, (IScheduledScanner<IScheduledScannable>) this, TimeSpan.Zero, _currentDuration));
+                _cancellable = Optional.Of(_spaceActor.Scheduler.ScheduleOnce(_spaceActor._scheduled, this, TimeSpan.Zero, _currentDuration));
             }
         }
     }

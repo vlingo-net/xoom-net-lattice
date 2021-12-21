@@ -10,14 +10,14 @@ using Vlingo.Xoom.Common;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    internal class ExpirableItem<T> : IComparable<ExpirableItem<T>>
+    internal class ExpirableItem : IComparable<ExpirableItem>
     {
         internal IKey Key { get; }
-        internal T Object { get; }
+        internal object Object { get; }
         internal DateTime ExpiresOn { get; }
         internal Lease Lease { get; }
 
-        internal ExpirableItem(IKey key, T @object, DateTime expiresOn, Lease lease)
+        internal ExpirableItem(IKey key, object @object, DateTime expiresOn, Lease lease)
         {
             Key = key;
             Object = @object;
@@ -27,6 +27,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         
         internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
         
-        public int CompareTo(ExpirableItem<T>? other) => Key.Compare(Key, other?.Key);
+        public int CompareTo(ExpirableItem? other) => Key.Compare(Key, other?.Key);
     }
 }

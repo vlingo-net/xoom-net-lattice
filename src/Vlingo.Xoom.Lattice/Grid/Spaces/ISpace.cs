@@ -13,7 +13,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
     public interface ISpace
     {
         ICompletes<T> ItemFor<T>(Type actorType, params object[] parameters);
-        ICompletes<KeyItem<T>> Put<T>(IKey key, Item<T> item);
+        ICompletes<KeyItem<T>> Put<T>(IKey key, Item item);
         ICompletes<Optional<KeyItem<T>>> Get<T>(IKey key, Period until);
         ICompletes<Optional<KeyItem<T>>> Take<T>(IKey key, Period until);
     }

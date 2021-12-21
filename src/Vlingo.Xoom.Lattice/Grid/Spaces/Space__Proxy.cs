@@ -4,7 +4,7 @@ using Vlingo.Xoom.Common;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    public class Space__Proxy : Vlingo.Xoom.Actors.IProxy, Vlingo.Xoom.Lattice.Grid.Spaces.ISpace
+    public class Space__Proxy : ActorProxyBase, Vlingo.Xoom.Actors.IProxy, Vlingo.Xoom.Lattice.Grid.Spaces.ISpace
     {
         private const string ItemForRepresentation1 = "ItemFor<T>(System.Type, System.Object[])";
         private const string PutRepresentation2 = "Put<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey, Item<T>)";
@@ -51,12 +51,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             return null;
         }
 
-        public ICompletes<KeyItem<T>> Put<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key, Item<T> item)
+        public ICompletes<KeyItem<T>> Put<T>(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key, Item item)
         {
             if (!this.actor.IsStopped)
             {
-                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons262655915 = __ => __.Put<T>(key, item);
-                var completes = new BasicCompletes<KeyItem<T>>(this.actor.Scheduler);
+                ActorProxyBase self = this;
+                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons262655915 = a => a.Put<T>(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, item));
+                var completes = Completes.Using<KeyItem<T>>(this.actor.Scheduler);
                 if (this.mailbox.IsPreallocated)
                 {
                     this.mailbox.Send(this.actor, cons262655915, completes, PutRepresentation2);
@@ -82,8 +83,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         {
             if (!this.actor.IsStopped)
             {
-                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1247307923 = __ => __.Get<T>(key, until);
-                var completes = new BasicCompletes<Optional<KeyItem<T>>>(this.actor.Scheduler);
+                ActorProxyBase self = this;
+                Action<Vlingo.Xoom.Lattice.Grid.Spaces.ISpace> cons1247307923 = a => a.Get<T>(Thunk(self, (Actor) a, key), Thunk(self, (Actor) a, until));
+                var completes = Completes.Using<Optional<KeyItem<T>>>(this.actor.Scheduler);
                 if (this.mailbox.IsPreallocated)
                 {
                     this.mailbox.Send(this.actor, cons1247307923, completes, GetRepresentation3);

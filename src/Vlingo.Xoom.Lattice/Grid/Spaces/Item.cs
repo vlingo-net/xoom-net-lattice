@@ -7,16 +7,16 @@
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
-    public class Item<T> : IScheduledScannable<Item<T>>
+    public class Item : IScheduledScannable<Item>
     {
         public Lease Lease { get; }
-        public T Object { get; }
+        public object Object { get; }
 
-        public static Item<T> Of(T @object, Lease lease) => new Item<T>(@object, lease);
+        public static Item Of(object @object, Lease lease) => new Item(@object, lease);
 
-        public Item<T> Scannable() => this;
+        public Item Scannable() => this;
 
-        protected Item(T @object, Lease lease)
+        protected Item(object @object, Lease lease)
         {
             Object = @object;
             Lease = lease;
