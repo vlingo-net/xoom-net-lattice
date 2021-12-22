@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
@@ -110,7 +109,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             if (itemMap.TryGetValue(key, out var removed))
             {
                 itemMap.Remove(key);
-                _registry[key.GetType()] = itemMap;
                 return removed;
             }
 
@@ -136,14 +134,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         {
             if (_registry.TryGetValue(type, out var map))
             {
-                return map.ToDictionary(m => m.Key, pair => pair.Value);
+                return map;
             }
 
             return null;
         }
         
-        private void PutItemMap(Type type, Dictionary<IKey, ExpirableItem> itemMap) =>
-            _registry.Add(type, itemMap.ToDictionary(p => p.Key, pair => pair.Value));
+        private void PutItemMap(Type type, Dictionary<IKey, ExpirableItem> itemMap) => _registry.Add(type, itemMap);
         
         private void Manage(IKey key, Item item)
         {
@@ -152,7 +149,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             var itemMap = ItemMap(expiringItem.Key);
 
             itemMap.Add(expiringItem.Key, expiringItem);
-            _registry[key.GetType()] = itemMap.ToDictionary(k => k.Key, pair => pair.Value);
 
             if (!expiringItem.IsMaximumExpiration)
             {
@@ -289,7 +285,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                         var itemMap = _spaceActor.ItemMap(expirableItem.Key);
                         if (itemMap != null && itemMap.Remove(expirableItem.Key))
                         {
-                            _spaceActor._registry[expirableItem.Key.GetType()] = itemMap;
                             confirmedExpirables.Add(expirableItem);
                         }
                     }
