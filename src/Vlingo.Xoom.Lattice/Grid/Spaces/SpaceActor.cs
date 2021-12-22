@@ -110,6 +110,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
             if (itemMap.TryGetValue(key, out var removed))
             {
                 itemMap.Remove(key);
+                _registry[key.GetType()] = itemMap;
                 return removed;
             }
 
