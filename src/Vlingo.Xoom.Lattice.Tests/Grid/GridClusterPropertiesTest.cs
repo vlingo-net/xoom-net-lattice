@@ -68,7 +68,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid
 
             var seedNodes = properties.GetString("cluster.seedNodes", "").Split(",");
 
-            Assert.Equal(1, seedNodes.Length);
+            Assert.Single(seedNodes);
             Assert.Equal("node1", seedNodes[0]);
 
             // node specific

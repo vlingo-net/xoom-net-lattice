@@ -258,7 +258,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Query
     internal class NoOpWriteResultInterest : IWriteResultInterest
     {
         public void WriteResultedIn<TState, TSource>(IOutcome<StorageException, Result> outcome, string id,
-            TState state, int stateVersion, IEnumerable<TSource> sources, object? @object)
+            TState state, int stateVersion, IEnumerable<TSource> sources, object @object)
         {
         }
     }

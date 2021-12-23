@@ -27,7 +27,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Query
             throw new System.NotImplementedException();
         }
 
-        public void Read<TState>(string id, IReadResultInterest interest, object? @object)
+        public void Read<TState>(string id, IReadResultInterest interest, object @object)
         {
             if (_readCount.IncrementAndGet() > _expectedReadFailures.Get())
             {
@@ -39,7 +39,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Query
             }
         }
 
-        public void ReadAll<TState>(IEnumerable<TypedStateBundle> bundles, IReadResultInterest interest, object? @object)
+        public void ReadAll<TState>(IEnumerable<TypedStateBundle> bundles, IReadResultInterest interest, object @object)
         {
             _readCount.IncrementAndGet();
             _delegate.ReadAll<TState>(bundles, interest, @object);
@@ -85,12 +85,12 @@ namespace Vlingo.Xoom.Lattice.Tests.Query
             throw new System.NotImplementedException();
         }
 
-        public void Write<TState>(string id, TState state, int stateVersion, Metadata metadata, IWriteResultInterest interest, object? @object)
+        public void Write<TState>(string id, TState state, int stateVersion, Metadata metadata, IWriteResultInterest interest, object @object)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Write<TState, TSource>(string id, TState state, int stateVersion, IEnumerable<TSource> sources, Metadata metadata, IWriteResultInterest interest, object? @object) => 
+        public void Write<TState, TSource>(string id, TState state, int stateVersion, IEnumerable<TSource> sources, Metadata metadata, IWriteResultInterest interest, object @object) => 
             _delegate.Write(id, state, stateVersion, sources, metadata, interest, @object);
 
         public ICompletes<IStateStoreEntryReader> EntryReader<TEntry>(string name) where TEntry : IEntry => 

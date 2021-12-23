@@ -32,7 +32,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Model.Projection
         
         public AccessSafely Access { get; private set; } = AccessSafely.AfterCompleting(0);
         
-        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, string? id, TState state, int stateVersion, Metadata? metadata, object? @object)
+        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, string id, TState state, int stateVersion, Metadata metadata, object @object)
         {
             outcome
                 .AndThen(result => {
@@ -52,11 +52,11 @@ namespace Vlingo.Xoom.Lattice.Tests.Model.Projection
                 });
         }
 
-        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, IEnumerable<TypedStateBundle> bundles, object? @object)
+        public void ReadResultedIn<TState>(IOutcome<StorageException, Result> outcome, IEnumerable<TypedStateBundle> bundles, object @object)
         {
         }
 
-        public void WriteResultedIn<TState, TSource>(IOutcome<StorageException, Result> outcome, string id, TState state, int stateVersion, IEnumerable<TSource> sources, object? @object)
+        public void WriteResultedIn<TState, TSource>(IOutcome<StorageException, Result> outcome, string id, TState state, int stateVersion, IEnumerable<TSource> sources, object @object)
         {
             outcome
                 .AndThen(result => {

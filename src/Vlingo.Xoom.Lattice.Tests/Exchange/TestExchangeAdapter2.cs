@@ -14,7 +14,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Exchange
     {
         private readonly IExchangeMapper<LocalType2, ExternalType2> _mapper = new TestExchangeMapper2();
 
-        public override bool Supports(object? exchangeMessage)
+        public override bool Supports(object exchangeMessage)
         {
             if (typeof(ExchangeMessage) != exchangeMessage?.GetType())
             {
