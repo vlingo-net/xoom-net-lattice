@@ -272,7 +272,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         {
             try
             {
-                _runnableThread.Abort();
+                _runnableThread?.Abort();
             }
             catch
             {

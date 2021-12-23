@@ -25,7 +25,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
 
         protected int Hashed(object id)
         {
-            using var stream = new MemoryStream(ByteConverter.ConvertToByteArray(id));
+            using var stream = new MemoryStream(ByteConverter.ConvertToByteArray(id)!);
             return Hasher.Hash(stream);
         }
         

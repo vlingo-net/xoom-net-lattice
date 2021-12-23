@@ -181,7 +181,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             {
                 var pending = relocate.Pending
                     .Select(deliver =>
-                        new LocalMessage<T>(null, (Action<T>) deliver.Consumer.Compile(),
+                        new LocalMessage<T>(null!, (Action<T>) deliver.Consumer.Compile(),
                             ReturnsAnswer<T>(receiver, sender, deliver), deliver.Representation));
                 _inbound.Relocate(receiver, sender, relocate.Definition, relocate.Address, relocate.Snapshot, pending);
             }

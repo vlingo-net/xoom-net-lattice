@@ -60,7 +60,7 @@ namespace Vlingo.Xoom.Lattice.Model.Projection
             }
 
             actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ManagedConfirmationsRepresentation2));
-            return null;
+            return null!;
         }
     }
 }

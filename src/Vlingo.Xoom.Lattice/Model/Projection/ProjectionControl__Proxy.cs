@@ -42,7 +42,7 @@ namespace Vlingo.Xoom.Lattice.Model.Projection
                 actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ConfirmerForRepresentation1));
             }
 
-            return null;
+            return null!;
         }
 
         public void ConfirmProjected(string projectionId)

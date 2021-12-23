@@ -48,7 +48,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 this.actor.DeadLetters?.FailedDelivery(new DeadLetter(this.actor, ItemForRepresentation1));
             }
 
-            return null;
+            return null!;
         }
 
         public ICompletes<KeyItem> Put(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key, Item item)
@@ -75,7 +75,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 this.actor.DeadLetters?.FailedDelivery(new DeadLetter(this.actor, PutRepresentation2));
             }
 
-            return null;
+            return null!;
         }
 
         public ICompletes<Optional<KeyItem>> Get(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
@@ -103,7 +103,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 this.actor.DeadLetters?.FailedDelivery(new DeadLetter(this.actor, GetRepresentation3));
             }
 
-            return null;
+            return null!;
         }
 
         public ICompletes<Optional<KeyItem>> Take(Vlingo.Xoom.Lattice.Grid.Spaces.IKey key,
@@ -130,13 +130,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 this.actor.DeadLetters?.FailedDelivery(new DeadLetter(this.actor, TakeRepresentation4));
             }
 
-            return null;
+            return null!;
         }
 
 
-        public IAddress Address => this.actor.Address;
+        public new IAddress Address => this.actor.Address;
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (this == other) return true;
             if (other == null) return false;

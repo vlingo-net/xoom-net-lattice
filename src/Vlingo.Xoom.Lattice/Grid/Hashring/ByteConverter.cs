@@ -21,7 +21,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
         /// </summary>
         /// <param name="item">The input to be serialized</param>
         /// <returns>Binary serialized representation of the input item.</returns>
-        public static byte[] ConvertToByteArray(object item)
+        public static byte[]? ConvertToByteArray(object? item)
         {
             if (item == null)
             {

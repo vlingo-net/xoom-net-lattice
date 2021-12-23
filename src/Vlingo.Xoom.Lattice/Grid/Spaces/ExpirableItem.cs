@@ -27,6 +27,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         
         internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
         
-        public int CompareTo(ExpirableItem? other) => Key.Compare(Key, other?.Key);
+        public int CompareTo(ExpirableItem? other) => Key.Compare(Key, other?.Key!);
     }
 }

@@ -23,7 +23,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         public override IAddress FindableBy<T>(T id) => 
             Guid.TryParse(id!.ToString(), out var parsed) ? 
                 new GridAddress(parsed) :
-                new GridAddress(long.Parse(id!.ToString()).ToGuid());
+                new GridAddress(long.Parse(id.ToString()!).ToGuid());
 
         public override IAddress From(long reservedId, string name) =>
             Guid.TryParse(reservedId!.ToString(), out var parsed) ? 

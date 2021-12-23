@@ -39,7 +39,7 @@ namespace Vlingo.Xoom.Lattice.Router
 
         public IAddress Address => actor.Address;
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (this == other) return true;
             if (other == null) return false;

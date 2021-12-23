@@ -73,13 +73,13 @@ namespace Vlingo.Xoom.Lattice.Model.Projection
         {
             outcome.AndThen(result =>
             {
-                ((Action<TState, int>) @object)!(state, stateVersion);
+                ((Action<TState, int>) @object!)(state, stateVersion);
                 return result;
             }).Otherwise(cause =>
             {
                 if (cause.Result == Result.NotFound)
                 {
-                    ((Action<TState, int>) @object)!(default!, -1);
+                    ((Action<TState, int>) @object!)(default!, -1);
                 }
                 else
                 {

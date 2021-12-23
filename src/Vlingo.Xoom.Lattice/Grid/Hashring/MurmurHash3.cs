@@ -38,7 +38,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Hashring
         {
             var primaryHash = item.GetHashCode();
             int secondaryHash;
-            using (var memoryStream = new MemoryStream(ByteConverter.ConvertToByteArray(item)))
+            using (var memoryStream = new MemoryStream(ByteConverter.ConvertToByteArray(item)!))
             {
                 secondaryHash = Hash(memoryStream);
             }

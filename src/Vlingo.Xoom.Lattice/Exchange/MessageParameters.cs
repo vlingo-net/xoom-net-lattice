@@ -21,32 +21,32 @@ namespace Vlingo.Xoom.Lattice.Exchange
         /// <summary>
         ///     Name of the exchange.
         /// </summary>
-        public string ExchangeName { get; private set; }
+        public string? ExchangeName { get; private set; }
 
         /// <summary>
         ///     Identity specific to the application or service.
         /// </summary>
-        public string ApplicationId { get; private set; }
+        public string? ApplicationId { get; private set; }
 
         /// <summary>
         ///     Encoding used for this message, defaulting to UTF_8.
         /// </summary>
-        public string ContentEncoding { get; private set; }
+        public string? ContentEncoding { get; private set; }
 
         /// <summary>
         ///     Type of content of the message, defaulting to \"text/plain\".
         /// </summary>
-        public string ContentType { get; private set; }
+        public string? ContentType { get; private set; }
 
         /// <summary>
         ///     Identity used to correlate with other messages.
         /// </summary>
-        public string CorrelationId { get; private set; }
+        public string? CorrelationId { get; private set; }
 
         /// <summary>
         ///     Delivery identity.
         /// </summary>
-        public string DeliveryId { get; private set; }
+        public string? DeliveryId { get; private set; }
 
         /// <summary>
         ///     Delivery mode, either Durable or Transient, defaulting to Transient.
@@ -56,27 +56,27 @@ namespace Vlingo.Xoom.Lattice.Exchange
         /// <summary>
         ///     Key-value headers to attach to the messages.
         /// </summary>
-        public IReadOnlyDictionary<string, object> Headers { get; private set; }
+        public IReadOnlyDictionary<string, object>? Headers { get; private set; }
 
         /// <summary>
         ///     Unique identity specific to the message.
         /// </summary>
-        public string MessageId { get; private set; }
+        public string? MessageId { get; private set; }
 
         /// <summary>
         ///     Extra parameter 1.
         /// </summary>
-        public string Other1 { get; private set; }
+        public string? Other1 { get; private set; }
 
         /// <summary>
         ///     Extra parameter 2.
         /// </summary>
-        public string Other2 { get; private set; }
+        public string? Other2 { get; private set; }
 
         /// <summary>
         ///     Extra parameter 3.
         /// </summary>
-        public string Other3 { get; private set; }
+        public string? Other3 { get; private set; }
 
         /// <summary>
         ///     Priority of the message, defaulting to Normal.
@@ -86,7 +86,7 @@ namespace Vlingo.Xoom.Lattice.Exchange
         /// <summary>
         ///     Name of the queue.
         /// </summary>
-        public string QueueName { get; private set; }
+        public string? QueueName { get; private set; }
 
         /// <summary>
         ///     Re-delivery indicator.
@@ -96,22 +96,22 @@ namespace Vlingo.Xoom.Lattice.Exchange
         /// <summary>
         ///     Identification for the receiver to reply to the sender.
         /// </summary>
-        public string ReplyTo { get; private set; }
+        public string? ReplyTo { get; private set; }
 
         /// <summary>
         ///     Return address for the receiver to reply to the sender.
         /// </summary>
-        public string ReturnAddress { get; private set; }
+        public string? ReturnAddress { get; private set; }
 
         /// <summary>
         ///     Routing information.
         /// </summary>
-        public IEnumerable<string> Routing { get; private set; }
+        public IEnumerable<string>? Routing { get; private set; }
 
         /// <summary>
         ///     Tag metadata.
         /// </summary>
-        public string Tag { get; private set; }
+        public string? Tag { get; private set; }
 
         /// <summary>
         ///     Time that the message was created, defaulting to the current time.
@@ -126,17 +126,17 @@ namespace Vlingo.Xoom.Lattice.Exchange
         /// <summary>
         ///     Message type code.
         /// </summary>
-        public string TypeCode { get; private set; }
+        public string? TypeCode { get; private set; }
 
         /// <summary>
         ///     Message type name.
         /// </summary>
-        public string TypeName { get; private set; }
+        public string? TypeName { get; private set; }
 
         /// <summary>
         ///     Identity of the user sending the message.
         /// </summary>
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         /// <summary>
         ///     Answer a new MessageParameters with no preset values.
@@ -199,19 +199,13 @@ namespace Vlingo.Xoom.Lattice.Exchange
             return this;
         }
 
-        public bool IsDurableDeliveryMode()
-        {
-            return Mode != null && Mode == DeliveryMode.Durable;
-        }
+        public bool IsDurableDeliveryMode() => Mode == DeliveryMode.Durable;
 
-        public bool IsTransientDeliveryMode()
-        {
-            return Mode == null || Mode == DeliveryMode.Transient;
-        }
+        public bool IsTransientDeliveryMode() => Mode == DeliveryMode.Transient;
 
         public MessageParameters WithExchangeName(string exchangeName)
         {
-            this.ExchangeName = exchangeName;
+            ExchangeName = exchangeName;
             return this;
         }
 
