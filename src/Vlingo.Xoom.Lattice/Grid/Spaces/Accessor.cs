@@ -15,6 +15,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
     {
         private static readonly long DefaultScanInterval = 15_000;
         private static readonly int DefaultTotalPartitions = 5;
+        private static readonly float DistributedWriteThroughFactor = 0.5f;
         
         private static readonly Accessor NullAccessor = new Accessor(null, null);
         private readonly Grid? _grid;
@@ -84,7 +85,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                     var localStage = _grid.LocalStage();
                     var localSpace = SpaceFor(spaceName, totalPartitions, scanInterval);
                     var definition = Definition.Has(() =>
-                        new DistributedSpaceActor(Name!, spaceName, totalPartitions, scanInterval, localSpace, _grid));
+                        new DistributedSpaceActor(Name!, spaceName, totalPartitions, scanInterval, DistributedWriteThroughFactor, localSpace, _grid));
                     distributedSpace = localStage.ActorFor<IDistributedSpace>(definition);
                     _distributedSpaces.AddOrUpdate(Name!, key => distributedSpace, (s, space) => distributedSpace);
                 }
