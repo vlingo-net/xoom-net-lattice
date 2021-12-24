@@ -141,7 +141,7 @@ namespace Vlingo.Xoom.Lattice.Grid
                 {
                     _local.Send(message);
                 }
-                _outbound.Deliver(
+                _outbound.GridDeliver(
                     nodeOf, _localId, message.Completes, message.Protocol,
                     _address, Definition.SerializationProxy.From(message.Actor.Definition),
                     message.SerializableConsumer!, message.Representation);
@@ -156,7 +156,7 @@ namespace Vlingo.Xoom.Lattice.Grid
                 {
                     _local.Send(actor, consumer, completes, representation);
                 }
-                _outbound.Deliver(nodeOf, _localId, completes, typeof(T),
+                _outbound.GridDeliver(nodeOf, _localId, completes, typeof(T),
                     _address, Definition.SerializationProxy.From(actor.Definition),
                     consumer.ToSerializableExpression(), representation);
             }, () => _local.Send(actor, consumer, completes, representation));
@@ -190,7 +190,7 @@ namespace Vlingo.Xoom.Lattice.Grid
                 {
                     _local.Send(actor, protocol, consumer, completes, representation);
                 }
-                _outbound.Deliver(nodeOf, _localId, completes, protocol,
+                _outbound.GridDeliver(nodeOf, _localId, completes, protocol,
                     _address, Definition.SerializationProxy.From(actor.Definition),
                     consumer, representation);
             }, () => _local.Send(actor, protocol, consumer, completes, representation));

@@ -21,7 +21,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
     {
         void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy);
         
-        void Deliver(
+        void GridDeliver(
                 Id recipient,
                 Id sender,
                 ICompletes? returns,
@@ -30,6 +30,16 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
                 Definition.SerializationProxy definitionProxy,
                 LambdaExpression consumer,
                 string representation);
+        
+        void ActorDeliver(
+                Id recipient,
+                Id sender,
+                ICompletes? returns,
+                Type protocol,
+                Func<Grid, Actor> actorProvider,
+                LambdaExpression consumer,
+                string representation);
+
 
         void Answer<T>(Id receiver, Id sender, Answer<T> answer);
         

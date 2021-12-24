@@ -199,7 +199,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                         expirableQuery.Completes.With(Optional.Of(KeyItem.Of(item.Key, item.Object, item.Lease)));
                         confirmedExpirables.Add(expirableQuery);
                     }
-                    else if (item == null)
+                    else
                     {
                         if (now > expirableQuery.ExpiresOn)
                         {

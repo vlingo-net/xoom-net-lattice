@@ -14,18 +14,18 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
     public class SpaceItemFactoryRelay : ISpace
     {
-        private readonly Grid _grid;
+        private readonly Stage _localStage;
         private readonly ISpace _space;
 
-        public SpaceItemFactoryRelay(Grid grid, ISpace space)
+        public SpaceItemFactoryRelay(Stage localStage, ISpace space)
         {
-            _grid = grid;
+            _localStage = localStage;
             _space = space;
         }
             
         public ICompletes<T> ItemFor<T>(Type actorType, params object[] parameters)
         {
-            var actor = _grid.ActorFor<T>(Definition.Has(actorType, parameters.ToArray()), _grid.AddressFactory.Unique());
+            var actor = _localStage.ActorFor<T>(actorType, Definition.Has(actorType, parameters.ToArray()), _localStage.AddressFactory.Unique());
             return Completes.WithSuccess(actor);
         }
 

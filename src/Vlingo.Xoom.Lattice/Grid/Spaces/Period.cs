@@ -10,6 +10,7 @@ using Vlingo.Xoom.Common;
 
 namespace Vlingo.Xoom.Lattice.Grid.Spaces
 {
+    [Serializable]
     public class Period
     {
         public static Period Forever = Of(DateTime.MaxValue.GetCurrentSeconds());

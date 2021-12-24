@@ -19,20 +19,24 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
         private static readonly Accessor NullAccessor = new Accessor(null, null);
         private readonly Grid? _grid;
         private readonly ConcurrentDictionary<string, ISpace> _spaces = new ConcurrentDictionary<string, ISpace>();
+        private readonly ConcurrentDictionary<string, IDistributedSpace> _distributedSpaces = new ConcurrentDictionary<string, IDistributedSpace>();
         private static volatile object _syncLock = new object();
         
         public string? Name { get; }
 
         public static Accessor Named(Grid grid, string name)
         {
-            var accessor = grid.World.ResolveDynamic<Accessor>(name);
-
-            if (accessor == null)
+            lock (_syncLock)
             {
-                accessor = NullAccessor;
-            }
+                var accessor = grid.World.ResolveDynamic<Accessor>(name);
 
-            return accessor;
+                if (accessor == null)
+                {
+                    accessor = NullAccessor;
+                }
+
+                return accessor;
+            }
         }
         
         public static Accessor Using(Grid grid, string name)
@@ -55,24 +59,58 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
 
         public bool IsNotDefined => !IsDefined;
         
-        public ISpace SpaceFor(string name) {
-            return SpaceFor(name, DefaultTotalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
+        public ISpace DistributedSpaceFor(string spaceName) => 
+            DistributedSpaceFor(spaceName, DefaultTotalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
+
+        public ISpace DistributedSpaceFor(string spaceName, int totalPartitions) => 
+            DistributedSpaceFor(spaceName, totalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
+
+        public ISpace DistributedSpaceFor(string spaceName, int totalPartitions, TimeSpan scanInterval)
+        {
+            if (string.IsNullOrEmpty(Name))
+            {
+                throw new ArgumentNullException(nameof(Name), "The Name must be defined first.");
+            }
+            
+            if (_grid == null)
+            {
+                throw new ArgumentNullException(nameof(_grid), "The Grid must be defined first.");
+            }
+            
+            lock (_syncLock)
+            {
+                if (!_distributedSpaces.TryGetValue(Name!, out var distributedSpace))
+                {
+                    var localStage = _grid.LocalStage();
+                    var localSpace = SpaceFor(spaceName, totalPartitions, scanInterval);
+                    var definition = Definition.Has(() =>
+                        new DistributedSpaceActor(Name!, spaceName, totalPartitions, scanInterval, localSpace, _grid));
+                    distributedSpace = localStage.ActorFor<IDistributedSpace>(definition);
+                    _distributedSpaces.AddOrUpdate(Name!, key => distributedSpace, (s, space) => distributedSpace);
+                }
+
+                return distributedSpace!;
+            }
+        }
+        
+        public ISpace SpaceFor(string spaceName) {
+            return SpaceFor(spaceName, DefaultTotalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
         }
 
-        public ISpace SpaceFor(string name, int totalPartitions) => 
-            SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
+        public ISpace SpaceFor(string spaceName, int totalPartitions) => 
+            SpaceFor(spaceName, totalPartitions, TimeSpan.FromMilliseconds(DefaultScanInterval));
 
-        public ISpace SpaceFor(string name, long defaultScanInterval) => 
-            SpaceFor(name, DefaultTotalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
+        public ISpace SpaceFor(string spaceName, long scanInterval) => 
+            SpaceFor(spaceName, DefaultTotalPartitions, TimeSpan.FromMilliseconds(scanInterval));
 
-        public ISpace SpaceFor(string name, int totalPartitions, long defaultScanInterval) => 
-            SpaceFor(name, totalPartitions, TimeSpan.FromMilliseconds(defaultScanInterval));
+        public ISpace SpaceFor(string spaceName, int totalPartitions, long scanInterval) => 
+            SpaceFor(spaceName, totalPartitions, TimeSpan.FromMilliseconds(scanInterval));
 
-        public ISpace SpaceFor(string name, int totalPartitions, TimeSpan defaultScanInterval)
+        public ISpace SpaceFor(string spaceName, int totalPartitions, TimeSpan scanInterval)
         {
-            if (defaultScanInterval <= TimeSpan.Zero)
+            if (scanInterval <= TimeSpan.Zero)
             {
-                throw new ArgumentException("The defaultScanInterval must be greater than zero.");
+                throw new ArgumentException("The scanInterval must be greater than zero.");
             }
 
             if (!IsDefined)
@@ -80,14 +118,14 @@ namespace Vlingo.Xoom.Lattice.Grid.Spaces
                 throw new InvalidOperationException("Accessor is invalid.");
             }
 
-            var spaceExist = _spaces.TryGetValue(name, out var space);
+            var spaceExist = _spaces.TryGetValue(spaceName, out var space);
 
             if (!spaceExist)
             {
-                var definition = Definition.Has(() => new PartitioningSpaceRouter(totalPartitions, defaultScanInterval), name);
+                var definition = Definition.Has(() => new PartitioningSpaceRouter(totalPartitions, scanInterval), spaceName);
                 var internalSpace = _grid?.ActorFor<ISpace>(definition);
                 space = new SpaceItemFactoryRelay(_grid!, internalSpace!);
-                _spaces.AddOrUpdate(name, s => space, (s, update) => space);
+                _spaces.AddOrUpdate(spaceName, s => space, (s, update) => space);
             }
 
             return space!;

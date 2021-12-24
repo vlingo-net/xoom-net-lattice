@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Cluster.Model.Application;
 using Vlingo.Xoom.Cluster.Model.Attribute;
+using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Grid.Application;
 using Vlingo.Xoom.Lattice.Grid.Application.Message;
 using Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization;
@@ -24,7 +25,8 @@ namespace Vlingo.Xoom.Lattice.Grid
     public class GridNode : ClusterApplicationAdapter
     {
         // Sent messages waiting for continuation (answer) onto current node
-        private static readonly ConcurrentDictionary<Guid, UnAckMessage> CorrelationMessages = new ConcurrentDictionary<Guid, UnAckMessage>();
+        private static readonly ConcurrentDictionary<Guid, UnAckMessage> GridMessagesCorrelations = new ConcurrentDictionary<Guid, UnAckMessage>();
+        private static readonly ConcurrentDictionary<Guid, ICompletes> ActorMessagesCorrelations = new ConcurrentDictionary<Guid, ICompletes>();
 
         private IAttributesProtocol? _client;
         private readonly IGridRuntime _gridRuntime;
@@ -43,7 +45,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             _gridRuntime = gridRuntime;
             _localNode = localNode;
             
-            _gridRuntime.SetNodeId(localNode.Id);
+            _gridRuntime.NodeId =localNode.Id;
 
             //var conf = FSTConfiguration.createDefaultConfiguration();
             // set classloader with available proxy classes
@@ -56,17 +58,18 @@ namespace Vlingo.Xoom.Lattice.Grid
                     () => new OutboundGridActorControl(
                         localNode.Id,
                         new JsonEncoder(),
-                        (id, message) => CorrelationMessages.AddOrUpdate(id, i => (UnAckMessage) message, (i, v) => (UnAckMessage) message),
+                        (id, message) => GridMessagesCorrelations.AddOrUpdate(id, i => (UnAckMessage) message, (i, v) => (UnAckMessage) message),
+                        (id, message) => ActorMessagesCorrelations.AddOrUpdate(id, i => message, (i, v) => message),
                         new OutBuffers(holder)));
 
-            _gridRuntime.SetOutbound(_outbound);
+            _gridRuntime.Outbound = _outbound;
 
             _inbound =
                 Stage.ActorFor<IInbound>(
-                    () => 
-            new InboundGridActorControl(
-                gridRuntime,
-                id => CorrelationMessages.Remove(id)));
+                    () => new InboundGridActorControl(
+                    gridRuntime,
+                    id => GridMessagesCorrelations.Remove(id),
+                    id => ActorMessagesCorrelations.Remove(id)));
 
             _applicationMessageHandler =
                 new GridApplicationMessageHandler(
@@ -98,8 +101,11 @@ namespace Vlingo.Xoom.Lattice.Grid
             _applicationMessageHandler.Handle(message);
         }
 
-        public override void InformAllLiveNodes(IEnumerable<Node> liveNodes, bool isHealthyCluster) => 
+        public override void InformAllLiveNodes(IEnumerable<Node> liveNodes, bool isHealthyCluster)
+        {
             Logger.Debug($"GRID: Live nodes confirmed: {liveNodes} and is healthy: {isHealthyCluster}");
+            _gridRuntime.InformAllLiveNodes(liveNodes);
+        }
 
         public override void InformLeaderElected(Id leaderId, bool isHealthyCluster, bool isLocalNodeLeading)
         {
@@ -204,38 +210,38 @@ namespace Vlingo.Xoom.Lattice.Grid
         /// <param name="leftNode">The node that left the cluster</param>
         private void RetryUnAckMessagesOn(Id leftNode)
         {
-            var retryMessages = CorrelationMessages
+            var retryMessages = GridMessagesCorrelations
                 .Where(entry => leftNode.Equals(entry.Value.Receiver))
                 .ToDictionary(kv => kv.Key, pair => pair.Value);
 
-            retryMessages.Keys.ToList().ForEach(id => CorrelationMessages.Remove(id));
+            retryMessages.Keys.ToList().ForEach(id => GridMessagesCorrelations.Remove(id));
 
             foreach (var retryMessage in retryMessages.Values)
             {
-                var deliver = retryMessage.Message;
-                var newRecipient = _gridRuntime.HashRing.NodeOf(deliver.Address.IdString);
+                var gridDeliver = retryMessage.Message;
+                var newRecipient = _gridRuntime.HashRing.NodeOf(gridDeliver.Address.IdString);
 
                 if (newRecipient.Equals(_localNode.Id))
                 {
-                    _inbound.Deliver(newRecipient,
+                    _inbound.GridDeliver(newRecipient,
                         newRecipient,
                         retryMessage.Completes,
-                        deliver.Protocol,
-                        deliver.Address,
-                        deliver.Definition,
-                        deliver.Consumer,
-                        deliver.Representation);
+                        gridDeliver.Protocol,
+                        gridDeliver.Address,
+                        gridDeliver.Definition,
+                        gridDeliver.Consumer,
+                        gridDeliver.Representation);
                 }
                 else
                 {
-                    _outbound.Deliver(newRecipient,
+                    _outbound.GridDeliver(newRecipient,
                         _localNode.Id,
                         retryMessage.Completes,
-                        deliver.Protocol,
-                        deliver.Address,
-                        deliver.Definition,
-                        deliver.Consumer,
-                        deliver.Representation);
+                        gridDeliver.Protocol,
+                        gridDeliver.Address,
+                        gridDeliver.Definition,
+                        gridDeliver.Consumer,
+                        gridDeliver.Representation);
                 }
             }
         }

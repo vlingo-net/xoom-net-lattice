@@ -6,6 +6,7 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Vlingo.Xoom.Actors;
@@ -28,12 +29,13 @@ namespace Vlingo.Xoom.Lattice.Grid
         private static readonly string InstanceName = Guid.NewGuid().ToString();
 
         private readonly IHashRing<Id> _hashRing;
-
-        private Id? _nodeId;
-        private IOutbound? _outbound;
+        
+        private List<Node> _liveNodes = new List<Node>();
 
         private volatile bool _hasQuorum;
         private readonly long _clusterHealthCheckInterval;
+        
+        private readonly string _clusterAppStageName;
 
         private Thread? _runnableThread;
         
@@ -73,6 +75,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         {
             _logger = logger;
             _hashRing = new MurmurSortedMapHashRing<Id>(100, (i, id) => new CacheNodePoint<Id>(Cache.Cache.Of(name), i, id));
+            _clusterAppStageName = clusterProperties.ClusterApplicationStageName();
             ExtenderStartDirectoryScanner();
             GridNodeBootstrap = GridNodeBootstrap.Boot(this, name, clusterProperties, false);
             _hasQuorum = false;
@@ -84,7 +87,7 @@ namespace Vlingo.Xoom.Lattice.Grid
         }
 
         protected override Func<IAddress?, IMailbox?, IMailbox?> MailboxWrapper() => 
-            (a, m) => new GridMailbox(m!, _nodeId!, a!, _hashRing, _outbound!, _logger);
+            (a, m) => new GridMailbox(m!, NodeId!, a!, _hashRing, Outbound!, _logger);
         
         public void Terminate() => World.Terminate();
         
@@ -106,10 +109,10 @@ namespace Vlingo.Xoom.Lattice.Grid
         public void RelocateActors()
         {
             var copy = _hashRing.Copy();
-            _hashRing.ExcludeNode(_nodeId!);
+            _hashRing.ExcludeNode(NodeId!);
 
             AllActorAddresses(this)
-                .Where(address => address.IsDistributable && IsAssignedTo(copy, address, _nodeId!))
+                .Where(address => address.IsDistributable && IsAssignedTo(copy, address, NodeId!))
                 .ToList()
                 .ForEach(address => {
                     var actor = ActorOf(this, address);
@@ -126,7 +129,7 @@ namespace Vlingo.Xoom.Lattice.Grid
 
         public void NodeJoined(Id newNode)
         {
-            if (_nodeId!.Equals(newNode))
+            if (NodeId!.Equals(newNode))
             {
                 // self is added to the hash-ring on GridNode#start
                 return;
@@ -143,10 +146,9 @@ namespace Vlingo.Xoom.Lattice.Grid
                     RelocateActorTo(actor!, address, newNode);
                 });
         }
-
-        public void SetNodeId(Id nodeId) => _nodeId = nodeId;
-
-        public void SetOutbound(IOutbound outbound) => _outbound = outbound;
+        
+        public Id? NodeId { get; set; }
+        public IOutbound? Outbound { get; set; }
 
         public GridNodeBootstrap GridNodeBootstrap { get; }
 
@@ -170,6 +172,8 @@ namespace Vlingo.Xoom.Lattice.Grid
             return actor!.ProtocolActor;
         }
 
+        public void InformAllLiveNodes(IEnumerable<Node> liveNodes) => _liveNodes = liveNodes.ToList();
+
         private void RelocateActorTo(Actor actor, IAddress address, Id toNode)
         {
             if (!GridActorOperations.IsSuspendedForRelocation(actor))
@@ -177,9 +181,9 @@ namespace Vlingo.Xoom.Lattice.Grid
                 _logger.Debug($"Relocating actor [{address}] to [{toNode}]");
                 //actor.suspendForRelocation();
                 GridActorOperations.SuspendForRelocation(actor);
-                _outbound?.Relocate(
+                Outbound?.Relocate(
                     toNode,
-                    _nodeId!,
+                    NodeId!,
                     Definition.SerializationProxy.From(actor.Definition),
                     address,
                     GridActorOperations.SupplyRelocationSnapshot(actor) /*actor.provideRelocationSnapshot()*/,
@@ -188,12 +192,20 @@ namespace Vlingo.Xoom.Lattice.Grid
         }
         
         private bool ShouldRelocateTo(IHashRing<Id> previous, IAddress address, Id newNode) =>
-            IsAssignedTo(previous, address, _nodeId!)
+            IsAssignedTo(previous, address, NodeId!)
             && IsAssignedTo(_hashRing, address, newNode);
 
         private static bool IsAssignedTo(IHashRing<Id> ring, IAddress a, Id node) => 
             node.Equals(ring.NodeOf(a.IdString));
         
+        public List<Id> AllOtherNodes() =>
+            _liveNodes
+                .Select(n => n.Id)
+                .Where(nodeId => !nodeId.Equals(NodeId))
+                .ToList();
+
+        public Stage LocalStage() => World.StageNamed(_clusterAppStageName);
+
         //====================================
         // Internal implementation
         //====================================
@@ -209,7 +221,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             var address = maybeAddress == null ? AddressFactory.Unique() : maybeAddress;
             var node = _hashRing.NodeOf(address.IdString);
             var mailbox = MaybeRemoteMailbox(address, definition, maybeMailbox!, () => {
-                _outbound?.Start(node, _nodeId!, typeof(T), address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
+                Outbound?.Start(node, NodeId!, typeof(T), address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
             });
             
             return base.ActorProtocolFor<T>(definition, parent, maybeAddress, mailbox, maybeSupervisor, logger);
@@ -227,7 +239,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             var address = maybeAddress == null ? AddressFactory.Unique() : maybeAddress;
             var node = _hashRing.NodeOf(address.IdString);
             var mailbox = MaybeRemoteMailbox(address, definition, maybeMailbox!, () => {
-                _outbound?.Start(node, _nodeId!, protocols[0], address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
+                Outbound?.Start(node, NodeId!, protocols[0], address, Definition.SerializationProxy.From(definition)); // TODO remote start all protocols
             });
             
             return base.ActorProtocolFor(protocols, definition, parent, maybeAddress, mailbox, maybeSupervisor, logger);
@@ -250,7 +262,7 @@ namespace Vlingo.Xoom.Lattice.Grid
 
             var node = _hashRing.NodeOf(address.IdString);
             IMailbox mailbox;
-            if (node != null && !node.Equals(_nodeId))
+            if (node != null && !node.Equals(NodeId))
             {
                 _runnableThread = new Thread(@out);
                 _runnableThread.Start();

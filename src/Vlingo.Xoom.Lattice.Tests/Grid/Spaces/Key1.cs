@@ -6,10 +6,12 @@
 // one at https://mozilla.org/MPL/2.0/.
 
 using System;
+using System.Runtime.Serialization;
 using Vlingo.Xoom.Lattice.Grid.Spaces;
 
 namespace Vlingo.Xoom.Lattice.Tests.Grid.Spaces
 {
+    [Serializable]
     public class Key1 : IKey
     {
         public string Id { get; }

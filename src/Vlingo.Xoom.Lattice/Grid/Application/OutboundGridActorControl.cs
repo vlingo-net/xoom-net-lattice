@@ -28,7 +28,8 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         private readonly Id _localNodeId;
         private IApplicationOutboundStream? _stream;
         private readonly IEncoder _encoder;
-        private readonly Action<Guid, IMessage> _correlation;
+        private readonly Action<Guid, IMessage> _gridMessagesCorrelationConsumer;
+        private readonly Action<Guid, ICompletes> _actorMessagesCorrelationConsumer;
 
         private readonly OutBuffers _outBuffers; // buffer messages for unhealthy nodes
         private readonly ConcurrentDictionary<Id, bool> _nodesHealth;
@@ -36,8 +37,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         public OutboundGridActorControl(
             Id localNodeId,
             IEncoder encoder,
-            Action<Guid, IMessage> correlation,
-            OutBuffers outBuffers) : this(localNodeId, null, encoder, correlation, outBuffers)
+            Action<Guid, IMessage> gridMessagesCorrelationConsumer,
+            Action<Guid, ICompletes> actorMessagesCorrelationConsumer,
+            OutBuffers outBuffers) : this(localNodeId, null, encoder, gridMessagesCorrelationConsumer, actorMessagesCorrelationConsumer, outBuffers)
         {
         }
             
@@ -45,13 +47,15 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             Id localNodeId,
             IApplicationOutboundStream? stream,
             IEncoder encoder,
-            Action<Guid, IMessage> correlation,
+            Action<Guid, IMessage> gridMessagesCorrelationConsumer,
+            Action<Guid, ICompletes> actorMessagesCorrelationConsumer,
             OutBuffers outBuffers)
         {
             _localNodeId = localNodeId;
             _stream = stream;
             _encoder = encoder;
-            _correlation = correlation;
+            _gridMessagesCorrelationConsumer = gridMessagesCorrelationConsumer;
+            _actorMessagesCorrelationConsumer = actorMessagesCorrelationConsumer;
             _outBuffers = outBuffers;
             _nodesHealth = new ConcurrentDictionary<Id, bool>();
         }
@@ -59,20 +63,44 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         public void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy) => 
             Send(recipient, new Start(protocol, address, definitionProxy));
 
-        public void Deliver(Id recipient, Id sender, ICompletes? returns, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy, LambdaExpression consumer, string representation)
+        public void GridDeliver(Id recipient, Id sender, ICompletes? returns, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy, LambdaExpression consumer, string representation)
         {
-            Deliver deliver;
+            GridDeliver gridDeliver;
             if (returns == null)
             {
-                deliver = new Deliver(protocol, address, definitionProxy, consumer, representation);
+                gridDeliver = new GridDeliver(protocol, address, definitionProxy, consumer, representation);
             } 
             else
             {
                 var answerCorrelationId = Guid.NewGuid();
-                deliver = new Deliver(protocol, address, definitionProxy, consumer, answerCorrelationId, representation);
-                _correlation(answerCorrelationId, new UnAckMessage(protocol, recipient, returns, deliver));
+                gridDeliver = new GridDeliver(protocol, address, definitionProxy, consumer, answerCorrelationId, representation);
+                _gridMessagesCorrelationConsumer(answerCorrelationId, new UnAckMessage(protocol, recipient, returns, gridDeliver));
             }
-            Send(recipient, deliver);
+            Send(recipient, gridDeliver);
+        }
+        
+        public void ActorDeliver(
+            Id recipient,
+            Id sender,
+            ICompletes? returns,
+            Type protocol,
+            Func<Grid, Actor> actorProvider,
+            LambdaExpression consumer,
+            string representation)
+        {
+            ActorDeliver actorDeliver;
+            if (returns == null)
+            {
+                actorDeliver = new ActorDeliver(protocol, actorProvider, consumer, representation);
+            }
+            else
+            {
+                var answerCorrelationId = Guid.NewGuid();
+                actorDeliver = new ActorDeliver(protocol, actorProvider, consumer, answerCorrelationId, representation);
+                _actorMessagesCorrelationConsumer(answerCorrelationId, returns);
+            }
+
+            Send(recipient, actorDeliver);
         }
 
         public void Answer<T>(Id receiver, Id sender, Answer<T> answer) => Send(receiver, answer);
@@ -83,7 +111,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         {
             var messages =
                 pending
-                    .Select(Message.Deliver.From(_correlation, receiver))
+                    .Select(Message.GridDeliver.From(_gridMessagesCorrelationConsumer, receiver))
                     .ToList();
 
             Send(receiver, new Relocate(messages.GetType().GetGenericArguments().First(), address, definitionProxy, snapshot, messages));

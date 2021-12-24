@@ -22,12 +22,17 @@ namespace Vlingo.Xoom.Lattice.Grid
     {
         private readonly IGridRuntime _gridRuntime;
 
-        private readonly Func<Guid, UnAckMessage> _correlation;
+        private readonly Func<Guid, UnAckMessage> _gridMessagesCorrelation;
+        private readonly Func<Guid, ICompletes> _actorMessagesCorrelation;
         
-        public InboundGridActorControl(IGridRuntime gridRuntime, Func<Guid, UnAckMessage> correlation)
+        public InboundGridActorControl(
+            IGridRuntime gridRuntime,
+            Func<Guid, UnAckMessage> gridMessagesCorrelation,
+            Func<Guid, ICompletes> actorMessagesCorrelation)
         {
             _gridRuntime = gridRuntime;
-            _correlation = correlation;
+            _gridMessagesCorrelation = gridMessagesCorrelation;
+            _actorMessagesCorrelation = actorMessagesCorrelation;
         }
         
         public void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy)
@@ -48,7 +53,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             }
         }
 
-        public void Deliver(
+        public void GridDeliver(
             Id recipient,
             Id sender,
             ICompletes? returns,
@@ -58,7 +63,7 @@ namespace Vlingo.Xoom.Lattice.Grid
             LambdaExpression consumer,
             string representation)
         {
-            Logger.Debug("Processing: Received application message: Deliver");
+            Logger.Debug("Processing: Received application message: GridDeliver");
 
             var stage = _gridRuntime.AsStage();
 
@@ -76,15 +81,41 @@ namespace Vlingo.Xoom.Lattice.Grid
                 GridActorOperations.ResumeFromRelocation(actor);
             }
         }
+        
+        public void ActorDeliver(
+            Id recipient,
+            Id sender,
+            ICompletes? returns,
+            Type protocol,
+            Func<Grid, Actor> actorProvider,
+            LambdaExpression consumer,
+            string representation)
+        {
+            Logger.Debug("Processing: Received application message: Deliver2");
+
+            var grid = (Grid) _gridRuntime.AsStage();
+
+            var actor = actorProvider(grid);
+
+            actor.ActorMailbox(actor).Send(actor, protocol, consumer, returns, representation);
+        }
 
         public void Answer<T>(Id receiver, Id sender, Answer<T> answer)
         {
+            // same Answer is used for both GridDeliver and Deliver2 messages
             Logger.Debug("GRID: Processing application message: Answer");
-            var clientReturns = _correlation(answer.CorrelationId).Completes as ICompletes<T>;
+            var clientReturns = Optional
+                .OfNullable(_gridMessagesCorrelation(answer.CorrelationId))
+                .Map(message => message.Completes as ICompletes<T>)
+                .OrElse(null);
             if (clientReturns == null)
             {
-                Logger.Warn($"GRID: Answer from {sender} for Returns with {answer.CorrelationId} didn't match a Returns on this node!");
-                return;
+                clientReturns = _actorMessagesCorrelation(answer.CorrelationId) as ICompletes<T>;
+                if (clientReturns == null)
+                {
+                    Logger.Warn($"GRID: Answer from {sender} for Returns with {answer.CorrelationId} didn't match a Returns on this node!");
+                    return;
+                }
             }
             if (answer.Error == null)
             {

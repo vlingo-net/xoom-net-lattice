@@ -5,6 +5,7 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
+using System.Collections.Generic;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Compiler;
 using Vlingo.Xoom.Lattice.Grid.Application;
@@ -19,8 +20,9 @@ namespace Vlingo.Xoom.Lattice.Grid
         void RelocateActors();
         Stage AsStage();
         void NodeJoined(Id newNode);
-        void SetNodeId(Id nodeId);
-        void SetOutbound(IOutbound outbound);
+        void InformAllLiveNodes(IEnumerable<Node> liveNodes);
+        Id? NodeId { get; set; }
+        IOutbound? Outbound { get; set; }
         World World { get; }
         GridNodeBootstrap GridNodeBootstrap { get; }
         IHashRing<Id> HashRing { get; }

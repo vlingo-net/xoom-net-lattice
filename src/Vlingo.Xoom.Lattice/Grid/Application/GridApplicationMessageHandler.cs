@@ -35,7 +35,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         private readonly IHardRefHolder _holder;
         private readonly Scheduler _scheduler;
         private readonly WeakQueue<ThreadStart> _buffer = new WeakQueue<ThreadStart>(); // buffer messages when cluster is not healthy
-        private IEnumerable<MethodInfo> _privateHandleMethods;
+        private readonly IEnumerable<MethodInfo> _privateHandleMethods;
 
         public GridApplicationMessageHandler(
             Id localNode,
@@ -144,21 +144,29 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         
         private void HandleAnswer<T>(Id receiver, Id sender, Answer<T> answer) => _inbound.Answer(receiver, sender, answer);
 
-        private void HandleDeliver<T>(Id receiver, Id sender, Deliver deliver)
+        private void HandleGridDeliver<T>(Id receiver, Id sender, GridDeliver gridDeliver)
         {
-            var recipient = Receiver(receiver, deliver.Address);
+            var recipient = Receiver(receiver, gridDeliver.Address);
             if (recipient.Equals(receiver))
             {
-                _inbound.Deliver(
+                _inbound.GridDeliver(
                     receiver, sender,
-                    ReturnsAnswer<T>(receiver, sender, deliver),
-                    deliver.Protocol,
-                    deliver.Address, deliver.Definition, deliver.Consumer, deliver.Representation);
+                    ReturnsAnswer<T>(receiver, sender, gridDeliver.AnswerCorrelationId),
+                    gridDeliver.Protocol,
+                    gridDeliver.Address, gridDeliver.Definition, gridDeliver.Consumer, gridDeliver.Representation);
             }
             else
             {
-                _outbound.Forward(recipient, sender, deliver);
+                _outbound.Forward(recipient, sender, gridDeliver);
             }
+        }
+        
+        private void HandleActorDeliver<T>(Id receiver, Id sender, ActorDeliver actorDeliver)
+        {
+            _inbound.ActorDeliver(
+                receiver, sender, ReturnsAnswer<T>(receiver, sender, actorDeliver.AnswerCorrelationId),
+                actorDeliver.Protocol, actorDeliver.ActorProvider, actorDeliver.Consumer, actorDeliver.Representation);
+
         }
 
         private void HandleStart<T>(Id receiver, Id sender, Start start)
@@ -182,7 +190,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
                 var pending = relocate.Pending
                     .Select(deliver =>
                         new LocalMessage<T>(null!, (Action<T>) deliver.Consumer.Compile(),
-                            ReturnsAnswer<T>(receiver, sender, deliver), deliver.Representation));
+                            ReturnsAnswer<T>(receiver, sender, deliver.AnswerCorrelationId), deliver.Representation));
                 _inbound.Relocate(receiver, sender, relocate.Definition, relocate.Address, relocate.Snapshot, pending);
             }
             else
@@ -204,17 +212,17 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
             return recipient;
         }
         
-        private ICompletes ReturnsAnswer<T>(Id receiver, Id sender, Deliver deliver)
+        private ICompletes ReturnsAnswer<T>(Id receiver, Id sender, Guid answerCorrelationId)
         {
-            if (deliver.AnswerCorrelationId == Guid.Empty)
+            if (answerCorrelationId == Guid.Empty)
             {
                 return null!;
             }
 
             var completes = Completes.Using<T>(_scheduler);
-            completes.AndThen(result => new Answer<T>(deliver.AnswerCorrelationId, result))
-                .RecoverFrom(error => new Answer<T>(deliver.AnswerCorrelationId, error))
-                .Otherwise<Answer<T>>(ignored => new Answer<T>(deliver.AnswerCorrelationId, new TimeoutException()))
+            completes.AndThen(result => new Answer<T>(answerCorrelationId, result))
+                .RecoverFrom(error => new Answer<T>(answerCorrelationId, error))
+                .Otherwise<Answer<T>>(ignored => new Answer<T>(answerCorrelationId, new TimeoutException()))
                 .AndThenConsume(TimeSpan.FromMilliseconds(4000), answer => _outbound.Answer(sender, receiver, answer));
 
             return completes;
@@ -224,9 +232,13 @@ namespace Vlingo.Xoom.Lattice.Grid.Application
         {
             switch (message)
             {
-                case Deliver d:
-                    _privateHandleMethods.First(m => m.Name.Contains("Deliver"))
-                        .Invoke(this, new object[] { receiver, sender, d });
+                case GridDeliver gd:
+                    _privateHandleMethods.First(m => m.Name.Contains("GridDeliver"))
+                        .Invoke(this, new object[] { receiver, sender, gd });
+                    break;
+                case ActorDeliver ad:
+                    _privateHandleMethods.First(m => m.Name.Contains("ActorDeliver"))
+                        .Invoke(this, new object[] { receiver, sender, ad });
                     break;
                 case Start s:
                     _privateHandleMethods.First(m => m.Name.Contains("Start"))

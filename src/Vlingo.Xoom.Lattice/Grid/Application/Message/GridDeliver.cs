@@ -14,7 +14,7 @@ using Vlingo.Xoom.Wire.Nodes;
 namespace Vlingo.Xoom.Lattice.Grid.Application.Message
 {
     [Serializable]
-    public class Deliver : IMessage
+    public class GridDeliver : IMessage
     {
         public Type Protocol { get; }
         public IAddress Address { get; }
@@ -23,7 +23,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         public Guid AnswerCorrelationId { get; }
         public string Representation { get; }
 
-        public static Func<Actors.IMessage, Deliver> From(Action<Guid, UnAckMessage> correlation, Id receiver)
+        public static Func<Actors.IMessage, GridDeliver> From(Action<Guid, UnAckMessage> correlation, Id receiver)
         {
             return message =>
             {
@@ -33,7 +33,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
                     .Map(completes => Guid.NewGuid())
                     .OrElse(Guid.Empty);
                 
-                var deliver = new Deliver(
+                var deliver = new GridDeliver(
                     message.Protocol,
                     message.Actor.Address,
                     Vlingo.Xoom.Actors.Definition.SerializationProxy.From(message.Actor.Definition),
@@ -50,7 +50,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
             };
         }
         
-        public Deliver(
+        public GridDeliver(
             Type protocol,
             IAddress address,
             Definition.SerializationProxy definition,
@@ -59,7 +59,7 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         {
         }
 
-        public Deliver(
+        public GridDeliver(
             Type protocol,
             IAddress address,
             Definition.SerializationProxy definition,
@@ -76,6 +76,6 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         }
         
         public override string ToString() =>
-            $"Deliver(protocol='{Protocol.Name}', address='{Address}', definitionProxy='{Definition}', consumer='{Consumer}', representation='{Representation}')";
+            $"GridDeliver(protocol='{Protocol.Name}', address='{Address}', definitionProxy='{Definition}', consumer='{Consumer}', representation='{Representation}')";
     }
 }

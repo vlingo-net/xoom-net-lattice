@@ -18,9 +18,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         public IAddress Address { get; }
         public Definition.SerializationProxy Definition { get; }
         public object Snapshot { get; }
-        public List<Deliver> Pending { get; }
+        public List<GridDeliver> Pending { get; }
 
-        public Relocate(Type protocol, IAddress address, Definition.SerializationProxy definition, object snapshot, List<Deliver> pending)
+        public Relocate(Type protocol, IAddress address, Definition.SerializationProxy definition, object snapshot, List<GridDeliver> pending)
         {
             Protocol = protocol;
             Address = address;

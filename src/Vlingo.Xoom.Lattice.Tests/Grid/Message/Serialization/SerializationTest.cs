@@ -56,20 +56,20 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
         public void TestThatEncodesDecodesDeliverMessage()
         {
             Expression<Action<ISimpleParametersInterface>> consumer = actor => actor.DoSomething("Test Consumer", 100);
-            var deliver = new Deliver(
+            var deliver = new GridDeliver(
                 typeof(ISimpleParametersInterface),
                 new GridAddress(Guid.NewGuid()),
                 Definition.SerializationProxy.From(
                     Definition.Has<ISimpleParametersInterface>(() => new ActorTest())),
                 consumer,
                 Guid.NewGuid(),
-                "Deliver representation");
+                "GridDeliver representation");
             var encoder = new JsonEncoder();
             var decoder = new JsonDecoder();
 
             var encoded = encoder.Encode(deliver);
 
-            var decoded = (Deliver) decoder.Decode(encoded);
+            var decoded = (GridDeliver) decoder.Decode(encoded);
             
             Assert.Equal(deliver.Address, decoded?.Address);
             Assert.Equal(deliver.Representation, decoded?.Representation);
@@ -101,14 +101,14 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
         public void TestThatEncodesForwardWithDeliverMessage()
         {
             Expression<Action<ISimpleParametersInterface>> consumer = actor => actor.DoSomething("Test Consumer", 100);
-            var deliver = new Deliver(
+            var deliver = new GridDeliver(
                 typeof(ISimpleParametersInterface),
                 new GridAddress(Guid.NewGuid()),
                 Definition.SerializationProxy.From(
                     Definition.Has<ISimpleParametersInterface>(() => new ActorTest())),
                 consumer,
                 Guid.NewGuid(),
-                "Deliver representation");
+                "GridDeliver representation");
             var forward = new Forward(Id.Of(50), deliver);
             var encoder = new JsonEncoder();
             var decoder = new JsonDecoder();
@@ -117,7 +117,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
 
             var decoded = (Forward) decoder.Decode(encoded);
 
-            var decodedDeliver = (Deliver)decoded?.Message;
+            var decodedDeliver = (GridDeliver)decoded?.Message;
             
             Assert.Equal(forward.OriginalSender, decoded?.OriginalSender);
             Assert.Equal(deliver.Address, decodedDeliver?.Address);
@@ -130,23 +130,23 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
         public void TestThatEncodesRelocateMessage()
         {
             Expression<Action<ISimpleParametersInterface>> consumer = actor => actor.DoSomething("Test Consumer", 100);
-            var deliver1 = new Deliver(
+            var deliver1 = new GridDeliver(
                 typeof(ISimpleParametersInterface),
                 new GridAddress(Guid.NewGuid()),
                 Definition.SerializationProxy.From(
                     Definition.Has<ISimpleParametersInterface>(() => new ActorTest())),
                 consumer,
                 Guid.NewGuid(),
-                "Deliver representation 1");
-            var deliver2 = new Deliver(
+                "GridDeliver representation 1");
+            var deliver2 = new GridDeliver(
                 typeof(ISimpleParametersInterface),
                 new GridAddress(Guid.NewGuid()),
                 Definition.SerializationProxy.From(
                     Definition.Has<ISimpleParametersInterface>(() => new ActorTest())),
                 consumer,
                 Guid.NewGuid(),
-                "Deliver representation 2");
-            var delivers = new List<Deliver>
+                "GridDeliver representation 2");
+            var delivers = new List<GridDeliver>
             {
                 deliver1,
                 deliver2
@@ -204,14 +204,14 @@ namespace Vlingo.Xoom.Lattice.Tests.Grid.Message.Serialization
         public void TestThatEncodesUnAckMessage()
         {
             Expression<Action<ISimpleParametersInterface>> consumer = actor => actor.DoSomething("Test Consumer", 100);
-            var deliver = new Deliver(
+            var deliver = new GridDeliver(
                 typeof(ISimpleParametersInterface),
                 new GridAddress(Guid.NewGuid()),
                 Definition.SerializationProxy.From(
                     Definition.Has<ISimpleParametersInterface>(() => new ActorTest())),
                 consumer,
                 Guid.NewGuid(),
-                "Deliver representation");
+                "GridDeliver representation");
             var unack = new UnAckMessage(
                 typeof(ISimpleParametersInterface),
                 Id.Of(50),

@@ -19,9 +19,9 @@ namespace Vlingo.Xoom.Lattice.Grid.Application.Message
         public Type Protocol { get; }
         public Id Receiver { get; }
         public ICompletes Completes { get; }
-        public Deliver Message { get; }
+        public GridDeliver Message { get; }
 
-        public UnAckMessage(Type protocol, Id receiver, ICompletes completes, Deliver message)
+        public UnAckMessage(Type protocol, Id receiver, ICompletes completes, GridDeliver message)
         {
             Protocol = protocol;
             Receiver = receiver;
