@@ -222,6 +222,7 @@ namespace Vlingo.Xoom.Lattice.Tests.Model.Projection
                         case "TwoHappened":
                         case "ThreeHappened":
                             _accessHolder.AccessProjection.WriteUsing(AccessProjection, 1);
+                            ProjectionControl.ConfirmerFor(projectable, control).Confirm();
                             Logger.Debug($"ALL {++_count}");
                             break;
                     }

@@ -55,7 +55,7 @@ namespace Vlingo.Xoom.Lattice.Model.Projection
 
             var total = confirmable.Total + 1;
 
-            if (confirmable.Count < total)
+            if (confirmable.Count > total)
             {
                 _confirmables.Add(projectionId, confirmable.IncrementTotal());
             }
