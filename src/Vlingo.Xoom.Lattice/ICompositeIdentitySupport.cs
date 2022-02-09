@@ -1,4 +1,4 @@
-// Copyright © 2012-2021 Vaughn Vernon. All rights reserved.
+// Copyright © 2012-2022 Vaughn Vernon. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the
 // Mozilla Public License, v. 2.0. If a copy of the MPL
