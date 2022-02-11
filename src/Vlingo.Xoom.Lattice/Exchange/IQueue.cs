@@ -5,13 +5,12 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Exchange;
+
+/// <summary>
+/// Defines a message exchange, as a queue, through which any number of related
+/// <see cref="IExchangeSender{T}"/>, <see cref="IExchangeReceiver{T}"/>, and <see cref="IExchangeAdapter{TLocal,TExternal,TExchange}"/> components
+/// </summary>
+public interface IQueue : IExchange
 {
-    /// <summary>
-    /// Defines a message exchange, as a queue, through which any number of related
-    /// <see cref="IExchangeSender{T}"/>, <see cref="IExchangeReceiver{T}"/>, and <see cref="IExchangeAdapter{TLocal,TExternal,TExchange}"/> components
-    /// </summary>
-    public interface IQueue : IExchange
-    {
-    }
 }

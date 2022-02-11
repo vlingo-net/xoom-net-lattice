@@ -10,57 +10,56 @@ using System.Collections.Generic;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Model.Projection;
+
+public class MultiConfirming__Proxy : IMultiConfirming
 {
-    public class MultiConfirming__Proxy : IMultiConfirming
+    private const string ManageConfirmationsForRepresentation1 =
+        "ManageConfirmationsFor(Vlingo.Xoom.Lattice.Model.Projection.IProjectable, int)";
+
+    private const string ManagedConfirmationsRepresentation2 = "ManagedConfirmations()";
+
+    private readonly Actor actor;
+    private readonly IMailbox mailbox;
+
+    public MultiConfirming__Proxy(Actor actor, IMailbox mailbox)
     {
-        private const string ManageConfirmationsForRepresentation1 =
-            "ManageConfirmationsFor(Vlingo.Xoom.Lattice.Model.Projection.IProjectable, int)";
+        this.actor = actor;
+        this.mailbox = mailbox;
+    }
 
-        private const string ManagedConfirmationsRepresentation2 = "ManagedConfirmations()";
-
-        private readonly Actor actor;
-        private readonly IMailbox mailbox;
-
-        public MultiConfirming__Proxy(Actor actor, IMailbox mailbox)
+    public void ManageConfirmationsFor(IProjectable projectable, int count)
+    {
+        if (!actor.IsStopped)
         {
-            this.actor = actor;
-            this.mailbox = mailbox;
-        }
-
-        public void ManageConfirmationsFor(IProjectable projectable, int count)
-        {
-            if (!actor.IsStopped)
-            {
-                Action<IMultiConfirming> cons1665207899 = __ => __.ManageConfirmationsFor(projectable, count);
-                if (mailbox.IsPreallocated)
-                    mailbox.Send(actor, cons1665207899, null, ManageConfirmationsForRepresentation1);
-                else
-                    mailbox.Send(new LocalMessage<IMultiConfirming>(actor, cons1665207899,
-                        ManageConfirmationsForRepresentation1));
-            }
+            Action<IMultiConfirming> cons1665207899 = __ => __.ManageConfirmationsFor(projectable, count);
+            if (mailbox.IsPreallocated)
+                mailbox.Send(actor, cons1665207899, null, ManageConfirmationsForRepresentation1);
             else
-            {
-                actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ManageConfirmationsForRepresentation1));
-            }
+                mailbox.Send(new LocalMessage<IMultiConfirming>(actor, cons1665207899,
+                    ManageConfirmationsForRepresentation1));
         }
-
-        public ICompletes<IEnumerable<IProjectable>> ManagedConfirmations()
+        else
         {
-            if (!actor.IsStopped)
-            {
-                Action<IMultiConfirming> cons859132867 = __ => __.ManagedConfirmations();
-                var completes = new BasicCompletes<IEnumerable<IProjectable>>(actor.Scheduler);
-                if (mailbox.IsPreallocated)
-                    mailbox.Send(actor, cons859132867, completes, ManagedConfirmationsRepresentation2);
-                else
-                    mailbox.Send(new LocalMessage<IMultiConfirming>(actor, cons859132867, completes,
-                        ManagedConfirmationsRepresentation2));
-                return completes;
-            }
-
-            actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ManagedConfirmationsRepresentation2));
-            return null!;
+            actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ManageConfirmationsForRepresentation1));
         }
+    }
+
+    public ICompletes<IEnumerable<IProjectable>> ManagedConfirmations()
+    {
+        if (!actor.IsStopped)
+        {
+            Action<IMultiConfirming> cons859132867 = __ => __.ManagedConfirmations();
+            var completes = new BasicCompletes<IEnumerable<IProjectable>>(actor.Scheduler);
+            if (mailbox.IsPreallocated)
+                mailbox.Send(actor, cons859132867, completes, ManagedConfirmationsRepresentation2);
+            else
+                mailbox.Send(new LocalMessage<IMultiConfirming>(actor, cons859132867, completes,
+                    ManagedConfirmationsRepresentation2));
+            return completes;
+        }
+
+        actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ManagedConfirmationsRepresentation2));
+        return null!;
     }
 }

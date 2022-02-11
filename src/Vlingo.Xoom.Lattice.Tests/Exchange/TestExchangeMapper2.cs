@@ -7,12 +7,11 @@
 
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Xoom.Lattice.Tests.Exchange
-{
-    public class TestExchangeMapper2 : IExchangeMapper<LocalType2, ExternalType2>
-    {
-        public ExternalType2 LocalToExternal(LocalType2 local) => new ExternalType2(local.Attribute1, local.Attribute2);
+namespace Vlingo.Xoom.Lattice.Tests.Exchange;
 
-        public LocalType2 ExternalToLocal(ExternalType2 external) => new LocalType2(external.Field1, int.Parse(external.Field2));
-    }
+public class TestExchangeMapper2 : IExchangeMapper<LocalType2, ExternalType2>
+{
+    public ExternalType2 LocalToExternal(LocalType2 local) => new ExternalType2(local.Attribute1, local.Attribute2);
+
+    public LocalType2 ExternalToLocal(ExternalType2 external) => new LocalType2(external.Field1, int.Parse(external.Field2));
 }

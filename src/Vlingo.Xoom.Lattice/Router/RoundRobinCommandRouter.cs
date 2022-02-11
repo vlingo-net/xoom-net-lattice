@@ -8,21 +8,20 @@
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Router
-{
-    /// <summary>
-    /// The <see cref="ICommandRouter"/> implementation for round-robin routing.
-    /// </summary>
-    public class RoundRobinCommandRouter : RoundRobinRouter<ICommandRouter>, ICommandRouter
-    {
-        public RoundRobinCommandRouter(int totalRoutees) :
-            base(new RouterSpecification<ICommandRouter>(totalRoutees, Definition.Has(typeof(CommandRouterWorkerActor), Definition.NoParameters)))
-        {
-        }
-        
-        public void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command => 
-            DispatchCommand((router, cmd) => router.Route(cmd), command);
+namespace Vlingo.Xoom.Lattice.Router;
 
-        public CommandRouterType CommandRouterType => CommandRouterType.RoundRobin;
+/// <summary>
+/// The <see cref="ICommandRouter"/> implementation for round-robin routing.
+/// </summary>
+public class RoundRobinCommandRouter : RoundRobinRouter<ICommandRouter>, ICommandRouter
+{
+    public RoundRobinCommandRouter(int totalRoutees) :
+        base(new RouterSpecification<ICommandRouter>(totalRoutees, Definition.Has(typeof(CommandRouterWorkerActor), Definition.NoParameters)))
+    {
     }
+        
+    public void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command => 
+        DispatchCommand((router, cmd) => router.Route(cmd), command);
+
+    public CommandRouterType CommandRouterType => CommandRouterType.RoundRobin;
 }

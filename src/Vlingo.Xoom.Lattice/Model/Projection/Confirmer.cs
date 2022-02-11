@@ -7,20 +7,19 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Model.Projection;
+
+/// <summary>
+/// Defines the functional interface used to confirm the completion of projections operations.
+/// </summary>
+public sealed class Confirmer
 {
+    private readonly Action _toConfirm;
+
+    public Confirmer(Action toConfirm) => _toConfirm = toConfirm;
+
     /// <summary>
-    /// Defines the functional interface used to confirm the completion of projections operations.
+    /// Confirms the completion of projections operations.
     /// </summary>
-    public sealed class Confirmer
-    {
-        private readonly Action _toConfirm;
-
-        public Confirmer(Action toConfirm) => _toConfirm = toConfirm;
-
-        /// <summary>
-        /// Confirms the completion of projections operations.
-        /// </summary>
-        public void Confirm() => _toConfirm();
-    }
+    public void Confirm() => _toConfirm();
 }

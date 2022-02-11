@@ -8,11 +8,10 @@
 using System;
 using Vlingo.Xoom.Lattice.Grid.Hashring;
 
-namespace Vlingo.Xoom.Lattice.Tests.Grid.Hashring
+namespace Vlingo.Xoom.Lattice.Tests.Grid.Hashring;
+
+public class MurmurArrayHashRingPropertyTest : HashRingPropertyTest
 {
-    public class MurmurArrayHashRingPropertyTest : HashRingPropertyTest
-    {
-        protected override IHashRing<string> Ring(int pointsPerNode, Func<int, string, HashedNodePoint<string>> factory) => 
-            new MurmurArrayHashRing<string>(pointsPerNode, factory);
-    }
+    protected override IHashRing<string> Ring(int pointsPerNode, Func<int, string, HashedNodePoint<string>> factory) => 
+        new MurmurArrayHashRing<string>(pointsPerNode, factory);
 }

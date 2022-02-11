@@ -8,51 +8,50 @@
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Process;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class FiveStepEmittingStatefulProcess : StatefulProcess<StepCountState>, IFiveStepProcess
 {
-    public class FiveStepEmittingStatefulProcess : StatefulProcess<StepCountState>, IFiveStepProcess
+    private readonly Chronicle<StepCountState> _chronicle;
+    private StepCountState _state;
+
+    public FiveStepEmittingStatefulProcess() : base("12345")
     {
-        private readonly Chronicle<StepCountState> _chronicle;
-        private StepCountState _state;
-
-        public FiveStepEmittingStatefulProcess() : base("12345")
-        {
-            _state = new StepCountState();
-            _chronicle = new Chronicle<StepCountState>(_state);
-        }
-        
-        protected override void State(StepCountState state) => _state = state;
-
-        public override Chronicle<StepCountState> Chronicle => _chronicle;
-
-        public override string ProcessId => Id;
-        
-        public ICompletes<int> QueryStepCount() => Completes().With(_state.StepCount());
-
-        public void StepOneHappened()
-        {
-            _state.CountStep();
-            Process(new DoStepTwo());
-        }
-
-        public void StepTwoHappened()
-        {
-            _state.CountStep();
-            Process(new DoStepThree());
-        }
-
-        public void StepThreeHappened()
-        {
-            _state.CountStep();
-            Process(new DoStepFour());
-        }
-
-        public void StepFourHappened()
-        {
-            _state.CountStep();
-            Process(new DoStepFive());
-        }
-
-        public void StepFiveHappened() => _state.CountStep();
+        _state = new StepCountState();
+        _chronicle = new Chronicle<StepCountState>(_state);
     }
+        
+    protected override void State(StepCountState state) => _state = state;
+
+    public override Chronicle<StepCountState> Chronicle => _chronicle;
+
+    public override string ProcessId => Id;
+        
+    public ICompletes<int> QueryStepCount() => Completes().With(_state.StepCount());
+
+    public void StepOneHappened()
+    {
+        _state.CountStep();
+        Process(new DoStepTwo());
+    }
+
+    public void StepTwoHappened()
+    {
+        _state.CountStep();
+        Process(new DoStepThree());
+    }
+
+    public void StepThreeHappened()
+    {
+        _state.CountStep();
+        Process(new DoStepFour());
+    }
+
+    public void StepFourHappened()
+    {
+        _state.CountStep();
+        Process(new DoStepFive());
+    }
+
+    public void StepFiveHappened() => _state.CountStep();
 }

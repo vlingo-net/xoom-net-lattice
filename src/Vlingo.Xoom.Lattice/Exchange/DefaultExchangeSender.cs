@@ -5,12 +5,11 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange
-{
-    public abstract class DefaultExchangeSender<TExchange> : IExchangeSender<TExchange>
-    {
-        public abstract void Send(TExchange message);
+namespace Vlingo.Xoom.Lattice.Exchange;
 
-        public void Send(object message) => Send((TExchange) message);
-    }
+public abstract class DefaultExchangeSender<TExchange> : IExchangeSender<TExchange>
+{
+    public abstract void Send(TExchange message);
+
+    public void Send(object message) => Send((TExchange) message);
 }

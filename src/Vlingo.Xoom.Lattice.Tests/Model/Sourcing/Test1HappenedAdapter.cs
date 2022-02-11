@@ -9,30 +9,29 @@ using System;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public class Test1HappenedAdapter : EntryAdapter
 {
-    public class Test1HappenedAdapter : EntryAdapter
+    public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<Test1Happened>(entry.EntryRawData);
+
+    public override IEntry ToEntry(ISource source, Metadata metadata)
     {
-        public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<Test1Happened>(entry.EntryRawData);
-
-        public override IEntry ToEntry(ISource source, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(typeof(Test1Happened), 1, serialization, metadata);
-        }
-
-        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(typeof(Test1Happened), version, serialization, metadata);
-        }
-
-        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(id, typeof(Test1Happened), version, serialization, metadata);
-        }
-
-        public override Type SourceType { get; } = typeof(Test1Happened);
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(typeof(Test1Happened), 1, serialization, metadata);
     }
+
+    public override IEntry ToEntry(ISource source, int version, Metadata metadata)
+    {
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(typeof(Test1Happened), version, serialization, metadata);
+    }
+
+    public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
+    {
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(id, typeof(Test1Happened), version, serialization, metadata);
+    }
+
+    public override Type SourceType { get; } = typeof(Test1Happened);
 }

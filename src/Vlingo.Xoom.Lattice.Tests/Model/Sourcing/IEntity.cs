@@ -8,13 +8,12 @@
 using System.Threading.Tasks;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public interface IEntity
 {
-    public interface IEntity
-    {
-        void DoTest1();
-        void DoTest2();
-        ICompletes<string> DoTest3();
-        Task<string> DoTest4();
-    }
+    void DoTest1();
+    void DoTest2();
+    ICompletes<string> DoTest3();
+    Task<string> DoTest4();
 }

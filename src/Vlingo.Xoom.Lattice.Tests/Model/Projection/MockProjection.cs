@@ -10,30 +10,29 @@ using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Projection;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Projection
+namespace Vlingo.Xoom.Lattice.Tests.Model.Projection;
+
+public class MockProjection : IProjection
 {
-    public class MockProjection : IProjection
-    {
-        private readonly AtomicInteger _projections = new AtomicInteger(0);
-        public List<string> ProjectedDataIds { get; } = new List<string>();
-        public AccessSafely Access { get; private set; } = AccessSafely.AfterCompleting(0);
+    private readonly AtomicInteger _projections = new AtomicInteger(0);
+    public List<string> ProjectedDataIds { get; } = new List<string>();
+    public AccessSafely Access { get; private set; } = AccessSafely.AfterCompleting(0);
         
-        public void ProjectWith(IProjectable projectable, IProjectionControl control) => 
-            Access.WriteUsing("projections", 1, projectable.DataId);
+    public void ProjectWith(IProjectable projectable, IProjectionControl control) => 
+        Access.WriteUsing("projections", 1, projectable.DataId);
 
-        public AccessSafely AfterCompleting(int times)
-        {
-            Access = AccessSafely.AfterCompleting(times);
+    public AccessSafely AfterCompleting(int times)
+    {
+        Access = AccessSafely.AfterCompleting(times);
 
-            Access
-                .WritingWith<int, string>("projections", (val, id) => {
-                    _projections.Set(_projections.Get() + val);
-                    ProjectedDataIds.Add(id);
-                })
-                .ReadingWith("projections", () => _projections.Get())
-                .ReadingWith<int, string>("projectionId", index => ProjectedDataIds[index]);
+        Access
+            .WritingWith<int, string>("projections", (val, id) => {
+                _projections.Set(_projections.Get() + val);
+                ProjectedDataIds.Add(id);
+            })
+            .ReadingWith("projections", () => _projections.Get())
+            .ReadingWith<int, string>("projectionId", index => ProjectedDataIds[index]);
 
-            return Access;
-        }
+        return Access;
     }
 }

@@ -5,17 +5,16 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feeds
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds;
+
+/// <summary>
+/// The protocol used by parties interested in consuming a <see cref="FeedItem"/> stream provided by a <see cref="IFeeder"/>.
+/// </summary>
+public interface IFeedConsumer
 {
     /// <summary>
-    /// The protocol used by parties interested in consuming a <see cref="FeedItem"/> stream provided by a <see cref="IFeeder"/>.
+    /// Consumes the <see cref="FeedItem"/> requested of the <code>IFeeder.FeedItemTo(FeedItemId, FeedConsumer)</code>.
     /// </summary>
-    public interface IFeedConsumer
-    {
-        /// <summary>
-        /// Consumes the <see cref="FeedItem"/> requested of the <code>IFeeder.FeedItemTo(FeedItemId, FeedConsumer)</code>.
-        /// </summary>
-        /// <param name="feedItem">The <see cref="FeedItem"/> requested of the <see cref="IFeeder"/> to be consumed</param>
-        void ConsumeFeedItem(FeedItem feedItem);
-    }
+    /// <param name="feedItem">The <see cref="FeedItem"/> requested of the <see cref="IFeeder"/> to be consumed</param>
+    void ConsumeFeedItem(FeedItem feedItem);
 }

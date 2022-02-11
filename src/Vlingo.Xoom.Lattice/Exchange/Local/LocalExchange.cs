@@ -7,38 +7,37 @@
 
 using Vlingo.Xoom.Common.Message;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Local
+namespace Vlingo.Xoom.Lattice.Exchange.Local;
+
+public class LocalExchange : IExchange, IMessageQueueListener
 {
-    public class LocalExchange : IExchange, IMessageQueueListener
+    private readonly object _channel = new object();
+    private readonly object _connection = new object();
+    private readonly IMessageQueue _queue;
+    private readonly Forwarder _forwarder;
+        
+    public LocalExchange(IMessageQueue queue)
     {
-        private readonly object _channel = new object();
-        private readonly object _connection = new object();
-        private readonly IMessageQueue _queue;
-        private readonly Forwarder _forwarder;
-        
-        public LocalExchange(IMessageQueue queue)
-        {
-            _queue = queue;
-            queue.RegisterListener(this);
-            _forwarder = new Forwarder();
-        }
-        
-        public void Close() => _queue.Close(true);
-
-        public T Channel<T>() => (T) _channel;
-
-        public T Connection<T>() => (T) _connection;
-
-        public string Name { get; } = "LocalExchange";
-        
-        public IExchange Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey)
-        {
-            _forwarder.Register(covey);
-            return this;
-        }
-
-        public void Send<TLocal>(TLocal local) => _forwarder.ForwardToSender(local);
-
-        public void HandleMessage(IMessage message) => _forwarder.ForwardToReceiver(message);
+        _queue = queue;
+        queue.RegisterListener(this);
+        _forwarder = new Forwarder();
     }
+        
+    public void Close() => _queue.Close(true);
+
+    public T Channel<T>() => (T) _channel;
+
+    public T Connection<T>() => (T) _connection;
+
+    public string Name { get; } = "LocalExchange";
+        
+    public IExchange Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey)
+    {
+        _forwarder.Register(covey);
+        return this;
+    }
+
+    public void Send<TLocal>(TLocal local) => _forwarder.ForwardToSender(local);
+
+    public void HandleMessage(IMessage message) => _forwarder.ForwardToReceiver(message);
 }

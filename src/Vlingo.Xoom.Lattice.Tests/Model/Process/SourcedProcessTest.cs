@@ -19,81 +19,81 @@ using Vlingo.Xoom.Symbio.Store.Journal.InMemory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class SourcedProcessTest : IDisposable
 {
-    public class SourcedProcessTest : IDisposable
+    private readonly IExchange _exchange;
+    private readonly IJournal<string> _journal;
+    private readonly ExchangeReceivers _exchangeReceivers;
+    private readonly LocalExchangeSender _exchangeSender;
+    private readonly SourcedTypeRegistry _sourcedTypeRegistry;
+    private readonly MockJournalDispatcher _dispatcher;
+    private readonly World _world;
+
+    [Fact]
+    public void TestFiveStepSendingProcess()
     {
-        private readonly IExchange _exchange;
-        private readonly IJournal<string> _journal;
-        private readonly ExchangeReceivers _exchangeReceivers;
-        private readonly LocalExchangeSender _exchangeSender;
-        private readonly SourcedTypeRegistry _sourcedTypeRegistry;
-        private readonly MockJournalDispatcher _dispatcher;
-        private readonly World _world;
-
-        [Fact]
-        public void TestFiveStepSendingProcess()
-        {
-            var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepSendingSourcedProcess());
-            _exchangeReceivers.SetProcess(process);
+        var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepSendingSourcedProcess());
+        _exchangeReceivers.SetProcess(process);
             
-            _exchange.Send(new DoStepOne());
+        _exchange.Send(new DoStepOne());
 
-            Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
+        Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
 
-            Assert.Equal(5, process.QueryStepCount().Await());
-        }
+        Assert.Equal(5, process.QueryStepCount().Await());
+    }
         
-        [Fact]
-        public void TestFiveStepEmittingProcess()
-        {
-            var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingSourcedProcess());
-            _exchangeReceivers.SetProcess(process);
-            var listenerAccess = _dispatcher.AfterCompleting(4);
+    [Fact]
+    public void TestFiveStepEmittingProcess()
+    {
+        var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingSourcedProcess());
+        _exchangeReceivers.SetProcess(process);
+        var listenerAccess = _dispatcher.AfterCompleting(4);
             
-            _exchange.Send(new DoStepOne());
+        _exchange.Send(new DoStepOne());
 
-            Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
+        Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
 
-            Assert.Equal(5, process.QueryStepCount().Await());
+        Assert.Equal(5, process.QueryStepCount().Await());
             
-            Assert.Equal(4, listenerAccess.ReadFrom<int>("entriesCount"));
-        }
+        Assert.Equal(4, listenerAccess.ReadFrom<int>("entriesCount"));
+    }
 
-        public SourcedProcessTest(ITestOutputHelper output)
-        {
-            var converter = new Converter(output);
-            Console.SetOut(converter);
+    public SourcedProcessTest(ITestOutputHelper output)
+    {
+        var converter = new Converter(output);
+        Console.SetOut(converter);
             
-            _world = World.StartWithDefaults("five-step-process-test");
+        _world = World.StartWithDefaults("five-step-process-test");
 
-            var queue = new AsyncMessageQueue(null);
-            _exchange = new LocalExchange(queue);
-            _dispatcher = new MockJournalDispatcher();
-            _journal = new InMemoryJournal<string>(_dispatcher, _world);
+        var queue = new AsyncMessageQueue(null);
+        _exchange = new LocalExchange(queue);
+        _dispatcher = new MockJournalDispatcher();
+        _journal = new InMemoryJournal<string>(_dispatcher, _world);
             
-            _sourcedTypeRegistry = new SourcedTypeRegistry(_world);
+        _sourcedTypeRegistry = new SourcedTypeRegistry(_world);
             
-            RegisterSourcedTypes<FiveStepSendingSourcedProcess>();
-            RegisterSourcedTypes<FiveStepEmittingSourcedProcess>();
+        RegisterSourcedTypes<FiveStepSendingSourcedProcess>();
+        RegisterSourcedTypes<FiveStepEmittingSourcedProcess>();
 
-            _exchangeReceivers = new ExchangeReceivers();
-            _exchangeSender = new LocalExchangeSender(queue);
+        _exchangeReceivers = new ExchangeReceivers();
+        _exchangeSender = new LocalExchangeSender(queue);
 
-            var processTypeRegistry = new ProcessTypeRegistry(_world);
-            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepSendingSourcedProcess, PorcessObjectState>(nameof(FiveStepSendingSourcedProcess), _exchange, _sourcedTypeRegistry));
-            processTypeRegistry.Register(new SourcedProcessInfo<FiveStepEmittingSourcedProcess, PorcessObjectState>(nameof(FiveStepEmittingSourcedProcess), _exchange, _sourcedTypeRegistry));
+        var processTypeRegistry = new ProcessTypeRegistry(_world);
+        processTypeRegistry.Register(new SourcedProcessInfo<FiveStepSendingSourcedProcess, PorcessObjectState>(nameof(FiveStepSendingSourcedProcess), _exchange, _sourcedTypeRegistry));
+        processTypeRegistry.Register(new SourcedProcessInfo<FiveStepEmittingSourcedProcess, PorcessObjectState>(nameof(FiveStepEmittingSourcedProcess), _exchange, _sourcedTypeRegistry));
             
-            RegisterExchangeCoveys();
-        }
+        RegisterExchangeCoveys();
+    }
         
-        private void RegisterExchangeCoveys()
-        {
-            _exchange
-                .Register(Covey<DoStepOne, DoStepOne, LocalExchangeMessage>.Of(
-                    _exchangeSender,
-                    _exchangeReceivers.DoStepOneReceiver,
-                    new LocalExchangeAdapter<DoStepOne, DoStepOne>()))
+    private void RegisterExchangeCoveys()
+    {
+        _exchange
+            .Register(Covey<DoStepOne, DoStepOne, LocalExchangeMessage>.Of(
+                _exchangeSender,
+                _exchangeReceivers.DoStepOneReceiver,
+                new LocalExchangeAdapter<DoStepOne, DoStepOne>()))
             .Register(Covey<DoStepTwo, DoStepTwo, LocalExchangeMessage>.Of(
                 _exchangeSender,
                 _exchangeReceivers.DoStepTwoReceiver,
@@ -110,28 +110,27 @@ namespace Vlingo.Xoom.Lattice.Tests.Model.Process
                 _exchangeSender,
                 _exchangeReceivers.DoStepFiveReceiver,
                 new LocalExchangeAdapter<DoStepFive, DoStepFive>()));
-        }
-        
-        private void RegisterSourcedTypes<TSourced>()
-        {
-            var entryAdapterProvider = EntryAdapterProvider.Instance(_world);
-
-            _sourcedTypeRegistry.Register(Vlingo.Xoom.Lattice.Model.Sourcing.Info.RegisterSourced<TSourced>(_journal));
-
-            _sourcedTypeRegistry.Info<TSourced>()?.RegisterEntryAdapter(new ProcessMessageTextAdapter(), 
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter))
-                .RegisterEntryAdapter(new DoStepOneAdapter(),
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter))
-                .RegisterEntryAdapter(new DoStepTwoAdapter(),
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter))
-                .RegisterEntryAdapter(new DoStepThreeAdapter(),
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter))
-                .RegisterEntryAdapter(new DoStepFourAdapter(),
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter))
-                .RegisterEntryAdapter(new DoStepFiveAdapter(),
-                    adapter => entryAdapterProvider.RegisterAdapter(adapter));
-        }
-
-        public void Dispose() => _world.Terminate();
     }
+        
+    private void RegisterSourcedTypes<TSourced>()
+    {
+        var entryAdapterProvider = EntryAdapterProvider.Instance(_world);
+
+        _sourcedTypeRegistry.Register(Vlingo.Xoom.Lattice.Model.Sourcing.Info.RegisterSourced<TSourced>(_journal));
+
+        _sourcedTypeRegistry.Info<TSourced>()?.RegisterEntryAdapter(new ProcessMessageTextAdapter(), 
+                adapter => entryAdapterProvider.RegisterAdapter(adapter))
+            .RegisterEntryAdapter(new DoStepOneAdapter(),
+                adapter => entryAdapterProvider.RegisterAdapter(adapter))
+            .RegisterEntryAdapter(new DoStepTwoAdapter(),
+                adapter => entryAdapterProvider.RegisterAdapter(adapter))
+            .RegisterEntryAdapter(new DoStepThreeAdapter(),
+                adapter => entryAdapterProvider.RegisterAdapter(adapter))
+            .RegisterEntryAdapter(new DoStepFourAdapter(),
+                adapter => entryAdapterProvider.RegisterAdapter(adapter))
+            .RegisterEntryAdapter(new DoStepFiveAdapter(),
+                adapter => entryAdapterProvider.RegisterAdapter(adapter));
+    }
+
+    public void Dispose() => _world.Terminate();
 }

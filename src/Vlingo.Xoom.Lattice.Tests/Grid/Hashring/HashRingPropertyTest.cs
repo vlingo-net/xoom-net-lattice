@@ -11,104 +11,103 @@ using System.Linq;
 using Vlingo.Xoom.Lattice.Grid.Hashring;
 using Xunit;
 
-namespace Vlingo.Xoom.Lattice.Tests.Grid.Hashring
+namespace Vlingo.Xoom.Lattice.Tests.Grid.Hashring;
+
+public abstract class HashRingPropertyTest
 {
-    public abstract class HashRingPropertyTest
+    private const int PointsPerNode = 100;
+
+    private static readonly Func<int, string, HashedNodePoint<string>> _factory =
+        (hash, node) => new HashedNodePointMock(hash, node);
+        
+    private static readonly int _sampleSize = 100;
+    private static readonly string[] _nodes = {"node0", "node1", "node2"};
+
+    [Fact]
+    public void EqualRingsMustAssignToTheSameNodes()
     {
-        private const int PointsPerNode = 100;
+        var ring1 = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
+        var ring2 = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
 
-        private static readonly Func<int, string, HashedNodePoint<string>> _factory =
-            (hash, node) => new HashedNodePointMock(hash, node);
+        foreach (var sample in Gen(_sampleSize))
+        {
+            Assert.Equal(ring1.NodeOf(sample), ring2.NodeOf(sample));
+        }
+    }
+
+    [Fact(Skip = "Inconsistent implementation")]
+    public void ExcludingNodesMustRetainAssignmentsToRemainingNodes()
+    {
+        var sample = Gen(_sampleSize);
+
+        var ring = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
+        var assignments = Assignments(sample, ring);
+
+        var removed = ExcludeAll(ring, _nodes[1]);
+        var assignmentsRemoved = Assignments(sample, removed);
+
+        Assert.Superset(new HashSet<Guid>( assignmentsRemoved[_nodes[0]]), new HashSet<Guid>( assignments[_nodes[0]]));
+        Assert.Superset(new HashSet<Guid>( assignmentsRemoved[_nodes[2]]), new HashSet<Guid>( assignments[_nodes[2]]));
+    }
+
+    [Fact]
+    public void EmptyHashRingShouldAssignNull()
+    {
+        var ring = Ring(PointsPerNode, _factory);
+        Assert.Null(ring.NodeOf(Guid.NewGuid()));
+    }
         
-        private static readonly int _sampleSize = 100;
-        private static readonly string[] _nodes = {"node0", "node1", "node2"};
+    protected static List<Guid> Gen(int n)
+    {
+        return Enumerable.Range(0, n)
+            .Select(ignored => Guid.NewGuid())
+            .ToList();
+    }
 
-        [Fact]
-        public void EqualRingsMustAssignToTheSameNodes()
-        {
-            var ring1 = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
-            var ring2 = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
-
-            foreach (var sample in Gen(_sampleSize))
-            {
-                Assert.Equal(ring1.NodeOf(sample), ring2.NodeOf(sample));
-            }
-        }
-
-        [Fact(Skip = "Inconsistent implementation")]
-        public void ExcludingNodesMustRetainAssignmentsToRemainingNodes()
-        {
-            var sample = Gen(_sampleSize);
-
-            var ring = IncludeAll(Ring(PointsPerNode, _factory), _nodes);
-            var assignments = Assignments(sample, ring);
-
-            var removed = ExcludeAll(ring, _nodes[1]);
-            var assignmentsRemoved = Assignments(sample, removed);
-
-            Assert.Superset(new HashSet<Guid>( assignmentsRemoved[_nodes[0]]), new HashSet<Guid>( assignments[_nodes[0]]));
-            Assert.Superset(new HashSet<Guid>( assignmentsRemoved[_nodes[2]]), new HashSet<Guid>( assignments[_nodes[2]]));
-        }
-
-        [Fact]
-        public void EmptyHashRingShouldAssignNull()
-        {
-            var ring = Ring(PointsPerNode, _factory);
-            Assert.Null(ring.NodeOf(Guid.NewGuid()));
-        }
+    protected abstract IHashRing<string> Ring(int pointsPerNode, Func<int, string, HashedNodePoint<string>> factory);
         
-        protected static List<Guid> Gen(int n)
+    private static IHashRing<string> IncludeAll(IHashRing<string> ring, params string[] nodes)
+    {
+        foreach (var node in nodes)
         {
-            return Enumerable.Range(0, n)
-                .Select(ignored => Guid.NewGuid())
-                .ToList();
+            ring.IncludeNode(node);
         }
-
-        protected abstract IHashRing<string> Ring(int pointsPerNode, Func<int, string, HashedNodePoint<string>> factory);
+        return ring;
+    }
         
-        private static IHashRing<string> IncludeAll(IHashRing<string> ring, params string[] nodes)
-        {
-            foreach (var node in nodes)
-            {
-                ring.IncludeNode(node);
-            }
-            return ring;
-        }
-        
-        private static Dictionary<string, List<Guid>> Assignments(List<Guid> sample, IHashRing<string> ring)
-        {
-            var map = sample
-                .Select(uuid => new Tuple<Guid, string>(uuid, ring.NodeOf(uuid)))
-                .GroupBy(tuple => tuple.Item2)
-                .ToDictionary(grouping => grouping.Key, grouping => grouping.Select(tuple => tuple.Item1).ToList());
+    private static Dictionary<string, List<Guid>> Assignments(List<Guid> sample, IHashRing<string> ring)
+    {
+        var map = sample
+            .Select(uuid => new Tuple<Guid, string>(uuid, ring.NodeOf(uuid)))
+            .GroupBy(tuple => tuple.Item2)
+            .ToDictionary(grouping => grouping.Key, grouping => grouping.Select(tuple => tuple.Item1).ToList());
             
-            return map;
-        }
+        return map;
+    }
         
-        private static IHashRing<string> ExcludeAll(IHashRing<string> ring, params string[] nodes)
-        {
-            foreach (var node in nodes)
-            {
-                ring.ExcludeNode(node);
-            }
-            return ring;
-        }
-    }
-
-    internal class HashedNodePointMock : HashedNodePoint<string>
+    private static IHashRing<string> ExcludeAll(IHashRing<string> ring, params string[] nodes)
     {
-        public HashedNodePointMock(int hash, string nodeIdentifier) : base(hash, nodeIdentifier)
+        foreach (var node in nodes)
         {
+            ring.ExcludeNode(node);
         }
-
-        public override void Excluded()
-        {
-        }
-
-        public override void Included()
-        {
-        }
-
-        public override string ToString() => $"HashedNodePoint[hash={Hash} nodeIdentifier={NodeIdentifier}]";
+        return ring;
     }
+}
+
+internal class HashedNodePointMock : HashedNodePoint<string>
+{
+    public HashedNodePointMock(int hash, string nodeIdentifier) : base(hash, nodeIdentifier)
+    {
+    }
+
+    public override void Excluded()
+    {
+    }
+
+    public override void Included()
+    {
+    }
+
+    public override string ToString() => $"HashedNodePoint[hash={Hash} nodeIdentifier={NodeIdentifier}]";
 }

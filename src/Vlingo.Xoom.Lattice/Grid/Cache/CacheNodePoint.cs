@@ -7,20 +7,19 @@
 
 using Vlingo.Xoom.Lattice.Grid.Hashring;
 
-namespace Vlingo.Xoom.Lattice.Grid.Cache
+namespace Vlingo.Xoom.Lattice.Grid.Cache;
+
+public class CacheNodePoint<T> : HashedNodePoint<T>
 {
-    public class CacheNodePoint<T> : HashedNodePoint<T>
+    public Cache Cache { get; }
+
+    public CacheNodePoint(Cache cache, int hash, T node) : base(hash, node) => Cache = cache;
+
+    public override void Excluded()
     {
-        public Cache Cache { get; }
+    }
 
-        public CacheNodePoint(Cache cache, int hash, T node) : base(hash, node) => Cache = cache;
-
-        public override void Excluded()
-        {
-        }
-
-        public override void Included()
-        {
-        }
+    public override void Included()
+    {
     }
 }

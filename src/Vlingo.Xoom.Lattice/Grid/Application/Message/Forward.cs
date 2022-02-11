@@ -8,20 +8,19 @@
 using System;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message
-{
-    [Serializable]
-    public class Forward : IMessage
-    {
-        public Id OriginalSender { get; }
-        public IMessage Message { get; }
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message;
 
-        public Forward(Id originalSender, IMessage message)
-        {
-            OriginalSender = originalSender;
-            Message = message;
-        }
-        
-        public override string ToString() => $"Forward(originalSender='{OriginalSender}', message='{Message}')";
+[Serializable]
+public class Forward : IMessage
+{
+    public Id OriginalSender { get; }
+    public IMessage Message { get; }
+
+    public Forward(Id originalSender, IMessage message)
+    {
+        OriginalSender = originalSender;
+        Message = message;
     }
+        
+    public override string ToString() => $"Forward(originalSender='{OriginalSender}', message='{Message}')";
 }

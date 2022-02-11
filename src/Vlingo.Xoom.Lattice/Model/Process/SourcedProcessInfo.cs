@@ -8,31 +8,30 @@
 using Vlingo.Xoom.Lattice.Exchange;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 
-namespace Vlingo.Xoom.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Model.Process;
+
+/// <summary>
+/// Holder of registration information for <see cref="SourcedProcess{T}"/> types.
+/// </summary>
+/// <typeparam name="TProcess">The type of sourced process</typeparam>
+/// <typeparam name="TState">The type of the state of the sourced process</typeparam>
+public class SourcedProcessInfo<TProcess, TState> : Info where TProcess : IProcess<TState>
 {
+    public SourcedTypeRegistry Registry { get; }
+
     /// <summary>
-    /// Holder of registration information for <see cref="SourcedProcess{T}"/> types.
+    /// Construct my default state.
     /// </summary>
-    /// <typeparam name="TProcess">The type of sourced process</typeparam>
-    /// <typeparam name="TState">The type of the state of the sourced process</typeparam>
-    public class SourcedProcessInfo<TProcess, TState> : Info where TProcess : IProcess<TState>
-    {
-        public SourcedTypeRegistry Registry { get; }
+    /// <param name="processName">The name of the current process</param>
+    /// <param name="exchange">The <see cref="IExchange"/></param>
+    /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
+    public SourcedProcessInfo(string processName, IExchange exchange, SourcedTypeRegistry registry) : base(typeof(TProcess), processName, exchange)
+        => Registry = registry;
 
-        /// <summary>
-        /// Construct my default state.
-        /// </summary>
-        /// <param name="processName">The name of the current process</param>
-        /// <param name="exchange">The <see cref="IExchange"/></param>
-        /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
-        public SourcedProcessInfo(string processName, IExchange exchange, SourcedTypeRegistry registry) : base(typeof(TProcess), processName, exchange)
-            => Registry = registry;
-
-        /// <summary>
-        /// Construct my default state.
-        /// </summary>
-        /// <param name="processName">The name of the current process</param>
-        /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
-        public SourcedProcessInfo(string processName, SourcedTypeRegistry registry) : base(typeof(TProcess), processName) => Registry = registry;
-    }
+    /// <summary>
+    /// Construct my default state.
+    /// </summary>
+    /// <param name="processName">The name of the current process</param>
+    /// <param name="registry">The <see cref="SourcedTypeRegistry"/> used by the <see cref="SourcedProcess{T}"/></param>
+    public SourcedProcessInfo(string processName, SourcedTypeRegistry registry) : base(typeof(TProcess), processName) => Registry = registry;
 }

@@ -5,14 +5,13 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Hashring
+namespace Vlingo.Xoom.Lattice.Grid.Hashring;
+
+public interface IHashRing<T>
 {
-    public interface IHashRing<T>
-    {
-        void Dump();
-        IHashRing<T> ExcludeNode(T nodeIdentifier);
-        IHashRing<T> IncludeNode(T nodeIdentifier);
-        T NodeOf(object id);
-        IHashRing<T> Copy();
-    }
+    void Dump();
+    IHashRing<T> ExcludeNode(T nodeIdentifier);
+    IHashRing<T> IncludeNode(T nodeIdentifier);
+    T NodeOf(object id);
+    IHashRing<T> Copy();
 }

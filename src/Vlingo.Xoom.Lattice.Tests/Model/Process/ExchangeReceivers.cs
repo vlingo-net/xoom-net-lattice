@@ -9,121 +9,120 @@ using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class ExchangeReceivers
 {
-    public class ExchangeReceivers
+    public AccessSafely Access { get; }
+
+    public DoStepOneReceiver DoStepOneReceiver { get; }
+    public DoStepTwoReceiver DoStepTwoReceiver { get; }
+    public DoStepThreeReceiver DoStepThreeReceiver { get; }
+    public DoStepFourReceiver DoStepFourReceiver { get; }
+    public DoStepFiveReceiver DoStepFiveReceiver{ get; }
+
+    public ExchangeReceivers()
     {
-        public AccessSafely Access { get; }
-
-        public DoStepOneReceiver DoStepOneReceiver { get; }
-        public DoStepTwoReceiver DoStepTwoReceiver { get; }
-        public DoStepThreeReceiver DoStepThreeReceiver { get; }
-        public DoStepFourReceiver DoStepFourReceiver { get; }
-        public DoStepFiveReceiver DoStepFiveReceiver{ get; }
-
-        public ExchangeReceivers()
-        {
-            Access = AccessSafely.AfterCompleting(5);
+        Access = AccessSafely.AfterCompleting(5);
             
-            DoStepOneReceiver = new DoStepOneReceiver(Access);
-            DoStepTwoReceiver = new DoStepTwoReceiver(Access);
-            DoStepThreeReceiver = new DoStepThreeReceiver(Access);
-            DoStepFourReceiver = new DoStepFourReceiver(Access);
-            DoStepFiveReceiver = new DoStepFiveReceiver(Access);
+        DoStepOneReceiver = new DoStepOneReceiver(Access);
+        DoStepTwoReceiver = new DoStepTwoReceiver(Access);
+        DoStepThreeReceiver = new DoStepThreeReceiver(Access);
+        DoStepFourReceiver = new DoStepFourReceiver(Access);
+        DoStepFiveReceiver = new DoStepFiveReceiver(Access);
 
-            var stepCount = new AtomicInteger(0);
+        var stepCount = new AtomicInteger(0);
             
-            Access.WritingWith<int>("stepCount", delta => stepCount.IncrementAndGet())
-                .ReadingWith("stepCount", () => stepCount.Get());
-        }
-
-        public void SetProcess(IFiveStepProcess process)
-        {
-            DoStepOneReceiver.SetProcess(process);
-            DoStepTwoReceiver.SetProcess(process);
-            DoStepThreeReceiver.SetProcess(process);
-            DoStepFourReceiver.SetProcess(process);
-            DoStepFiveReceiver.SetProcess(process);
-        }
+        Access.WritingWith<int>("stepCount", delta => stepCount.IncrementAndGet())
+            .ReadingWith("stepCount", () => stepCount.Get());
     }
-    
-    public class DoStepOneReceiver : DefaultExchangeReceiver<DoStepOne>
+
+    public void SetProcess(IFiveStepProcess process)
     {
-        private IFiveStepProcess _process;
-        private readonly AccessSafely _access;
-
-        public DoStepOneReceiver(AccessSafely access) => _access = access;
-
-        public override void Receive(DoStepOne message)
-        {
-            _process.StepOneHappened();
-            _access.WriteUsing("stepCount", 1);
-        }
-
-        public void SetProcess(IFiveStepProcess process) => _process = process;
+        DoStepOneReceiver.SetProcess(process);
+        DoStepTwoReceiver.SetProcess(process);
+        DoStepThreeReceiver.SetProcess(process);
+        DoStepFourReceiver.SetProcess(process);
+        DoStepFiveReceiver.SetProcess(process);
     }
+}
     
-    public class DoStepTwoReceiver : DefaultExchangeReceiver<DoStepTwo>
+public class DoStepOneReceiver : DefaultExchangeReceiver<DoStepOne>
+{
+    private IFiveStepProcess _process;
+    private readonly AccessSafely _access;
+
+    public DoStepOneReceiver(AccessSafely access) => _access = access;
+
+    public override void Receive(DoStepOne message)
     {
-        private IFiveStepProcess _process;
-        private readonly AccessSafely _access;
+        _process.StepOneHappened();
+        _access.WriteUsing("stepCount", 1);
+    }
 
-        public DoStepTwoReceiver(AccessSafely access) => _access = access;
+    public void SetProcess(IFiveStepProcess process) => _process = process;
+}
+    
+public class DoStepTwoReceiver : DefaultExchangeReceiver<DoStepTwo>
+{
+    private IFiveStepProcess _process;
+    private readonly AccessSafely _access;
 
-        public override void Receive(DoStepTwo message)
-        {
-            _process.StepTwoHappened();
-            _access.WriteUsing("stepCount", 1);
-        }
+    public DoStepTwoReceiver(AccessSafely access) => _access = access;
+
+    public override void Receive(DoStepTwo message)
+    {
+        _process.StepTwoHappened();
+        _access.WriteUsing("stepCount", 1);
+    }
         
-        public void SetProcess(IFiveStepProcess process) => _process = process;
-    }
+    public void SetProcess(IFiveStepProcess process) => _process = process;
+}
     
-    public class DoStepThreeReceiver : DefaultExchangeReceiver<DoStepThree>
+public class DoStepThreeReceiver : DefaultExchangeReceiver<DoStepThree>
+{
+    private IFiveStepProcess _process;
+    private readonly AccessSafely _access;
+
+    public DoStepThreeReceiver(AccessSafely access) => _access = access;
+
+    public override void Receive(DoStepThree message)
     {
-        private IFiveStepProcess _process;
-        private readonly AccessSafely _access;
-
-        public DoStepThreeReceiver(AccessSafely access) => _access = access;
-
-        public override void Receive(DoStepThree message)
-        {
-            _process.StepThreeHappened();
-            _access.WriteUsing("stepCount", 1);
-        }
-        
-        public void SetProcess(IFiveStepProcess process) => _process = process;
+        _process.StepThreeHappened();
+        _access.WriteUsing("stepCount", 1);
     }
+        
+    public void SetProcess(IFiveStepProcess process) => _process = process;
+}
     
-    public class DoStepFourReceiver : DefaultExchangeReceiver<DoStepFour>
+public class DoStepFourReceiver : DefaultExchangeReceiver<DoStepFour>
+{
+    private IFiveStepProcess _process;
+    private readonly AccessSafely _access;
+
+    public DoStepFourReceiver(AccessSafely access) => _access = access;
+
+    public override void Receive(DoStepFour message)
     {
-        private IFiveStepProcess _process;
-        private readonly AccessSafely _access;
-
-        public DoStepFourReceiver(AccessSafely access) => _access = access;
-
-        public override void Receive(DoStepFour message)
-        {
-            _process.StepFourHappened();
-            _access.WriteUsing("stepCount", 1);
-        }
-        
-        public void SetProcess(IFiveStepProcess process) => _process = process;
+        _process.StepFourHappened();
+        _access.WriteUsing("stepCount", 1);
     }
+        
+    public void SetProcess(IFiveStepProcess process) => _process = process;
+}
     
-    public class DoStepFiveReceiver : DefaultExchangeReceiver<DoStepFive>
+public class DoStepFiveReceiver : DefaultExchangeReceiver<DoStepFive>
+{
+    private IFiveStepProcess _process;
+    private readonly AccessSafely _access;
+
+    public DoStepFiveReceiver(AccessSafely access) => _access = access;
+
+    public override void Receive(DoStepFive message)
     {
-        private IFiveStepProcess _process;
-        private readonly AccessSafely _access;
-
-        public DoStepFiveReceiver(AccessSafely access) => _access = access;
-
-        public override void Receive(DoStepFive message)
-        {
-            _process.StepFiveHappened();
-            _access.WriteUsing("stepCount", 1);
-        }
-        
-        public void SetProcess(IFiveStepProcess process) => _process = process;
+        _process.StepFiveHappened();
+        _access.WriteUsing("stepCount", 1);
     }
+        
+    public void SetProcess(IFiveStepProcess process) => _process = process;
 }

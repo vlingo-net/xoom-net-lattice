@@ -15,53 +15,52 @@ using Vlingo.Xoom.Wire.Fdx.Outbound;
 using Vlingo.Xoom.Wire.Nodes;
 using IMessage = Vlingo.Xoom.Lattice.Grid.Application.Message.IMessage;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application
+namespace Vlingo.Xoom.Lattice.Grid.Application;
+
+public interface IGridActorControl
 {
-    public interface IGridActorControl
-    {
-        void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy);
+    void Start(Id recipient, Id sender, Type protocol, IAddress address, Definition.SerializationProxy definitionProxy);
         
-        void GridDeliver(
-                Id recipient,
-                Id sender,
-                ICompletes? returns,
-                Type protocol,
-                IAddress address,
-                Definition.SerializationProxy definitionProxy,
-                LambdaExpression consumer,
-                string representation);
+    void GridDeliver(
+        Id recipient,
+        Id sender,
+        ICompletes? returns,
+        Type protocol,
+        IAddress address,
+        Definition.SerializationProxy definitionProxy,
+        LambdaExpression consumer,
+        string representation);
         
-        void ActorDeliver(
-                Id recipient,
-                Id sender,
-                ICompletes? returns,
-                Type protocol,
-                Func<Grid, Actor> actorProvider,
-                LambdaExpression consumer,
-                string representation);
+    void ActorDeliver(
+        Id recipient,
+        Id sender,
+        ICompletes? returns,
+        Type protocol,
+        Func<Grid, Actor> actorProvider,
+        LambdaExpression consumer,
+        string representation);
 
 
-        void Answer<T>(Id receiver, Id sender, Answer<T> answer);
+    void Answer<T>(Id receiver, Id sender, Answer<T> answer);
         
-        void Forward(Id receiver, Id sender, IMessage message);
+    void Forward(Id receiver, Id sender, IMessage message);
         
-        void Relocate(
-            Id receiver,
-            Id sender,
-            Definition.SerializationProxy definitionProxy,
-            IAddress address,
-            object snapshot,
-            IEnumerable<Vlingo.Xoom.Actors.IMessage> pending);
+    void Relocate(
+        Id receiver,
+        Id sender,
+        Definition.SerializationProxy definitionProxy,
+        IAddress address,
+        object snapshot,
+        IEnumerable<Vlingo.Xoom.Actors.IMessage> pending);
         
-        void InformNodeIsHealthy(Id id, bool isHealthy);
-    }
+    void InformNodeIsHealthy(Id id, bool isHealthy);
+}
 
-    public interface IInbound : IGridActorControl
-    {
-    }
+public interface IInbound : IGridActorControl
+{
+}
 
-    public interface IOutbound : IGridActorControl
-    {
-        void UseStream(IApplicationOutboundStream? outbound);
-    }
+public interface IOutbound : IGridActorControl
+{
+    void UseStream(IApplicationOutboundStream? outbound);
 }

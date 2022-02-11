@@ -8,28 +8,27 @@
 using System;
 using System.Collections.Generic;
 
-namespace Vlingo.Xoom.Lattice.Grid.Hashring
+namespace Vlingo.Xoom.Lattice.Grid.Hashring;
+
+public abstract class HashedNodePoint<T> : HashedIdentity
 {
-    public abstract class HashedNodePoint<T> : HashedIdentity
-    {
-        public T NodeIdentifier { get; }
+    public T NodeIdentifier { get; }
         
-        protected HashedNodePoint(int hash, T nodeIdentifier) : base(hash) => NodeIdentifier = nodeIdentifier;
+    protected HashedNodePoint(int hash, T nodeIdentifier) : base(hash) => NodeIdentifier = nodeIdentifier;
 
-        public abstract void Excluded();
+    public abstract void Excluded();
 
-        public abstract void Included();
+    public abstract void Included();
 
-        public override string ToString() => $"HashedNodePoint[hash={Hash} nodeIdentifier={NodeIdentifier}]";
-    }
+    public override string ToString() => $"HashedNodePoint[hash={Hash} nodeIdentifier={NodeIdentifier}]";
+}
     
-    public class HashNodePointComparer<T> : IComparer<HashedNodePoint<T>>
+public class HashNodePointComparer<T> : IComparer<HashedNodePoint<T>>
+{
+    public int Compare(HashedNodePoint<T>? x, HashedNodePoint<T>? y)
     {
-        public int Compare(HashedNodePoint<T>? x, HashedNodePoint<T>? y)
-        {
-            if (x == null) throw new ArgumentNullException(nameof(x));
-            if (y == null) throw new ArgumentNullException(nameof(y));
-            return x.Hash.CompareTo(y.Hash);
-        }
+        if (x == null) throw new ArgumentNullException(nameof(x));
+        if (y == null) throw new ArgumentNullException(nameof(y));
+        return x.Hash.CompareTo(y.Hash);
     }
 }

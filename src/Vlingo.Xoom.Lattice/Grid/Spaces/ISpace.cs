@@ -8,13 +8,12 @@
 using System;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+public interface ISpace
 {
-    public interface ISpace
-    {
-        ICompletes<T> ItemFor<T>(Type actorType, params object[] parameters);
-        ICompletes<KeyItem> Put(IKey key, Item item);
-        ICompletes<Optional<KeyItem>> Get(IKey key, Period until);
-        ICompletes<Optional<KeyItem>> Take(IKey key, Period until);
-    }
+    ICompletes<T> ItemFor<T>(Type actorType, params object[] parameters);
+    ICompletes<KeyItem> Put(IKey key, Item item);
+    ICompletes<Optional<KeyItem>> Get(IKey key, Period until);
+    ICompletes<Optional<KeyItem>> Take(IKey key, Period until);
 }

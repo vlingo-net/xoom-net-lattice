@@ -8,19 +8,18 @@
 using System;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+public class Lease : Period
 {
-    public class Lease : Period
+    public new static Lease Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
+    public new static Lease None = Of(0);
+
+    public new static Lease Of(TimeSpan duration) => new Lease(duration);
+
+    public new static Lease Of(long period) => new Lease(TimeSpan.FromSeconds(period));
+
+    protected Lease(TimeSpan duration) : base(duration)
     {
-        public new static Lease Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
-        public new static Lease None = Of(0);
-
-        public new static Lease Of(TimeSpan duration) => new Lease(duration);
-
-        public new static Lease Of(long period) => new Lease(TimeSpan.FromSeconds(period));
-
-        protected Lease(TimeSpan duration) : base(duration)
-        {
-        }
     }
 }

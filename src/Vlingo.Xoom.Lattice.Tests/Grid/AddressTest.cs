@@ -12,101 +12,100 @@ using Vlingo.Xoom.Lattice.Grid;
 using Vlingo.Xoom.UUID;
 using Xunit;
 
-namespace Vlingo.Xoom.Lattice.Tests.Grid
+namespace Vlingo.Xoom.Lattice.Tests.Grid;
+
+public class GridAddressTest
 {
-    public class GridAddressTest
+    [Fact]
+    public void TestNameGiven()
     {
-        [Fact]
-        public void TestNameGiven()
-        {
-            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+        var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
             
-            var address = addressFactory.UniqueWith("test-address");
+        var address = addressFactory.UniqueWith("test-address");
     
-            Assert.NotNull(address);
-            Assert.NotNull(address.IdString);
-            Assert.Equal("test-address", address.Name);
+        Assert.NotNull(address);
+        Assert.NotNull(address.IdString);
+        Assert.Equal("test-address", address.Name);
     
-            var another = addressFactory.UniqueWith("another-address");
+        var another = addressFactory.UniqueWith("another-address");
     
-            Assert.NotEqual(another, address);
-            Assert.NotEqual(0, address.CompareTo(another));
-            Assert.Equal(address.IdTyped(s => s), address.IdString);
-        }
+        Assert.NotEqual(another, address);
+        Assert.NotEqual(0, address.CompareTo(another));
+        Assert.Equal(address.IdTyped(s => s), address.IdString);
+    }
         
-        [Fact]
-        public void TestNameAndGuidIdGiven()
+    [Fact]
+    public void TestNameAndGuidIdGiven()
+    {
+        var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+
+        var id1 = Guid.NewGuid().ToString();
+    
+        var address = addressFactory.From(id1, "test-address");
+    
+        Assert.NotNull(address);
+        Assert.Equal(new Guid(id1).ToLeastSignificantBits(), address.Id);
+        Assert.Equal("test-address", address.Name);
+    
+        var id2 = Guid.NewGuid().ToString();
+        var another = addressFactory.From(id2, "test-address");
+    
+        Assert.NotEqual(another, address);
+        Assert.NotEqual(0, address.CompareTo(another));
+        Assert.Equal(address, addressFactory.From(id1, "test-address"));
+        Assert.Equal(0, address.CompareTo(addressFactory.From(id1, "test-address")));
+    }
+
+    [Fact]
+    public void TestNameAndLongIdGiven()
+    {
+        var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+
+        var id = 123;
+    
+        var address = addressFactory.From(id, "test-address");
+    
+        Assert.NotNull(address);
+        Assert.Equal(123, address.Id);
+        Assert.Equal("test-address", address.Name);
+    
+        var another = addressFactory.From(456, "test-address");
+    
+        Assert.NotEqual(another, address);
+        Assert.NotEqual(0, address.CompareTo(another));
+        Assert.Equal(address, addressFactory.From(id, "test-address"));
+        Assert.Equal(0, address.CompareTo(addressFactory.From(id, "test-address")));
+    }
+
+    [Fact]
+    public void TestTimeBasedOrdering()
+    {
+        var addressFactory = new GridAddressFactory(IdentityGeneratorType.TimeBased);
+
+        var ordered = new IAddress[10];
+        var reversed = new IAddress[10];
+        for (var idx = 0; idx < ordered.Length; ++idx)
         {
-            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
-
-            var id1 = Guid.NewGuid().ToString();
-    
-            var address = addressFactory.From(id1, "test-address");
-    
-            Assert.NotNull(address);
-            Assert.Equal(new Guid(id1).ToLeastSignificantBits(), address.Id);
-            Assert.Equal("test-address", address.Name);
-    
-            var id2 = Guid.NewGuid().ToString();
-            var another = addressFactory.From(id2, "test-address");
-    
-            Assert.NotEqual(another, address);
-            Assert.NotEqual(0, address.CompareTo(another));
-            Assert.Equal(address, addressFactory.From(id1, "test-address"));
-            Assert.Equal(0, address.CompareTo(addressFactory.From(id1, "test-address")));
+            ordered[idx] = addressFactory.Unique();
+            reversed[reversed.Length - idx - 1] = ordered[idx];
         }
-
-        [Fact]
-        public void TestNameAndLongIdGiven()
-        {
-            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
-
-            var id = 123;
-    
-            var address = addressFactory.From(id, "test-address");
-    
-            Assert.NotNull(address);
-            Assert.Equal(123, address.Id);
-            Assert.Equal("test-address", address.Name);
-    
-            var another = addressFactory.From(456, "test-address");
-    
-            Assert.NotEqual(another, address);
-            Assert.NotEqual(0, address.CompareTo(another));
-            Assert.Equal(address, addressFactory.From(id, "test-address"));
-            Assert.Equal(0, address.CompareTo(addressFactory.From(id, "test-address")));
-        }
-
-        [Fact]
-        public void TestTimeBasedOrdering()
-        {
-            var addressFactory = new GridAddressFactory(IdentityGeneratorType.TimeBased);
-
-            var ordered = new IAddress[10];
-            var reversed = new IAddress[10];
-            for (var idx = 0; idx < ordered.Length; ++idx)
-            {
-                ordered[idx] = addressFactory.Unique();
-                reversed[reversed.Length - idx - 1] = ordered[idx];
-            }
-            Array.Sort(reversed);
-            Assert.Equal(ordered, reversed);
-            Array.Sort(ordered);
-            Assert.Equal(reversed, ordered);
-        }
+        Array.Sort(reversed);
+        Assert.Equal(ordered, reversed);
+        Array.Sort(ordered);
+        Assert.Equal(reversed, ordered);
+    }
         
-        [Fact]
-        public void TestItCreatesDistributableAddresses()
-        {
-            var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
+    [Fact]
+    public void TestItCreatesDistributableAddresses()
+    {
+        var addressFactory = new GridAddressFactory(IdentityGeneratorType.Random);
 
-            var address = addressFactory.Unique();
-            var namedAddress = addressFactory.UniqueWith("test-address");
-            var prefixedAddress = addressFactory.UniquePrefixedWith("test-prefix");
+        var address = addressFactory.Unique();
+        var namedAddress = addressFactory.UniqueWith("test-address");
+        var prefixedAddress = addressFactory.UniquePrefixedWith("test-prefix");
 
-            Assert.True(address.IsDistributable);
-            Assert.True(namedAddress.IsDistributable);
-            Assert.True(prefixedAddress.IsDistributable);
-        }
+        Assert.True(address.IsDistributable);
+        Assert.True(namedAddress.IsDistributable);
+        Assert.True(prefixedAddress.IsDistributable);
     }
 }

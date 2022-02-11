@@ -7,22 +7,21 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+[Serializable]
+public class Item : IScheduledScannable<Item>
 {
-    [Serializable]
-    public class Item : IScheduledScannable<Item>
+    public Lease Lease { get; }
+    public object Object { get; }
+
+    public static Item Of(object @object, Lease lease) => new Item(@object, lease);
+
+    public Item Scannable() => this;
+
+    protected Item(object @object, Lease lease)
     {
-        public Lease Lease { get; }
-        public object Object { get; }
-
-        public static Item Of(object @object, Lease lease) => new Item(@object, lease);
-
-        public Item Scannable() => this;
-
-        protected Item(object @object, Lease lease)
-        {
-            Object = @object;
-            Lease = lease;
-        }
+        Object = @object;
+        Lease = lease;
     }
 }

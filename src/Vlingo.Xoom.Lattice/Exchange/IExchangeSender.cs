@@ -5,23 +5,22 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Exchange;
+
+public interface IExchangeSender
 {
-    public interface IExchangeSender
-    {
-        void Send(object message);
-    }
+    void Send(object message);
+}
     
+/// <summary>
+/// A sender of messages to a <see cref="IExchange"/>.
+/// </summary>
+/// <typeparam name="T">The exchange typed message</typeparam>
+public interface IExchangeSender<in T> : IExchangeSender
+{
     /// <summary>
-    /// A sender of messages to a <see cref="IExchange"/>.
+    ///  Sends the exchange typed message through the exchange.
     /// </summary>
-    /// <typeparam name="T">The exchange typed message</typeparam>
-    public interface IExchangeSender<in T> : IExchangeSender
-    {
-        /// <summary>
-        ///  Sends the exchange typed message through the exchange.
-        /// </summary>
-        /// <param name="message">The <typeparamref name="T"/> typed exchange message to send</param>
-        void Send(T message);
-    }
+    /// <param name="message">The <typeparamref name="T"/> typed exchange message to send</param>
+    void Send(T message);
 }

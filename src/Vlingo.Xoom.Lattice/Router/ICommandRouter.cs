@@ -9,37 +9,36 @@ using System;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Router
+namespace Vlingo.Xoom.Lattice.Router;
+
+public interface ICommandRouter
 {
-    public interface ICommandRouter
-    {
-        void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command;
+    void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command;
 
-        CommandRouterType CommandRouterType { get; }
-    }
+    CommandRouterType CommandRouterType { get; }
+}
 
-    public enum CommandRouterType
-    {
-        LoadBalancing,
-        Partitioning,
-        RoundRobin,
-        NotDefined
-    }
+public enum CommandRouterType
+{
+    LoadBalancing,
+    Partitioning,
+    RoundRobin,
+    NotDefined
+}
     
-    public static class CommandRouter
+public static class CommandRouter
+{
+    public static ICommandRouter Of(Stage stage, CommandRouterType type, int totalRoutees)
     {
-        public static ICommandRouter Of(Stage stage, CommandRouterType type, int totalRoutees)
+        switch (type)
         {
-            switch (type)
-            {
-                case CommandRouterType.LoadBalancing:
-                    return stage.ActorFor<ICommandRouter>(() => new LoadBalancingCommandRouter(totalRoutees));
-                case CommandRouterType.Partitioning:
-                    return stage.ActorFor<ICommandRouter>(() => new PartitioningCommandRouter(totalRoutees));
-                case CommandRouterType.RoundRobin:
-                    return stage.ActorFor<ICommandRouter>(() => new RoundRobinCommandRouter(totalRoutees));
-            }
-            throw new ArgumentException($"The command router type is not mapped: {type}");
+            case CommandRouterType.LoadBalancing:
+                return stage.ActorFor<ICommandRouter>(() => new LoadBalancingCommandRouter(totalRoutees));
+            case CommandRouterType.Partitioning:
+                return stage.ActorFor<ICommandRouter>(() => new PartitioningCommandRouter(totalRoutees));
+            case CommandRouterType.RoundRobin:
+                return stage.ActorFor<ICommandRouter>(() => new RoundRobinCommandRouter(totalRoutees));
         }
+        throw new ArgumentException($"The command router type is not mapped: {type}");
     }
 }

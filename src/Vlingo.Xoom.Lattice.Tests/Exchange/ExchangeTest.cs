@@ -13,52 +13,51 @@ using Vlingo.Xoom.Lattice.Exchange;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Xoom.Lattice.Tests.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Exchange;
+
+public class ExchangeTest
 {
-    public class ExchangeTest
+    [Fact]
+    public void TestThatExchangeSendsTyped()
     {
-        [Fact]
-        public void TestThatExchangeSendsTyped()
-        {
-            var results = new ConcurrentQueue<object>();
+        var results = new ConcurrentQueue<object>();
 
-            var logger = ConsoleLogger.TestInstance();
-            var queue = new AsyncMessageQueue(null);
-            var exchange = new TestExchange(queue, logger);
-            var accessExchange = exchange.AfterCompleting(2);
+        var logger = ConsoleLogger.TestInstance();
+        var queue = new AsyncMessageQueue(null);
+        var exchange = new TestExchange(queue, logger);
+        var accessExchange = exchange.AfterCompleting(2);
 
-            var exchangeReceiver1 = new TestExchangeReceiver1(results, logger);
-            var accessExchangeReceiver1 = exchangeReceiver1.AfterCompleting(1);
-            var exchangeReceiver2 = new TestExchangeReceiver2(results, logger);
-            var accessExchangeReceiver2 = exchangeReceiver2.AfterCompleting(1);
+        var exchangeReceiver1 = new TestExchangeReceiver1(results, logger);
+        var accessExchangeReceiver1 = exchangeReceiver1.AfterCompleting(1);
+        var exchangeReceiver2 = new TestExchangeReceiver2(results, logger);
+        var accessExchangeReceiver2 = exchangeReceiver2.AfterCompleting(1);
 
-            exchange
-                .Register(Covey<LocalType1, ExternalType1, ExchangeMessage>.Of(
-                    new TestExchangeSender(queue, logger),
-                    exchangeReceiver1,
-                    new TestExchangeAdapter1()))
+        exchange
+            .Register(Covey<LocalType1, ExternalType1, ExchangeMessage>.Of(
+                new TestExchangeSender(queue, logger),
+                exchangeReceiver1,
+                new TestExchangeAdapter1()))
             .Register(Covey<LocalType2, ExternalType2, ExchangeMessage>.Of(
-                    new TestExchangeSender(queue, logger),
-                    exchangeReceiver2,
-                    new TestExchangeAdapter2()));
+                new TestExchangeSender(queue, logger),
+                exchangeReceiver2,
+                new TestExchangeAdapter2()));
 
-            var local1 = new LocalType1("ABC", 123);
-            exchange.Send(local1);
+        var local1 = new LocalType1("ABC", 123);
+        exchange.Send(local1);
 
-            var local2 = new LocalType2("DEF", 456);
-            exchange.Send(local2);
+        var local2 = new LocalType2("DEF", 456);
+        exchange.Send(local2);
 
-            Assert.Equal(2, accessExchange.ReadFrom<int>("sentCount"));
-            Assert.Equal(local1, accessExchangeReceiver1.ReadFrom<LocalType1>("getMessage"));
-            Assert.Equal(local2, accessExchangeReceiver2.ReadFrom<LocalType2>("getMessage"));
+        Assert.Equal(2, accessExchange.ReadFrom<int>("sentCount"));
+        Assert.Equal(local1, accessExchangeReceiver1.ReadFrom<LocalType1>("getMessage"));
+        Assert.Equal(local2, accessExchangeReceiver2.ReadFrom<LocalType2>("getMessage"));
 
-            exchange.Close();
-        }
+        exchange.Close();
+    }
 
-        public ExchangeTest(ITestOutputHelper output)
-        {
-            var converter = new Converter(output);
-            Console.SetOut(converter);
-        }
+    public ExchangeTest(ITestOutputHelper output)
+    {
+        var converter = new Converter(output);
+        Console.SetOut(converter);
     }
 }

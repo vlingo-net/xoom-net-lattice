@@ -8,44 +8,43 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Vlingo.Xoom.Lattice
+namespace Vlingo.Xoom.Lattice;
+
+/// <summary>
+/// Composite identity support mix-in.
+/// </summary>
+public interface ICompositeIdentitySupport
 {
     /// <summary>
-    /// Composite identity support mix-in.
+    /// Gets data id from the <paramref name="idSegments"/> separated by <paramref name="separator"/>.
     /// </summary>
-    public interface ICompositeIdentitySupport
-    {
-        /// <summary>
-        /// Gets data id from the <paramref name="idSegments"/> separated by <paramref name="separator"/>.
-        /// </summary>
-        /// <param name="separator">The string used to separate the segments</param>
-        /// <param name="idSegments">The array of identities to compose</param>
-        /// <returns>String id</returns>
-        string DataIdFrom(string separator, params string[] idSegments);
+    /// <param name="separator">The string used to separate the segments</param>
+    /// <param name="idSegments">The array of identities to compose</param>
+    /// <returns>String id</returns>
+    string DataIdFrom(string separator, params string[] idSegments);
 
-        /// <summary>
-        /// Gets the collection of segments from the <paramref name="dataId"/> that are
-        /// separated by the <paramref name="separator"/>.
-        /// </summary>
-        /// <param name="separator">The string that separates the segments</param>
-        /// <param name="dataId">The string composite identity</param>
-        /// <returns>Id Segments</returns>
-        IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId);
-    }
+    /// <summary>
+    /// Gets the collection of segments from the <paramref name="dataId"/> that are
+    /// separated by the <paramref name="separator"/>.
+    /// </summary>
+    /// <param name="separator">The string that separates the segments</param>
+    /// <param name="dataId">The string composite identity</param>
+    /// <returns>Id Segments</returns>
+    IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId);
+}
 
-    public static class CompositeIdentitySupport
+public static class CompositeIdentitySupport
+{
+    public static string DataIdFrom(string separator, params string[] idSegments)
     {
-        public static string DataIdFrom(string separator, params string[] idSegments)
+        var builder = new StringBuilder();
+        builder.Append(idSegments[0]);
+        for (var idx = 1; idx < idSegments.Length; ++idx)
         {
-            var builder = new StringBuilder();
-            builder.Append(idSegments[0]);
-            for (var idx = 1; idx < idSegments.Length; ++idx)
-            {
-                builder.Append(separator).Append(idSegments[idx]);
-            }
-            return builder.ToString();
+            builder.Append(separator).Append(idSegments[idx]);
         }
-
-        public static IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId) => dataId.Split(separator.ToCharArray());
+        return builder.ToString();
     }
+
+    public static IEnumerable<string> DataIdSegmentsFrom(string separator, string dataId) => dataId.Split(separator.ToCharArray());
 }

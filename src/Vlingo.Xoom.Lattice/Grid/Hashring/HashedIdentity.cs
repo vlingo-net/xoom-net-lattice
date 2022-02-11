@@ -7,16 +7,15 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Grid.Hashring
+namespace Vlingo.Xoom.Lattice.Grid.Hashring;
+
+public class HashedIdentity : IComparable<int>
 {
-    public class HashedIdentity : IComparable<int>
-    {
-        public int Hash { get; }
+    public int Hash { get; }
 
-        public HashedIdentity(int hash) => Hash = hash;
+    public HashedIdentity(int hash) => Hash = hash;
 
-        public int CompareTo(int other) => other - Hash;
+    public int CompareTo(int other) => other - Hash;
 
-        public override string ToString() => $"HashedIdentity[hash={Hash}]";
-    }
+    public override string ToString() => $"HashedIdentity[hash={Hash}]";
 }

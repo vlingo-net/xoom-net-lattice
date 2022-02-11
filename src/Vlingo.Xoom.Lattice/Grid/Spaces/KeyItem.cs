@@ -5,14 +5,13 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+public class KeyItem : Item
 {
-    public class KeyItem : Item
-    {
-        public IKey Key { get; }
+    public IKey Key { get; }
 
-        public static KeyItem Of(IKey key, object @object, Lease lease) => new KeyItem(key, @object, lease);
+    public static KeyItem Of(IKey key, object @object, Lease lease) => new KeyItem(key, @object, lease);
 
-        protected KeyItem(IKey key, object @object, Lease lease) : base(@object, lease) => Key = key;
-    }
+    protected KeyItem(IKey key, object @object, Lease lease) : base(@object, lease) => Key = key;
 }

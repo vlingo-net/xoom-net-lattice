@@ -8,18 +8,17 @@
 using System;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class StepCountObjectState : StateObject, IComparable<StepCountObjectState>
 {
-    public class StepCountObjectState : StateObject, IComparable<StepCountObjectState>
+    public int StepCount { get; private set; } = 0;
+
+    public StepCountObjectState(long id) : base(id)
     {
-        public int StepCount { get; private set; } = 0;
-
-        public StepCountObjectState(long id) : base(id)
-        {
-        }
-        
-        public void CountStep() => ++StepCount;
-
-        public int CompareTo(StepCountObjectState other) => PersistenceId.CompareTo(other.PersistenceId);
     }
+        
+    public void CountStep() => ++StepCount;
+
+    public int CompareTo(StepCountObjectState other) => PersistenceId.CompareTo(other.PersistenceId);
 }

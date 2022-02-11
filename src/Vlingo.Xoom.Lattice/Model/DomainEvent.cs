@@ -7,26 +7,25 @@
 
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Model
+namespace Vlingo.Xoom.Lattice.Model;
+
+/// <summary>
+/// A abstract base for events, which are considered a type of <see cref="Source{T}"/>.
+/// </summary>
+public abstract class DomainEvent : Source<DomainEvent>
 {
     /// <summary>
-    /// A abstract base for events, which are considered a type of <see cref="Source{T}"/>.
+    /// Construct my default state with a type version of 1.
     /// </summary>
-    public abstract class DomainEvent : Source<DomainEvent>
+    protected DomainEvent()
     {
-        /// <summary>
-        /// Construct my default state with a type version of 1.
-        /// </summary>
-        protected DomainEvent()
-        {
-        }
+    }
         
-        /// <summary>
-        /// Construct my default state with a <paramref name="eventTypeVersion"/> greater than 1.
-        /// </summary>
-        /// <param name="eventTypeVersion">The int version of this command type</param>
-        protected DomainEvent(int eventTypeVersion) : base(eventTypeVersion)
-        {
-        }
+    /// <summary>
+    /// Construct my default state with a <paramref name="eventTypeVersion"/> greater than 1.
+    /// </summary>
+    /// <param name="eventTypeVersion">The int version of this command type</param>
+    protected DomainEvent(int eventTypeVersion) : base(eventTypeVersion)
+    {
     }
 }

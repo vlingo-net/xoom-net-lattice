@@ -9,46 +9,45 @@ using System;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Cluster.Model;
 
-namespace Vlingo.Xoom.Lattice.Grid
+namespace Vlingo.Xoom.Lattice.Grid;
+
+public class GridNodeBootstrap
 {
-    public class GridNodeBootstrap
+    private readonly Tuple<IClusterSnapshotControl, ILogger> _clusterSnapshotControl;
+
+    public static GridNodeBootstrap Boot(IGridRuntime grid, string nodeName, bool embedded) => 
+        Boot(grid, nodeName, Cluster.Model.Properties.Instance, embedded);
+        
+    public static GridNodeBootstrap Boot(IGridRuntime grid, string nodeName, Cluster.Model.Properties properties, bool embedded)
     {
-        private readonly Tuple<IClusterSnapshotControl, ILogger> _clusterSnapshotControl;
+        properties.ValidateRequired(nodeName);
 
-        public static GridNodeBootstrap Boot(IGridRuntime grid, string nodeName, bool embedded) => 
-            Boot(grid, nodeName, Cluster.Model.Properties.Instance, embedded);
-        
-        public static GridNodeBootstrap Boot(IGridRuntime grid, string nodeName, Cluster.Model.Properties properties, bool embedded)
+        var controlLogger = Cluster.Model.Cluster.ControlFor(
+            grid.World,
+            node => new GridNode(grid, node),
+            properties,
+            nodeName);
+
+        var instance = new GridNodeBootstrap(controlLogger, nodeName);
+
+        var (_, logger) = controlLogger;
+        logger.Info($"Successfully started cluster node: '{nodeName}'");
+
+        if (!embedded)
         {
-            properties.ValidateRequired(nodeName);
-
-            var controlLogger = Cluster.Model.Cluster.ControlFor(
-                grid.World,
-                node => new GridNode(grid, node),
-                properties,
-                nodeName);
-
-            var instance = new GridNodeBootstrap(controlLogger, nodeName);
-
-            var (_, logger) = controlLogger;
-            logger.Info($"Successfully started cluster node: '{nodeName}'");
-
-            if (!embedded)
-            {
-                logger.Info("==========");
-            }
-
-            return instance;
+            logger.Info("==========");
         }
 
-        public IClusterSnapshotControl ClusterSnapshotControl => _clusterSnapshotControl.Item1;
-        
-        private GridNodeBootstrap(Tuple<IClusterSnapshotControl, ILogger> control, string nodeName)
-        {
-            _clusterSnapshotControl = control;
+        return instance;
+    }
 
-            var shutdownHook = new GridShutdownHook(nodeName, control);
-            shutdownHook.Register();
-        }
+    public IClusterSnapshotControl ClusterSnapshotControl => _clusterSnapshotControl.Item1;
+        
+    private GridNodeBootstrap(Tuple<IClusterSnapshotControl, ILogger> control, string nodeName)
+    {
+        _clusterSnapshotControl = control;
+
+        var shutdownHook = new GridShutdownHook(nodeName, control);
+        shutdownHook.Register();
     }
 }

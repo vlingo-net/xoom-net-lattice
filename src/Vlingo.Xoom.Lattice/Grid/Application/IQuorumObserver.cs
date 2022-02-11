@@ -5,11 +5,10 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Application
+namespace Vlingo.Xoom.Lattice.Grid.Application;
+
+public interface IQuorumObserver
 {
-    public interface IQuorumObserver
-    {
-        void QuorumAchieved();
-        void QuorumLost();
-    }
+    void QuorumAchieved();
+    void QuorumLost();
 }

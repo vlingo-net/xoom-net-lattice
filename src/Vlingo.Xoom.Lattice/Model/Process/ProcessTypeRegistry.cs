@@ -9,63 +9,62 @@ using System;
 using System.Collections.Concurrent;
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Xoom.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Model.Process;
+
+/// <summary>
+/// Registry for <see cref="IProcess{TState}"/> types.
+/// </summary>
+public class ProcessTypeRegistry
 {
+    internal static readonly string InternalName = Guid.NewGuid().ToString();
+    private readonly ConcurrentDictionary<Type, Info> _stores = new ConcurrentDictionary<Type, Info>();
+
     /// <summary>
-    /// Registry for <see cref="IProcess{TState}"/> types.
+    /// Gets the <see cref="ProcessTypeRegistry"/> held by the <paramref name="world"/>.
+    /// If the registry doesn't exist, a one is instantiated and registered.
     /// </summary>
-    public class ProcessTypeRegistry
+    /// <param name="world">The <see cref="World"/> where the <see cref="ProcessTypeRegistry"/> is held</param>
+    /// <returns><see cref="ProcessTypeRegistry"/></returns>
+    public static ProcessTypeRegistry ResolveProcessTypeRegistry(World world)
     {
-        internal static readonly string InternalName = Guid.NewGuid().ToString();
-        private readonly ConcurrentDictionary<Type, Info> _stores = new ConcurrentDictionary<Type, Info>();
+        var registry = world.ResolveDynamic<ProcessTypeRegistry>(InternalName);
 
-        /// <summary>
-        /// Gets the <see cref="ProcessTypeRegistry"/> held by the <paramref name="world"/>.
-        /// If the registry doesn't exist, a one is instantiated and registered.
-        /// </summary>
-        /// <param name="world">The <see cref="World"/> where the <see cref="ProcessTypeRegistry"/> is held</param>
-        /// <returns><see cref="ProcessTypeRegistry"/></returns>
-        public static ProcessTypeRegistry ResolveProcessTypeRegistry(World world)
+        if (registry != null)
         {
-            var registry = world.ResolveDynamic<ProcessTypeRegistry>(InternalName);
-
-            if (registry != null)
-            {
-                return registry;
-            }
-
-            return new ProcessTypeRegistry(world);
+            return registry;
         }
+
+        return new ProcessTypeRegistry(world);
+    }
         
-        /// <summary>
-        /// Construct my default state and register me with the <see cref="World"/>.
-        /// </summary>
-        /// <param name="world">The World to which I am registered</param>
-        public ProcessTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
+    /// <summary>
+    /// Construct my default state and register me with the <see cref="World"/>.
+    /// </summary>
+    /// <param name="world">The World to which I am registered</param>
+    public ProcessTypeRegistry(World world) => world.RegisterDynamic(InternalName, this);
         
-        /// <summary>
-        /// Answer the <see cref="Info"/>.
-        /// </summary>
-        /// <returns><see cref="Info"/></returns>
-        public Info Info(Type processType)
+    /// <summary>
+    /// Answer the <see cref="Info"/>.
+    /// </summary>
+    /// <returns><see cref="Info"/></returns>
+    public Info Info(Type processType)
+    {
+        if (_stores.TryGetValue(processType, out var value))
         {
-            if (_stores.TryGetValue(processType, out var value))
-            {
-                return value;
-            }
-
-            throw new ArgumentOutOfRangeException($"No info registered for {value?.ProcessType.Name}");
+            return value;
         }
 
-        /// <summary>
-        /// Answer myself after registering the <see cref="Info"/>.
-        /// </summary>
-        /// <param name="info"><see cref="Info"/> to register</param>
-        /// <returns>The registry</returns>
-        public ProcessTypeRegistry Register(Info info)
-        {
-            _stores.AddOrUpdate(info.ProcessType, info, (type, o) => info);
-            return this;
-        }
+        throw new ArgumentOutOfRangeException($"No info registered for {value?.ProcessType.Name}");
+    }
+
+    /// <summary>
+    /// Answer myself after registering the <see cref="Info"/>.
+    /// </summary>
+    /// <param name="info"><see cref="Info"/> to register</param>
+    /// <returns>The registry</returns>
+    public ProcessTypeRegistry Register(Info info)
+    {
+        _stores.AddOrUpdate(info.ProcessType, info, (type, o) => info);
+        return this;
     }
 }

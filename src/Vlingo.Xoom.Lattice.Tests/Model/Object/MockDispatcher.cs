@@ -7,16 +7,15 @@
 
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Object
-{
-    public class MockDispatcher : IDispatcher
-    {
-        public void ControlWith(IDispatcherControl control)
-        {
-        }
+namespace Vlingo.Xoom.Lattice.Tests.Model.Object;
 
-        public void Dispatch(Dispatchable dispatchable)
-        {
-        }
+public class MockDispatcher : IDispatcher
+{
+    public void ControlWith(IDispatcherControl control)
+    {
+    }
+
+    public void Dispatch(Dispatchable dispatchable)
+    {
     }
 }

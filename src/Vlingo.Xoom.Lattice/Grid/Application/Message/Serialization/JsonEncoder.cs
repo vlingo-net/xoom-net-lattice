@@ -10,22 +10,21 @@ using System.Text;
 using Newtonsoft.Json;
 using Vlingo.Xoom.Common.Serialization;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message.Serialization;
+
+public class JsonEncoder : IEncoder
 {
-    public class JsonEncoder : IEncoder
+    private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
     {
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
-        {
-            Converters = new List<JsonConverter> { new MessageConverter() },
-            TypeNameHandling = TypeNameHandling.Objects,
-            Formatting = Formatting.Indented,
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
+        Converters = new List<JsonConverter> { new MessageConverter() },
+        TypeNameHandling = TypeNameHandling.Objects,
+        Formatting = Formatting.Indented,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
         
-        public byte[] Encode(IMessage message)
-        {
-            var serialized = JsonSerialization.Serialized(message, _settings);
-            return Encoding.UTF8.GetBytes(serialized);
-        }
+    public byte[] Encode(IMessage message)
+    {
+        var serialized = JsonSerialization.Serialized(message, _settings);
+        return Encoding.UTF8.GetBytes(serialized);
     }
 }

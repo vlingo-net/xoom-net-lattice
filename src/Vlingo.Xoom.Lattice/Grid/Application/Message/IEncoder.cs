@@ -5,10 +5,9 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message;
+
+public interface IEncoder
 {
-    public interface IEncoder
-    {
-        byte[] Encode(IMessage message);
-    }
+    byte[] Encode(IMessage message);
 }

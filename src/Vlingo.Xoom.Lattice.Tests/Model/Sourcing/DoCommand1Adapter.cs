@@ -9,30 +9,29 @@ using System;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public class DoCommand1Adapter : EntryAdapter
 {
-    public class DoCommand1Adapter : EntryAdapter
+    public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<DoCommand1>(entry.EntryRawData);
+
+    public override IEntry ToEntry(ISource source, Metadata metadata)
     {
-        public override ISource FromEntry(IEntry entry) => JsonSerialization.Deserialized<DoCommand1>(entry.EntryRawData);
-
-        public override IEntry ToEntry(ISource source, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(typeof(DoCommand1), 1, serialization, metadata);
-        }
-
-        public override IEntry ToEntry(ISource source, int version, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(typeof(DoCommand1), 1, serialization, version, metadata);
-        }
-
-        public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
-        {
-            var serialization = JsonSerialization.Serialized(source);
-            return new TextEntry(id, typeof(DoCommand1), 1, serialization, metadata);
-        }
-
-        public override Type SourceType { get; } = typeof(DoCommand1);
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(typeof(DoCommand1), 1, serialization, metadata);
     }
+
+    public override IEntry ToEntry(ISource source, int version, Metadata metadata)
+    {
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(typeof(DoCommand1), 1, serialization, version, metadata);
+    }
+
+    public override IEntry ToEntry(ISource source, int version, string id, Metadata metadata)
+    {
+        var serialization = JsonSerialization.Serialized(source);
+        return new TextEntry(id, typeof(DoCommand1), 1, serialization, metadata);
+    }
+
+    public override Type SourceType { get; } = typeof(DoCommand1);
 }

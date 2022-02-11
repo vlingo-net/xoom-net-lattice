@@ -9,40 +9,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 
-namespace Vlingo.Xoom.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Model.Projection;
+
+public class BinaryProjectionDispatcherActor : ProjectionDispatcherActor
 {
-    public class BinaryProjectionDispatcherActor : ProjectionDispatcherActor
+    public BinaryProjectionDispatcherActor() : this (Enumerable.Empty<ProjectToDescription>())
     {
-        public BinaryProjectionDispatcherActor() : this (Enumerable.Empty<ProjectToDescription>())
-        {
-        }
-        
-        public BinaryProjectionDispatcherActor(IEnumerable<ProjectToDescription> projectToDescriptions) : this(projectToDescriptions, MultiConfirming.DefaultExpirationLimit)
-        {
-        }
-        
-        public BinaryProjectionDispatcherActor(IEnumerable<ProjectToDescription> projectToDescriptions, long multiConfirmationsExpiration): base(projectToDescriptions, multiConfirmationsExpiration)
-        {
-        }
-
-        public override void Dispatch(Dispatchable dispatchable)
-        {
-            dispatchable.State.IfPresent(state =>
-            {
-                if (HasProjectionsFor(state.Metadata.Operation))
-                {
-                    Dispatch(dispatchable.Id, new BinaryProjectable(state, dispatchable.Entries, dispatchable.Id));
-                }
-            });
-
-            var entries = dispatchable.Entries.Where(entry => HasProjectionsFor(entry.TypeName)).ToList();
-
-            if (entries.Any())
-            {
-                Dispatch(dispatchable.Id, new BinaryProjectable(dispatchable.State.OrElse(null!), entries, dispatchable.Id));
-            }
-        }
-        
-        protected override bool RequiresDispatchedConfirmation() => true;
     }
+        
+    public BinaryProjectionDispatcherActor(IEnumerable<ProjectToDescription> projectToDescriptions) : this(projectToDescriptions, MultiConfirming.DefaultExpirationLimit)
+    {
+    }
+        
+    public BinaryProjectionDispatcherActor(IEnumerable<ProjectToDescription> projectToDescriptions, long multiConfirmationsExpiration): base(projectToDescriptions, multiConfirmationsExpiration)
+    {
+    }
+
+    public override void Dispatch(Dispatchable dispatchable)
+    {
+        dispatchable.State.IfPresent(state =>
+        {
+            if (HasProjectionsFor(state.Metadata.Operation))
+            {
+                Dispatch(dispatchable.Id, new BinaryProjectable(state, dispatchable.Entries, dispatchable.Id));
+            }
+        });
+
+        var entries = dispatchable.Entries.Where(entry => HasProjectionsFor(entry.TypeName)).ToList();
+
+        if (entries.Any())
+        {
+            Dispatch(dispatchable.Id, new BinaryProjectable(dispatchable.State.OrElse(null!), entries, dispatchable.Id));
+        }
+    }
+        
+    protected override bool RequiresDispatchedConfirmation() => true;
 }

@@ -12,21 +12,20 @@ using Vlingo.Xoom.Lattice.Grid.Application;
 using Vlingo.Xoom.Lattice.Grid.Hashring;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Xoom.Lattice.Grid
+namespace Vlingo.Xoom.Lattice.Grid;
+
+public interface IGridRuntime : IQuorumObserver
 {
-    public interface IGridRuntime : IQuorumObserver
-    {
-        Actor ActorAt(IAddress address);
-        void RelocateActors();
-        Stage AsStage();
-        void NodeJoined(Id newNode);
-        void InformAllLiveNodes(IEnumerable<Node> liveNodes);
-        Id? NodeId { get; set; }
-        IOutbound? Outbound { get; set; }
-        World World { get; }
-        GridNodeBootstrap GridNodeBootstrap { get; }
-        IHashRing<Id> HashRing { get; }
-        IQuorumObserver QuorumObserver { get; }
-        DynaClassLoader WorldClassLoader { get; }
-    }
+    Actor ActorAt(IAddress address);
+    void RelocateActors();
+    Stage AsStage();
+    void NodeJoined(Id newNode);
+    void InformAllLiveNodes(IEnumerable<Node> liveNodes);
+    Id? NodeId { get; set; }
+    IOutbound? Outbound { get; set; }
+    World World { get; }
+    GridNodeBootstrap GridNodeBootstrap { get; }
+    IHashRing<Id> HashRing { get; }
+    IQuorumObserver QuorumObserver { get; }
+    DynaClassLoader WorldClassLoader { get; }
 }

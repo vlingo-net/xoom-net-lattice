@@ -7,15 +7,14 @@
 
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Object
+namespace Vlingo.Xoom.Lattice.Tests.Model.Object;
+
+public interface IEmployee
 {
-    public interface IEmployee
-    {
-        ICompletes<EmployeeState> Current();
-        ICompletes<EmployeeState> Adjust(int salary);
-        ICompletes<EmployeeState> Hire(int salary);
-    }
-    
-    public class EmployeeHired : TestEvents.Event { }
-    public class EmployeeSalaryAdjusted : TestEvents.Event { }
+    ICompletes<EmployeeState> Current();
+    ICompletes<EmployeeState> Adjust(int salary);
+    ICompletes<EmployeeState> Hire(int salary);
 }
+    
+public class EmployeeHired : TestEvents.Event { }
+public class EmployeeSalaryAdjusted : TestEvents.Event { }

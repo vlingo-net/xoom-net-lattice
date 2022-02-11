@@ -7,9 +7,8 @@
 
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public class Test1Happened : DomainEvent
 {
-    public class Test1Happened : DomainEvent
-    {
-    }
 }

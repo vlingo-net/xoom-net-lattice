@@ -8,35 +8,34 @@
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public interface IFiveStepProcess
 {
-    public interface IFiveStepProcess
-    {
-        ICompletes<int> QueryStepCount();
-        void StepOneHappened();
-        void StepTwoHappened();
-        void StepThreeHappened();
-        void StepFourHappened();
-        void StepFiveHappened();
-    }
+    ICompletes<int> QueryStepCount();
+    void StepOneHappened();
+    void StepTwoHappened();
+    void StepThreeHappened();
+    void StepFourHappened();
+    void StepFiveHappened();
+}
 
-    public class DoStepOne : Command
-    {
-    }
+public class DoStepOne : Command
+{
+}
 
-    public class DoStepTwo : Command
-    {
-    }
+public class DoStepTwo : Command
+{
+}
 
-    public class DoStepThree : Command
-    {
-    }
+public class DoStepThree : Command
+{
+}
 
-    public class DoStepFour : Command
-    {
-    }
+public class DoStepFour : Command
+{
+}
 
-    public class DoStepFive : Command
-    {
-    }
+public class DoStepFive : Command
+{
 }

@@ -5,15 +5,14 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Model.Sourcing;
+
+/// <summary>
+/// A <see cref="Sourced{T}"/> for concrete types of <see cref="Command"/>.
+/// </summary>
+public abstract class CommandSourced : Sourced<Command>
 {
-    /// <summary>
-    /// A <see cref="Sourced{T}"/> for concrete types of <see cref="Command"/>.
-    /// </summary>
-    public abstract class CommandSourced : Sourced<Command>
+    public CommandSourced(string streamName) : base(streamName)
     {
-        public CommandSourced(string streamName) : base(streamName)
-        {
-        }
     }
 }

@@ -8,10 +8,9 @@
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Tests.Router
+namespace Vlingo.Xoom.Lattice.Tests.Router;
+
+public class SolverActor : Actor, ISolver
 {
-    public class SolverActor : Actor, ISolver
-    {
-        public ICompletes<Stuff> SolveStuff(int value) => Completes().With(new Stuff(value * 2));
-    }
+    public ICompletes<Stuff> SolveStuff(int value) => Completes().With(new Stuff(value * 2));
 }

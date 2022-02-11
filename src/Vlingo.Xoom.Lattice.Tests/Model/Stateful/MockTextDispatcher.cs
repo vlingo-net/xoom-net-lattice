@@ -12,64 +12,63 @@ using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Stateful
+namespace Vlingo.Xoom.Lattice.Tests.Model.Stateful;
+
+public class MockTextDispatcher : IDispatcher
 {
-    public class MockTextDispatcher : IDispatcher
-    {
-        private AccessSafely _access;
+    private AccessSafely _access;
 
-        private IDispatcherControl _control;
-        private readonly Dictionary<string, TextState> _dispatched = new Dictionary<string, TextState>();
-        private readonly ConcurrentBag<IEntry> _dispatchedEntries = new ConcurrentBag<IEntry>();
-        private readonly AtomicBoolean _processDispatch = new AtomicBoolean(true);
+    private IDispatcherControl _control;
+    private readonly Dictionary<string, TextState> _dispatched = new Dictionary<string, TextState>();
+    private readonly ConcurrentBag<IEntry> _dispatchedEntries = new ConcurrentBag<IEntry>();
+    private readonly AtomicBoolean _processDispatch = new AtomicBoolean(true);
         
-        public MockTextDispatcher() => _access = AfterCompleting(0);
+    public MockTextDispatcher() => _access = AfterCompleting(0);
 
-        public void ControlWith(IDispatcherControl control) => _control = control;
-        public void Dispatch(Dispatchable dispatchable)
-        {
-            if (_processDispatch.Get())
-            {
-                var dispatchId = dispatchable.Id;
-                _access.WriteUsing("dispatched", dispatchId, new Dispatch(dispatchable.TypedState<TextState>(), dispatchable.Entries));
-            }
-        }
-
-        public AccessSafely AfterCompleting(int times)
-        {
-            _access = AccessSafely.AfterCompleting(times)
-                .WritingWith<string, Dispatch>("dispatched", (id, dispatch) =>
-                {
-                    _dispatched[id] = (TextState) dispatch.State;
-                    foreach (var entry in dispatch.Entries)
-                    {
-                        _dispatchedEntries.Add(entry);
-                    }
-                })
-                .ReadingWith("dispatchedIds", () => _dispatched.Keys)
-                .ReadingWith<string, TextState>("dispatchedState", id => _dispatched[id])
-                .ReadingWith("dispatchedStateCount", () => _dispatched.Count)
-
-                .WritingWith<bool>("processDispatch", flag => _processDispatch.Set(flag))
-                .ReadingWith("processDispatch", () => _processDispatch.Get())
-
-                .ReadingWith("dispatched", () => _dispatched);
-
-            return _access;
-        }
-
-        public List<Dispatchable> GetDispatched() => _access.ReadFrom<List<Dispatchable>>("dispatched");
-    }
-    
-    internal class Dispatch
+    public void ControlWith(IDispatcherControl control) => _control = control;
+    public void Dispatch(Dispatchable dispatchable)
     {
-        public List<IEntry> Entries { get; }
-        public IState State { get; }
-
-        public Dispatch(IState state, List<IEntry> entries)
+        if (_processDispatch.Get())
         {
-            State = state;
-            Entries = entries;
+            var dispatchId = dispatchable.Id;
+            _access.WriteUsing("dispatched", dispatchId, new Dispatch(dispatchable.TypedState<TextState>(), dispatchable.Entries));
         }
+    }
+
+    public AccessSafely AfterCompleting(int times)
+    {
+        _access = AccessSafely.AfterCompleting(times)
+            .WritingWith<string, Dispatch>("dispatched", (id, dispatch) =>
+            {
+                _dispatched[id] = (TextState) dispatch.State;
+                foreach (var entry in dispatch.Entries)
+                {
+                    _dispatchedEntries.Add(entry);
+                }
+            })
+            .ReadingWith("dispatchedIds", () => _dispatched.Keys)
+            .ReadingWith<string, TextState>("dispatchedState", id => _dispatched[id])
+            .ReadingWith("dispatchedStateCount", () => _dispatched.Count)
+
+            .WritingWith<bool>("processDispatch", flag => _processDispatch.Set(flag))
+            .ReadingWith("processDispatch", () => _processDispatch.Get())
+
+            .ReadingWith("dispatched", () => _dispatched);
+
+        return _access;
+    }
+
+    public List<Dispatchable> GetDispatched() => _access.ReadFrom<List<Dispatchable>>("dispatched");
+}
+    
+internal class Dispatch
+{
+    public List<IEntry> Entries { get; }
+    public IState State { get; }
+
+    public Dispatch(IState state, List<IEntry> entries)
+    {
+        State = state;
+        Entries = entries;
     }
 }

@@ -7,11 +7,10 @@
 
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+public interface IDistributedSpace : ISpace
 {
-    public interface IDistributedSpace : ISpace
-    {
-        ICompletes<KeyItem> LocalPut(IKey key, Item item);
-        ICompletes<KeyItem> LocalTake(IKey key, Period until);
-    }
+    ICompletes<KeyItem> LocalPut(IKey key, Item item);
+    ICompletes<KeyItem> LocalTake(IKey key, Period until);
 }

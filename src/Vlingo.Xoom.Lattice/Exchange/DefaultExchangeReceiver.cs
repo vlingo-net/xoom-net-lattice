@@ -5,12 +5,11 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange
-{
-    public abstract class DefaultExchangeReceiver<TLocal> : IExchangeReceiver<TLocal>
-    {
-        public abstract void Receive(TLocal message);
+namespace Vlingo.Xoom.Lattice.Exchange;
 
-        public void Receive(object message) => Receive((TLocal) message);
-    }
+public abstract class DefaultExchangeReceiver<TLocal> : IExchangeReceiver<TLocal>
+{
+    public abstract void Receive(TLocal message);
+
+    public void Receive(object message) => Receive((TLocal) message);
 }

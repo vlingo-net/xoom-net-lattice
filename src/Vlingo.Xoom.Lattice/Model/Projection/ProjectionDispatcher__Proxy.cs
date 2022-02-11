@@ -8,37 +8,36 @@
 using System;
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Xoom.Lattice.Model.Projection
+namespace Vlingo.Xoom.Lattice.Model.Projection;
+
+public class ProjectionDispatcher__Proxy : IProjectionDispatcher
 {
-    public class ProjectionDispatcher__Proxy : IProjectionDispatcher
+    private const string ProjectToRepresentation1 =
+        "ProjectTo(Vlingo.Xoom.Lattice.Model.Projection.IProjection, System.String[])";
+
+    private readonly Actor actor;
+    private readonly IMailbox mailbox;
+
+    public ProjectionDispatcher__Proxy(Actor actor, IMailbox mailbox)
     {
-        private const string ProjectToRepresentation1 =
-            "ProjectTo(Vlingo.Xoom.Lattice.Model.Projection.IProjection, System.String[])";
+        this.actor = actor;
+        this.mailbox = mailbox;
+    }
 
-        private readonly Actor actor;
-        private readonly IMailbox mailbox;
-
-        public ProjectionDispatcher__Proxy(Actor actor, IMailbox mailbox)
+    public void ProjectTo(IProjection projection, string[] becauseOf)
+    {
+        if (!actor.IsStopped)
         {
-            this.actor = actor;
-            this.mailbox = mailbox;
-        }
-
-        public void ProjectTo(IProjection projection, string[] becauseOf)
-        {
-            if (!actor.IsStopped)
-            {
-                Action<IProjectionDispatcher> cons2068952794 = __ => __.ProjectTo(projection, becauseOf);
-                if (mailbox.IsPreallocated)
-                    mailbox.Send(actor, cons2068952794, null, ProjectToRepresentation1);
-                else
-                    mailbox.Send(
-                        new LocalMessage<IProjectionDispatcher>(actor, cons2068952794, ProjectToRepresentation1));
-            }
+            Action<IProjectionDispatcher> cons2068952794 = __ => __.ProjectTo(projection, becauseOf);
+            if (mailbox.IsPreallocated)
+                mailbox.Send(actor, cons2068952794, null, ProjectToRepresentation1);
             else
-            {
-                actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ProjectToRepresentation1));
-            }
+                mailbox.Send(
+                    new LocalMessage<IProjectionDispatcher>(actor, cons2068952794, ProjectToRepresentation1));
+        }
+        else
+        {
+            actor.DeadLetters?.FailedDelivery(new DeadLetter(actor, ProjectToRepresentation1));
         }
     }
 }

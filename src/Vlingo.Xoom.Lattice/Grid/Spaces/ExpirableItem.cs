@@ -8,25 +8,24 @@
 using System;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
-{
-    internal class ExpirableItem : IComparable<ExpirableItem>
-    {
-        internal IKey Key { get; }
-        internal object Object { get; }
-        internal DateTime ExpiresOn { get; }
-        internal Lease Lease { get; }
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
 
-        internal ExpirableItem(IKey key, object @object, DateTime expiresOn, Lease lease)
-        {
-            Key = key;
-            Object = @object;
-            ExpiresOn = expiresOn;
-            Lease = lease;
-        }
-        
-        internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
-        
-        public int CompareTo(ExpirableItem? other) => Key.Compare(Key, other?.Key!);
+internal class ExpirableItem : IComparable<ExpirableItem>
+{
+    internal IKey Key { get; }
+    internal object Object { get; }
+    internal DateTime ExpiresOn { get; }
+    internal Lease Lease { get; }
+
+    internal ExpirableItem(IKey key, object @object, DateTime expiresOn, Lease lease)
+    {
+        Key = key;
+        Object = @object;
+        ExpiresOn = expiresOn;
+        Lease = lease;
     }
+        
+    internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
+        
+    public int CompareTo(ExpirableItem? other) => Key.Compare(Key, other?.Key!);
 }

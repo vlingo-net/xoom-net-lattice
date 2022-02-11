@@ -7,44 +7,43 @@
 
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model
-{
-    public static class TestEvents
-    {
-        public abstract class Event : Source<Event>
-        {
-            public static Event1 Event1 => new Event1();
-            
-            public static Event2 Event2 => new Event2();
-            
-            public static Event3 Event3 => new Event3();
-            
-            public override bool Equals(object obj)
-            {
-                if (obj == null || obj.GetType() != GetType())
-                {
-                    return false;
-                }
-                
-                return true;
-            }
+namespace Vlingo.Xoom.Lattice.Tests.Model;
 
-            public override int GetHashCode()
+public static class TestEvents
+{
+    public abstract class Event : Source<Event>
+    {
+        public static Event1 Event1 => new Event1();
+            
+        public static Event2 Event2 => new Event2();
+            
+        public static Event3 Event3 => new Event3();
+            
+        public override bool Equals(object obj)
+        {
+            if (obj == null || obj.GetType() != GetType())
             {
-                return base.GetHashCode();
+                return false;
             }
+                
+            return true;
         }
-        
-        public class Event1 : Event
+
+        public override int GetHashCode()
         {
+            return base.GetHashCode();
         }
+    }
         
-        public class Event2 : Event
-        {
-        }
+    public class Event1 : Event
+    {
+    }
         
-        public class Event3 : Event
-        {
-        }
+    public class Event2 : Event
+    {
+    }
+        
+    public class Event3 : Event
+    {
     }
 }

@@ -7,16 +7,15 @@
 
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Xoom.Lattice.Model
+namespace Vlingo.Xoom.Lattice.Model;
+
+/// <summary>
+/// Abstract base of all entity types.
+/// </summary>
+public abstract class EntityActor : Actor
 {
     /// <summary>
-    /// Abstract base of all entity types.
+    /// Restore my state.
     /// </summary>
-    public abstract class EntityActor : Actor
-    {
-        /// <summary>
-        /// Restore my state.
-        /// </summary>
-        protected abstract void Restore();
-    }
+    protected abstract void Restore();
 }

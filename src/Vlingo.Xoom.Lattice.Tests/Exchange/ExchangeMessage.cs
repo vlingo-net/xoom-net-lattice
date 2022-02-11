@@ -10,26 +10,25 @@ using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Common.Serialization;
 using Vlingo.Xoom.Common.Version;
 
-namespace Vlingo.Xoom.Lattice.Tests.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Exchange;
+
+public class ExchangeMessage : IMessage
 {
-    public class ExchangeMessage : IMessage
+    private readonly string _payload;
+        
+    public ExchangeMessage(string type, string payload)
     {
-        private readonly string _payload;
-        
-        public ExchangeMessage(string type, string payload)
-        {
-            Type = type;
-            _payload = payload;
-        }
-        
-        public string Id { get; }
-        public DateTimeOffset OccurredOn { get; }
-        public T Payload<T>() => JsonSerialization.Deserialized<T>(_payload);
-
-        public string Type { get; }
-        public string Version { get; }
-        public SemanticVersion SemanticVersion { get; }
-
-        public override string ToString() => $"ExchangeMessage[type={Type} payload={_payload}]";
+        Type = type;
+        _payload = payload;
     }
+        
+    public string Id { get; }
+    public DateTimeOffset OccurredOn { get; }
+    public T Payload<T>() => JsonSerialization.Deserialized<T>(_payload);
+
+    public string Type { get; }
+    public string Version { get; }
+    public SemanticVersion SemanticVersion { get; }
+
+    public override string ToString() => $"ExchangeMessage[type={Type} payload={_payload}]";
 }

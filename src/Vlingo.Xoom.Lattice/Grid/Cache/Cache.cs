@@ -5,19 +5,18 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Grid.Cache
+namespace Vlingo.Xoom.Lattice.Grid.Cache;
+
+public class Cache
 {
-    public class Cache
-    {
-        private const string DefaultCacheName = "__defaultCache";
-        private string _name;
+    private const string DefaultCacheName = "__defaultCache";
+    private string _name;
 
-        public static Cache Of(string name) => new Cache(name);
+    public static Cache Of(string name) => new Cache(name);
 
-        public static Cache DefaultCache() => new Cache();
+    public static Cache DefaultCache() => new Cache();
 
-        public Cache(string name) => _name = name;
+    public Cache(string name) => _name = name;
 
-        public Cache() => _name = DefaultCacheName;
-    }
+    public Cache() => _name = DefaultCacheName;
 }

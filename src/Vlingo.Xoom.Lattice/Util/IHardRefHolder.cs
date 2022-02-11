@@ -5,10 +5,9 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Util
+namespace Vlingo.Xoom.Lattice.Util;
+
+public interface IHardRefHolder
 {
-    public interface IHardRefHolder
-    {
-        void HoldOnTo(object @object);
-    }
+    void HoldOnTo(object @object);
 }

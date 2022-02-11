@@ -10,42 +10,41 @@ using System.Threading;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Cluster.Model;
 
-namespace Vlingo.Xoom.Lattice.Grid
-{
-    internal class GridShutdownHook
-    {
-        private readonly IClusterSnapshotControl _control;
-        private readonly ILogger _logger;
-        private readonly string _nodeName;
+namespace Vlingo.Xoom.Lattice.Grid;
 
-        internal GridShutdownHook(string nodeName, Tuple<IClusterSnapshotControl, ILogger> _)
-        {
-            _nodeName = nodeName;
-            (_control, _logger) = _;
-        }
+internal class GridShutdownHook
+{
+    private readonly IClusterSnapshotControl _control;
+    private readonly ILogger _logger;
+    private readonly string _nodeName;
+
+    internal GridShutdownHook(string nodeName, Tuple<IClusterSnapshotControl, ILogger> _)
+    {
+        _nodeName = nodeName;
+        (_control, _logger) = _;
+    }
         
-        internal void Register()
+    internal void Register()
+    {
+        AppDomain.CurrentDomain.ProcessExit += (s, e) =>
         {
-            AppDomain.CurrentDomain.ProcessExit += (s, e) =>
-            {
-                _logger.Info("\n==========");
-                _logger.Info($"Stopping node: '{_nodeName}' ...");
-                _control.ShutDown();
-                Pause();
-                _logger.Info($"Stopped node: '{_nodeName}'");
-            };
-        }
+            _logger.Info("\n==========");
+            _logger.Info($"Stopping node: '{_nodeName}' ...");
+            _control.ShutDown();
+            Pause();
+            _logger.Info($"Stopped node: '{_nodeName}'");
+        };
+    }
         
-        private void Pause()
+    private void Pause()
+    {
+        try
         {
-            try
-            {
-                Thread.Sleep(1000);
-            }
-            catch 
-            {
-                // ignore
-            }
+            Thread.Sleep(1000);
+        }
+        catch 
+        {
+            // ignore
         }
     }
 }

@@ -7,25 +7,24 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Query
+namespace Vlingo.Xoom.Lattice.Query;
+
+/// <summary>
+/// An Exception used to indicate the failure of an attempt to <code>QueryAll()</code> or to <code>QueryObject()</code>.
+/// </summary>
+public class ObjectQueryFailedException : Exception
 {
-    /// <summary>
-    /// An Exception used to indicate the failure of an attempt to <code>QueryAll()</code> or to <code>QueryObject()</code>.
-    /// </summary>
-    public class ObjectQueryFailedException : Exception
-    {
-        private readonly object _queryAttempt;
+    private readonly object _queryAttempt;
 
-        public ObjectQueryFailedException(object queryAttempt) => _queryAttempt = queryAttempt;
+    public ObjectQueryFailedException(object queryAttempt) => _queryAttempt = queryAttempt;
 
-        public ObjectQueryFailedException(object queryAttempt, string message, Exception cause) : base(message, cause) =>
-            _queryAttempt = queryAttempt;
+    public ObjectQueryFailedException(object queryAttempt, string message, Exception cause) : base(message, cause) =>
+        _queryAttempt = queryAttempt;
 
-        public ObjectQueryFailedException(object queryAttempt, string message) : base(message) => _queryAttempt = queryAttempt;
+    public ObjectQueryFailedException(object queryAttempt, string message) : base(message) => _queryAttempt = queryAttempt;
 
-        public QueryAttempt<TObjectState, TOutcome, TResult> QueryAttempt<TObjectState, TOutcome, TResult>() => 
-            (QueryAttempt<TObjectState, TOutcome, TResult>) _queryAttempt;
+    public QueryAttempt<TObjectState, TOutcome, TResult> QueryAttempt<TObjectState, TOutcome, TResult>() => 
+        (QueryAttempt<TObjectState, TOutcome, TResult>) _queryAttempt;
         
-        public QueryAttemptBase QueryAttempt() => (QueryAttemptBase) _queryAttempt;
-    }
+    public QueryAttemptBase QueryAttempt() => (QueryAttemptBase) _queryAttempt;
 }

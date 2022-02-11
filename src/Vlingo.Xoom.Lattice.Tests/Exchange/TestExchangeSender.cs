@@ -9,24 +9,23 @@ using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common.Message;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Xoom.Lattice.Tests.Exchange
+namespace Vlingo.Xoom.Lattice.Tests.Exchange;
+
+public class TestExchangeSender : DefaultExchangeSender<ExchangeMessage>
 {
-    public class TestExchangeSender : DefaultExchangeSender<ExchangeMessage>
+    private readonly ILogger _logger;
+
+    public TestExchangeSender(IMessageQueue queue, ILogger logger)
     {
-        private readonly ILogger _logger;
-
-        public TestExchangeSender(IMessageQueue queue, ILogger logger)
-        {
-            _logger = logger;
-            Queue = queue;
-        }
-
-        public override void Send(ExchangeMessage message)
-        {
-            _logger.Debug($"MessageQueue sending: {message}");
-            Queue.Enqueue(message);
-        }
-        
-        public IMessageQueue Queue { get; }
+        _logger = logger;
+        Queue = queue;
     }
+
+    public override void Send(ExchangeMessage message)
+    {
+        _logger.Debug($"MessageQueue sending: {message}");
+        Queue.Enqueue(message);
+    }
+        
+    public IMessageQueue Queue { get; }
 }

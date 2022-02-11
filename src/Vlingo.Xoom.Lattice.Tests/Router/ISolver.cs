@@ -7,17 +7,16 @@
 
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Tests.Router
-{
-    public interface ISolver
-    {
-        ICompletes<Stuff> SolveStuff(int value);
-    }
-    
-    public class Stuff
-    {
-        public int Value { get; }
+namespace Vlingo.Xoom.Lattice.Tests.Router;
 
-        public Stuff(int value) => Value = value;
-    }
+public interface ISolver
+{
+    ICompletes<Stuff> SolveStuff(int value);
+}
+    
+public class Stuff
+{
+    public int Value { get; }
+
+    public Stuff(int value) => Value = value;
 }

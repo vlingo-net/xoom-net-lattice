@@ -5,15 +5,14 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange.Local
+namespace Vlingo.Xoom.Lattice.Exchange.Local;
+
+public class LocalExchangeAdapter<TLocal, TExternal> : DefaultExchangeAdapter<TLocal, TExternal, LocalExchangeMessage>
 {
-    public class LocalExchangeAdapter<TLocal, TExternal> : DefaultExchangeAdapter<TLocal, TExternal, LocalExchangeMessage>
-    {
-        public override TLocal FromExchange(LocalExchangeMessage exchangeMessage) => exchangeMessage.Payload<TLocal>();
+    public override TLocal FromExchange(LocalExchangeMessage exchangeMessage) => exchangeMessage.Payload<TLocal>();
 
-        public override LocalExchangeMessage ToExchange(TLocal localMessage) => 
-            new LocalExchangeMessage(localMessage!.GetType().FullName!, localMessage);
+    public override LocalExchangeMessage ToExchange(TLocal localMessage) => 
+        new LocalExchangeMessage(localMessage!.GetType().FullName!, localMessage);
 
-        public override bool Supports(object? exchangeMessage) => exchangeMessage != null && ((LocalExchangeMessage) exchangeMessage).RawPayload.GetType() == typeof(TLocal);
-    }
+    public override bool Supports(object? exchangeMessage) => exchangeMessage != null && ((LocalExchangeMessage) exchangeMessage).RawPayload.GetType() == typeof(TLocal);
 }

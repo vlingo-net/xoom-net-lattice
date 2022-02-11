@@ -7,18 +7,17 @@
 
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class StepCountState : StateObject
 {
-    public class StepCountState : StateObject
-    {
-        private int _stepCount;
+    private int _stepCount;
 
-        public StepCountState(int stepCount) => _stepCount = stepCount;
+    public StepCountState(int stepCount) => _stepCount = stepCount;
 
-        public StepCountState() => _stepCount = 0;
+    public StepCountState() => _stepCount = 0;
 
-        public void CountStep() => ++_stepCount;
+    public void CountStep() => ++_stepCount;
 
-        public int StepCount() => _stepCount;
-    }
+    public int StepCount() => _stepCount;
 }

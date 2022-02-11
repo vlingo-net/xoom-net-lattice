@@ -20,71 +20,71 @@ using Vlingo.Xoom.Symbio.Store.Object.InMemory;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class ObjectProcessTest
 {
-    public class ObjectProcessTest
+    private readonly IExchange _exchange;
+    private readonly ExchangeReceivers _exchangeReceivers;
+    private readonly LocalExchangeSender _exchangeSender;
+    private readonly World _world;
+
+    [Fact]
+    public void TestFiveStepEmittingProcess()
     {
-        private readonly IExchange _exchange;
-        private readonly ExchangeReceivers _exchangeReceivers;
-        private readonly LocalExchangeSender _exchangeSender;
-        private readonly World _world;
+        var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingObjectProcess());
+        _exchangeReceivers.SetProcess(process);
 
-        [Fact]
-        public void TestFiveStepEmittingProcess()
-        {
-            var process = _world.ActorFor<IFiveStepProcess>(() => new FiveStepEmittingObjectProcess());
-            _exchangeReceivers.SetProcess(process);
+        _exchange.Send(new DoStepOne());
 
-            _exchange.Send(new DoStepOne());
+        Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
 
-            Assert.Equal(5, _exchangeReceivers.Access.ReadFrom<int>("stepCount"));
+        Assert.Equal(5, process.QueryStepCount().Await());
+    }
 
-            Assert.Equal(5, process.QueryStepCount().Await());
-        }
-
-        public ObjectProcessTest(ITestOutputHelper output)
-        {
-            var converter = new Converter(output);
-            Console.SetOut(converter);
+    public ObjectProcessTest(ITestOutputHelper output)
+    {
+        var converter = new Converter(output);
+        Console.SetOut(converter);
             
-            _world = World.StartWithDefaults("five-step-process-test");
+        _world = World.StartWithDefaults("five-step-process-test");
 
-            var queue = new AsyncMessageQueue(null);
-            _exchange = new LocalExchange(queue);
-            var adapter = new ProcessMessageTextAdapter();
-            EntryAdapterProvider.Instance(_world).RegisterAdapter(adapter);
+        var queue = new AsyncMessageQueue(null);
+        _exchange = new LocalExchange(queue);
+        var adapter = new ProcessMessageTextAdapter();
+        EntryAdapterProvider.Instance(_world).RegisterAdapter(adapter);
 
-            var dispatcher = new MockDispatcher();
-            var objectStore = _world.ActorFor<IObjectStore>(() => new InMemoryObjectStoreActor<string>(dispatcher));
+        var dispatcher = new MockDispatcher();
+        var objectStore = _world.ActorFor<IObjectStore>(() => new InMemoryObjectStoreActor<string>(dispatcher));
 
-            var objectTypeRegistry = new ObjectTypeRegistry(_world);
+        var objectTypeRegistry = new ObjectTypeRegistry(_world);
 
-            var stepCountStateInfo =
-                new Info<StepCountObjectState>(
-                    objectStore,
-                    nameof(StepCountObjectState),
-                    MapQueryExpression.Using<StepCountObjectState>("find", MapQueryExpression.Map("id", "id")),
-                    StateObjectMapper.With<StepCountObjectState>(new object(), new object()));
+        var stepCountStateInfo =
+            new Info<StepCountObjectState>(
+                objectStore,
+                nameof(StepCountObjectState),
+                MapQueryExpression.Using<StepCountObjectState>("find", MapQueryExpression.Map("id", "id")),
+                StateObjectMapper.With<StepCountObjectState>(new object(), new object()));
 
-            objectTypeRegistry.Register(stepCountStateInfo);
+        objectTypeRegistry.Register(stepCountStateInfo);
             
-            _exchangeSender = new LocalExchangeSender(queue);
+        _exchangeSender = new LocalExchangeSender(queue);
 
-            var processTypeRegistry = new ProcessTypeRegistry(_world);
-            processTypeRegistry.Register(new ObjectProcessInfo<FiveStepEmittingObjectProcess, StepCountObjectState>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
+        var processTypeRegistry = new ProcessTypeRegistry(_world);
+        processTypeRegistry.Register(new ObjectProcessInfo<FiveStepEmittingObjectProcess, StepCountObjectState>(nameof(FiveStepEmittingObjectProcess), _exchange, objectTypeRegistry));
             
-            _exchangeReceivers = new ExchangeReceivers();
+        _exchangeReceivers = new ExchangeReceivers();
             
-            RegisterExchangeCoveys();
-        }
+        RegisterExchangeCoveys();
+    }
         
-        private void RegisterExchangeCoveys()
-        {
-            _exchange
-                .Register(Covey<DoStepOne, DoStepOne, LocalExchangeMessage>.Of(
-                    _exchangeSender,
-                    _exchangeReceivers.DoStepOneReceiver,
-                    new LocalExchangeAdapter<DoStepOne, DoStepOne>()))
+    private void RegisterExchangeCoveys()
+    {
+        _exchange
+            .Register(Covey<DoStepOne, DoStepOne, LocalExchangeMessage>.Of(
+                _exchangeSender,
+                _exchangeReceivers.DoStepOneReceiver,
+                new LocalExchangeAdapter<DoStepOne, DoStepOne>()))
             .Register(Covey<DoStepTwo, DoStepTwo, LocalExchangeMessage>.Of(
                 _exchangeSender,
                 _exchangeReceivers.DoStepTwoReceiver,
@@ -101,6 +101,5 @@ namespace Vlingo.Xoom.Lattice.Tests.Model.Process
                 _exchangeSender,
                 _exchangeReceivers.DoStepFiveReceiver,
                 new LocalExchangeAdapter<DoStepFive, DoStepFive>()));
-        }
     }
 }

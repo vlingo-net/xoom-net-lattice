@@ -9,44 +9,43 @@ using System.Threading.Tasks;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Sourcing;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public class TestEventSourcedEntity : EventSourced, IEntity
 {
-    public class TestEventSourcedEntity : EventSourced, IEntity
+    private readonly Result _result;
+
+    public TestEventSourcedEntity(Result result) : base("TestEvent123")
     {
-        private readonly Result _result;
+        _result = result;
+        RegisterConsumer<Test1Happened>(Applied1);
+        RegisterConsumer<Test2Happened>(Applied2);
+        RegisterConsumer<Test3Happened>(Applied3);
+    }
 
-        public TestEventSourcedEntity(Result result) : base("TestEvent123")
-        {
-            _result = result;
-            RegisterConsumer<Test1Happened>(Applied1);
-            RegisterConsumer<Test2Happened>(Applied2);
-            RegisterConsumer<Test3Happened>(Applied3);
-        }
+    public void DoTest1() => Apply(new Test1Happened());
 
-        public void DoTest1() => Apply(new Test1Happened());
+    public void DoTest2() => Apply(new Test2Happened());
 
-        public void DoTest2() => Apply(new Test2Happened());
+    public ICompletes<string> DoTest3() => Apply(new Test3Happened(), () => "hello");
 
-        public ICompletes<string> DoTest3() => Apply(new Test3Happened(), () => "hello");
+    public async Task<string> DoTest4() => await Apply(new Test3Happened(), () => "hello task");
 
-        public async Task<string> DoTest4() => await Apply(new Test3Happened(), () => "hello task");
+    private void Applied1(Test1Happened @event)
+    {
+        _result.Access().WriteUsing("tested1", true);
+        _result.Access().WriteUsing("applied", @event);
+    }
 
-        private void Applied1(Test1Happened @event)
-        {
-            _result.Access().WriteUsing("tested1", true);
-            _result.Access().WriteUsing("applied", @event);
-        }
-
-        private void Applied2(Test2Happened @event)
-        {
-            _result.Access().WriteUsing("tested2", true);
-            _result.Access().WriteUsing("applied", @event);
-        }
+    private void Applied2(Test2Happened @event)
+    {
+        _result.Access().WriteUsing("tested2", true);
+        _result.Access().WriteUsing("applied", @event);
+    }
         
-        private void Applied3(Test3Happened @event)
-        {
-            _result.Access().WriteUsing("tested3", true);
-            _result.Access().WriteUsing("applied", @event);
-        }
+    private void Applied3(Test3Happened @event)
+    {
+        _result.Access().WriteUsing("tested3", true);
+        _result.Access().WriteUsing("applied", @event);
     }
 }

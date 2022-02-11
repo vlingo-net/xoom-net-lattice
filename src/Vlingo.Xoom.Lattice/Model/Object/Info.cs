@@ -9,38 +9,37 @@ using System;
 using Vlingo.Xoom.Symbio.Store;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Xoom.Lattice.Model.Object
+namespace Vlingo.Xoom.Lattice.Model.Object;
+
+/// <summary>
+/// Holder of registration information.
+/// </summary>
+/// <typeparam name="TState">The type of the underlying state.</typeparam>
+public class Info<TState> : StateObject
 {
     /// <summary>
-    /// Holder of registration information.
+    /// Construct my default state.
     /// </summary>
-    /// <typeparam name="TState">The type of the underlying state.</typeparam>
-    public class Info<TState> : StateObject
+    /// <param name="store">The instance of <see cref="IObjectStore"/></param>
+    /// <param name="storeName">The name of the object store</param>
+    /// <param name="queryObjectExpression">The <see cref="QueryExpression"/> used to retrieve a single instance</param>
+    /// <param name="mapper">The persistent <see cref="StateObjectMapper"/> between Object type and persistent type</param>
+    public Info(IObjectStore store, string storeName, QueryExpression queryObjectExpression, StateObjectMapper mapper)
     {
-        /// <summary>
-        /// Construct my default state.
-        /// </summary>
-        /// <param name="store">The instance of <see cref="IObjectStore"/></param>
-        /// <param name="storeName">The name of the object store</param>
-        /// <param name="queryObjectExpression">The <see cref="QueryExpression"/> used to retrieve a single instance</param>
-        /// <param name="mapper">The persistent <see cref="StateObjectMapper"/> between Object type and persistent type</param>
-        public Info(IObjectStore store, string storeName, QueryExpression queryObjectExpression, StateObjectMapper mapper)
-        {
-            Store = store;
-            StoreName = storeName;
-            QueryObjectExpression = queryObjectExpression;
-            Mapper = mapper;
-            StoreType = typeof(TState);
-        }
-        
-        public StateObjectMapper Mapper { get; }
-
-        public QueryExpression QueryObjectExpression { get; }
-
-        public IObjectStore Store { get; }
-        
-        public Type StoreType { get; }
-
-        public string StoreName { get; }
+        Store = store;
+        StoreName = storeName;
+        QueryObjectExpression = queryObjectExpression;
+        Mapper = mapper;
+        StoreType = typeof(TState);
     }
+        
+    public StateObjectMapper Mapper { get; }
+
+    public QueryExpression QueryObjectExpression { get; }
+
+    public IObjectStore Store { get; }
+        
+    public Type StoreType { get; }
+
+    public string StoreName { get; }
 }

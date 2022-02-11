@@ -8,38 +8,37 @@
 using System;
 using Vlingo.Xoom.Lattice.Exchange;
 
-namespace Vlingo.Xoom.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Model.Process;
+
+/// <summary>
+/// Holder of registration information.
+/// </summary>
+public abstract class Info
 {
+    public IExchange Exchange { get; }
+    public string ProcessName { get; }
+
+    public Type ProcessType { get; }
+
     /// <summary>
-    /// Holder of registration information.
+    /// Construct my default state.
     /// </summary>
-    public abstract class Info
+    /// <param name="processType">The type of the process.</param>
+    /// <param name="processName">The string name of the Process</param>
+    /// <param name="exchange">The exchange</param>
+    public Info(Type processType, string processName, IExchange exchange)
     {
-        public IExchange Exchange { get; }
-        public string ProcessName { get; }
+        ProcessType = processType;
+        ProcessName = processName;
+        Exchange = exchange;
+    }
 
-        public Type ProcessType { get; }
-
-        /// <summary>
-        /// Construct my default state.
-        /// </summary>
-        /// <param name="processType">The type of the process.</param>
-        /// <param name="processName">The string name of the Process</param>
-        /// <param name="exchange">The exchange</param>
-        public Info(Type processType, string processName, IExchange exchange)
-        {
-            ProcessType = processType;
-            ProcessName = processName;
-            Exchange = exchange;
-        }
-
-        /// <summary>
-        /// Construct my default state.
-        /// </summary>
-        /// <param name="processType">The type of the process.</param>
-        /// <param name="processName">The string name of the Process</param>
-        public Info(Type processType, string processName) : this(processType, processName, NullExchange.Instance)
-        {
-        }
+    /// <summary>
+    /// Construct my default state.
+    /// </summary>
+    /// <param name="processType">The type of the process.</param>
+    /// <param name="processName">The string name of the Process</param>
+    public Info(Type processType, string processName) : this(processType, processName, NullExchange.Instance)
+    {
     }
 }

@@ -10,34 +10,33 @@ using Vlingo.Xoom.Actors.TestKit;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Dispatch;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing
+namespace Vlingo.Xoom.Lattice.Tests.Model.Sourcing;
+
+public class MockJournalDispatcher : IDispatcher
 {
-    public class MockJournalDispatcher : IDispatcher
+    private AccessSafely _access;
+    private readonly List<IEntry> _entries = new List<IEntry>();
+        
+    public MockJournalDispatcher() => _access = AfterCompleting(0);
+        
+    public void ControlWith(IDispatcherControl control)
     {
-        private AccessSafely _access;
-        private readonly List<IEntry> _entries = new List<IEntry>();
-        
-        public MockJournalDispatcher() => _access = AfterCompleting(0);
-        
-        public void ControlWith(IDispatcherControl control)
-        {
-        }
+    }
 
-        public void Dispatch(Dispatchable dispatchable) =>
-            _access.WriteUsing("appendedAll", dispatchable.Entries);
+    public void Dispatch(Dispatchable dispatchable) =>
+        _access.WriteUsing("appendedAll", dispatchable.Entries);
 
-        public AccessSafely AfterCompleting(int times)
-        {
-            _access = AccessSafely
-                .AfterCompleting(times)
+    public AccessSafely AfterCompleting(int times)
+    {
+        _access = AccessSafely
+            .AfterCompleting(times)
   
-                .WritingWith("appended", (IEntry appended) => _entries.Add(appended))
-                .WritingWith("appendedAll", (List<IEntry> appended) => _entries.AddRange(appended))
-                .ReadingWith<int, IEntry>("appendedAt", index => _entries[index])
-                .ReadingWith("entries", () => _entries)
-                .ReadingWith("entriesCount", () => _entries.Count);
+            .WritingWith("appended", (IEntry appended) => _entries.Add(appended))
+            .WritingWith("appendedAll", (List<IEntry> appended) => _entries.AddRange(appended))
+            .ReadingWith<int, IEntry>("appendedAt", index => _entries[index])
+            .ReadingWith("entries", () => _entries)
+            .ReadingWith("entriesCount", () => _entries.Count);
 
-            return _access;
-        }
+        return _access;
     }
 }

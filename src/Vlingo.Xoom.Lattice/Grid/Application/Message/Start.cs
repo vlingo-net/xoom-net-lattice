@@ -8,22 +8,21 @@
 using System;
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message
-{
-    [Serializable]
-    public class Start : IMessage
-    {
-        public Type Protocol { get; }
-        public IAddress Address { get; }
-        public Definition.SerializationProxy Definition { get; }
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message;
 
-        public Start(Type protocol, IAddress address, Definition.SerializationProxy definition)
-        {
-            Protocol = protocol;
-            Address = address;
-            Definition = definition;
-        }
-        
-        public override string ToString() => $"Start(protocol='{Protocol.Name}', address='{Address}', definition='{Definition}')";
+[Serializable]
+public class Start : IMessage
+{
+    public Type Protocol { get; }
+    public IAddress Address { get; }
+    public Definition.SerializationProxy Definition { get; }
+
+    public Start(Type protocol, IAddress address, Definition.SerializationProxy definition)
+    {
+        Protocol = protocol;
+        Address = address;
+        Definition = definition;
     }
+        
+    public override string ToString() => $"Start(protocol='{Protocol.Name}', address='{Address}', definition='{Definition}')";
 }

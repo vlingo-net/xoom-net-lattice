@@ -9,28 +9,27 @@ using System.Collections.Generic;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Model
+namespace Vlingo.Xoom.Lattice.Model;
+
+/// <summary>
+/// The elements used in the attempted <code>Apply()</code>
+/// </summary>
+/// <typeparam name="T">The type of the state</typeparam>
+public class Applicable<T>
 {
-    /// <summary>
-    /// The elements used in the attempted <code>Apply()</code>
-    /// </summary>
-    /// <typeparam name="T">The type of the state</typeparam>
-    public class Applicable<T>
+    public Applicable(T state, IEnumerable<ISource> sources, Metadata metadata, CompletionSupplier<T> completionSupplier)
     {
-        public Applicable(T state, IEnumerable<ISource> sources, Metadata metadata, CompletionSupplier<T> completionSupplier)
-        {
-            State = state;
-            Sources = sources;
-            Metadata = metadata;
-            CompletionSupplier = completionSupplier;
-        }
-        
-        public CompletionSupplier<T> CompletionSupplier { get; }
-        
-        public Metadata Metadata { get; }
-        
-        public IEnumerable<ISource> Sources { get; }
-        
-        public T State { get; }
+        State = state;
+        Sources = sources;
+        Metadata = metadata;
+        CompletionSupplier = completionSupplier;
     }
+        
+    public CompletionSupplier<T> CompletionSupplier { get; }
+        
+    public Metadata Metadata { get; }
+        
+    public IEnumerable<ISource> Sources { get; }
+        
+    public T State { get; }
 }

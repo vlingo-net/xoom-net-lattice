@@ -11,37 +11,36 @@ using Vlingo.Xoom.Lattice.Query;
 using Vlingo.Xoom.Symbio.Store;
 using Xunit;
 
-namespace Vlingo.Xoom.Lattice.Tests.Query
+namespace Vlingo.Xoom.Lattice.Tests.Query;
+
+public class ObjectQueryFailedExceptionTest
 {
-    public class ObjectQueryFailedExceptionTest
+    [Fact]
+    public void TestThatFailedHasAttempt()
     {
-        [Fact]
-        public void TestThatFailedHasAttempt()
-        {
-            var queryAttempt = new QueryAttempt<object, object, object>(Cardinality.All, QueryExpression.Using<object>(""), CompletionTranslator<object, object>.TranslatorOrNull(o => null, null));
-            var e = new ObjectQueryFailedException(queryAttempt);
+        var queryAttempt = new QueryAttempt<object, object, object>(Cardinality.All, QueryExpression.Using<object>(""), CompletionTranslator<object, object>.TranslatorOrNull(o => null, null));
+        var e = new ObjectQueryFailedException(queryAttempt);
 
-            Assert.NotNull(e);
-            Assert.NotNull(e.QueryAttempt());
-            Assert.Equal(Cardinality.All, e.QueryAttempt().Cardinality);
-            Assert.NotNull(e.QueryAttempt().Query);
-            Assert.NotNull(e.QueryAttempt().UntypedCompletionTranslator);
-        }
+        Assert.NotNull(e);
+        Assert.NotNull(e.QueryAttempt());
+        Assert.Equal(Cardinality.All, e.QueryAttempt().Cardinality);
+        Assert.NotNull(e.QueryAttempt().Query);
+        Assert.NotNull(e.QueryAttempt().UntypedCompletionTranslator);
+    }
         
-        [Fact]
-        public void TestThatFailedHasExceptionInfo()
-        {
-            var cause = new Exception("TestInner", new Exception());
-            var queryAttempt = new QueryAttempt<object, object, object>(Cardinality.All, QueryExpression.Using<object>(""), CompletionTranslator<object, object>.TranslatorOrNull(o => null, null));
-            var e = new ObjectQueryFailedException(queryAttempt, "TestOuter", cause);
+    [Fact]
+    public void TestThatFailedHasExceptionInfo()
+    {
+        var cause = new Exception("TestInner", new Exception());
+        var queryAttempt = new QueryAttempt<object, object, object>(Cardinality.All, QueryExpression.Using<object>(""), CompletionTranslator<object, object>.TranslatorOrNull(o => null, null));
+        var e = new ObjectQueryFailedException(queryAttempt, "TestOuter", cause);
 
-            Assert.NotNull(e);
-            Assert.NotNull(e.QueryAttempt());
-            Assert.Equal("TestOuter", e.Message);
-            Assert.NotNull(e.InnerException);
-            Assert.Equal("TestInner", e.InnerException.Message);
-            Assert.NotNull(e.Message);
-            Assert.NotNull(e.InnerException.InnerException);
-        }
+        Assert.NotNull(e);
+        Assert.NotNull(e.QueryAttempt());
+        Assert.Equal("TestOuter", e.Message);
+        Assert.NotNull(e.InnerException);
+        Assert.Equal("TestInner", e.InnerException.Message);
+        Assert.NotNull(e.Message);
+        Assert.NotNull(e.InnerException.InnerException);
     }
 }

@@ -7,16 +7,15 @@
 
 using Vlingo.Xoom.Streams.Operator;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Streams
+namespace Vlingo.Xoom.Lattice.Exchange.Streams;
+
+/// <summary>
+/// <see cref="IExchange"/> specific <see cref="QueueSource{T}"/> implementation.
+/// </summary>
+/// <typeparam name="T">Type of the message.</typeparam>
+public class ExchangeStreamSource<T> : QueueSource<T>
 {
-    /// <summary>
-    /// <see cref="IExchange"/> specific <see cref="QueueSource{T}"/> implementation.
-    /// </summary>
-    /// <typeparam name="T">Type of the message.</typeparam>
-    public class ExchangeStreamSource<T> : QueueSource<T>
+    public ExchangeStreamSource(bool slow) : base(slow)
     {
-        public ExchangeStreamSource(bool slow) : base(slow)
-        {
-        }
     }
 }

@@ -8,14 +8,13 @@
 using System.Collections.Generic;
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Model.Projection
-{
-    public class TextProjectable : AbstractProjectable
-    {
-        public TextProjectable(IState state, IEnumerable<IEntry> entries, string projectionId) : base(state, entries, projectionId)
-        {
-        }
+namespace Vlingo.Xoom.Lattice.Model.Projection;
 
-        public override string DataAsText() => TextState.Data;
+public class TextProjectable : AbstractProjectable
+{
+    public TextProjectable(IState state, IEnumerable<IEntry> entries, string projectionId) : base(state, entries, projectionId)
+    {
     }
+
+    public override string DataAsText() => TextState.Data;
 }

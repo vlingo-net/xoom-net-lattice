@@ -9,24 +9,23 @@ using System;
 using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application.Message
-{
-    /// <summary>
-    /// This class represents an unacknowledged message which has been sent to recipient.
-    /// </summary>
-    public class UnAckMessage : IMessage
-    {
-        public Type Protocol { get; }
-        public Id Receiver { get; }
-        public ICompletes Completes { get; }
-        public GridDeliver Message { get; }
+namespace Vlingo.Xoom.Lattice.Grid.Application.Message;
 
-        public UnAckMessage(Type protocol, Id receiver, ICompletes completes, GridDeliver message)
-        {
-            Protocol = protocol;
-            Receiver = receiver;
-            Completes = completes;
-            Message = message;
-        }
+/// <summary>
+/// This class represents an unacknowledged message which has been sent to recipient.
+/// </summary>
+public class UnAckMessage : IMessage
+{
+    public Type Protocol { get; }
+    public Id Receiver { get; }
+    public ICompletes Completes { get; }
+    public GridDeliver Message { get; }
+
+    public UnAckMessage(Type protocol, Id receiver, ICompletes completes, GridDeliver message)
+    {
+        Protocol = protocol;
+        Receiver = receiver;
+        Completes = completes;
+        Message = message;
     }
 }

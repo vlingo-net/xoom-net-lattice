@@ -8,12 +8,11 @@
 using Vlingo.Xoom.Wire.Message;
 using Vlingo.Xoom.Wire.Nodes;
 
-namespace Vlingo.Xoom.Lattice.Grid.Application
-{
-    public interface IApplicationMessageHandler
-    {
-        void Handle(RawMessage message);
+namespace Vlingo.Xoom.Lattice.Grid.Application;
 
-        void InformNodeIsHealthy(Id id, bool isHealthy);
-    }
+public interface IApplicationMessageHandler
+{
+    void Handle(RawMessage message);
+
+    void InformNodeIsHealthy(Id id, bool isHealthy);
 }

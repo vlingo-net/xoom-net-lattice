@@ -8,23 +8,22 @@
 using System;
 using Vlingo.Xoom.Actors;
 
-namespace Vlingo.Xoom.Lattice.Grid
+namespace Vlingo.Xoom.Lattice.Grid;
+
+[Serializable]
+public class GridAddress : GuidAddress
 {
-    [Serializable]
-    public class GridAddress : GuidAddress
-    {
-        public override bool IsDistributable => true;
+    public override bool IsDistributable => true;
         
-        internal GridAddress(Guid reservedId) : this(reservedId, null, false)
-        {
-        }
+    internal GridAddress(Guid reservedId) : this(reservedId, null, false)
+    {
+    }
 
-        internal GridAddress(Guid reservedId, string? name) : this(reservedId, name, false)
-        {
-        }
+    internal GridAddress(Guid reservedId, string? name) : this(reservedId, name, false)
+    {
+    }
 
-        internal GridAddress(Guid reservedId, string? name, bool prefixName): base(reservedId, name, prefixName)
-        {
-        }
+    internal GridAddress(Guid reservedId, string? name, bool prefixName): base(reservedId, name, prefixName)
+    {
     }
 }

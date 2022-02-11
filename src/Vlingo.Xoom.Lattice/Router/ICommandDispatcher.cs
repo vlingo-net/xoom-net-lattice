@@ -7,10 +7,9 @@
 
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Router
+namespace Vlingo.Xoom.Lattice.Router;
+
+public interface ICommandDispatcher<in TProtocol, in TCommand, in TAnswer> where TCommand : Command
 {
-    public interface ICommandDispatcher<in TProtocol, in TCommand, in TAnswer> where TCommand : Command
-    {
-        void Accept(TProtocol protocol, TCommand command, TAnswer answer);
-    }
+    void Accept(TProtocol protocol, TCommand command, TAnswer answer);
 }

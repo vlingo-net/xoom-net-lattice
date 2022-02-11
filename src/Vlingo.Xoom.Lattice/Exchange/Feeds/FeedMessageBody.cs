@@ -7,38 +7,37 @@
 
 using System;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Feeds
+namespace Vlingo.Xoom.Lattice.Exchange.Feeds;
+
+/// <summary>
+/// A message body that is provided by <code>body</code>.
+/// </summary>
+public class FeedMessageBody
 {
     /// <summary>
-    /// A message body that is provided by <code>body</code>.
+    /// The value representation of the body
     /// </summary>
-    public class FeedMessageBody
+    public string Value { get; }
+
+    /// <summary>
+    /// Construct default state
+    /// </summary>
+    /// <param name="body">The representation to assign as my body</param>
+    /// <exception cref="ArgumentNullException">If <paramref name="body"/> is null or empty</exception>
+    public FeedMessageBody(string body)
     {
-        /// <summary>
-        /// The value representation of the body
-        /// </summary>
-        public string Value { get; }
-
-        /// <summary>
-        /// Construct default state
-        /// </summary>
-        /// <param name="body">The representation to assign as my body</param>
-        /// <exception cref="ArgumentNullException">If <paramref name="body"/> is null or empty</exception>
-        public FeedMessageBody(string body)
+        if (string.IsNullOrEmpty(body))
         {
-            if (string.IsNullOrEmpty(body))
-            {
-                throw new ArgumentNullException(nameof(body));
-            }
-
-            Value = body;
+            throw new ArgumentNullException(nameof(body));
         }
 
-        /// <summary>
-        /// Gets a new FeedMessageBody with <paramref name="body"/>.
-        /// </summary>
-        /// <param name="body">The representation of the body</param>
-        /// <returns><see cref="FeedMessageBody"/></returns>
-        public static FeedMessageBody With(string body) => new FeedMessageBody(body);
+        Value = body;
     }
+
+    /// <summary>
+    /// Gets a new FeedMessageBody with <paramref name="body"/>.
+    /// </summary>
+    /// <param name="body">The representation of the body</param>
+    /// <returns><see cref="FeedMessageBody"/></returns>
+    public static FeedMessageBody With(string body) => new FeedMessageBody(body);
 }

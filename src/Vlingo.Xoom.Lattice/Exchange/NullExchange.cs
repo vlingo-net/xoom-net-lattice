@@ -8,29 +8,28 @@
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Actors.Plugin.Logging.Console;
 
-namespace Vlingo.Xoom.Lattice.Exchange
+namespace Vlingo.Xoom.Lattice.Exchange;
+
+/// <summary>
+/// Exchange that does nothing.
+/// </summary>
+public class NullExchange : IExchange
 {
-    /// <summary>
-    /// Exchange that does nothing.
-    /// </summary>
-    public class NullExchange : IExchange
+    private readonly ILogger _logger = ConsoleLogger.BasicInstance();
+        
+    public static readonly NullExchange Instance = new NullExchange();
+        
+    public void Close()
     {
-        private readonly ILogger _logger = ConsoleLogger.BasicInstance();
-        
-        public static readonly NullExchange Instance = new NullExchange();
-        
-        public void Close()
-        {
-        }
-
-        public T Channel<T>() => default!;
-
-        public T Connection<T>() => default!;
-
-        public string Name => "NullExchange";
-
-        public IExchange Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey) => this;
-
-        public void Send<TLocal>(TLocal local) => _logger.Error($"NullExchange: Sending nowhere: {local}");
     }
+
+    public T Channel<T>() => default!;
+
+    public T Connection<T>() => default!;
+
+    public string Name => "NullExchange";
+
+    public IExchange Register<TLocal, TExternal, TExchange>(Covey<TLocal, TExternal, TExchange> covey) => this;
+
+    public void Send<TLocal>(TLocal local) => _logger.Error($"NullExchange: Sending nowhere: {local}");
 }

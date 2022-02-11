@@ -8,26 +8,25 @@
 using System;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
+
+[Serializable]
+public class Period
 {
-    [Serializable]
-    public class Period
-    {
-        public static Period Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
-        public static Period None = Of(0);
+    public static Period Forever = Of(DateTime.MaxValue.GetCurrentSeconds());
+    public static Period None = Of(0);
 
-        public TimeSpan Duration { get; }
+    public TimeSpan Duration { get; }
 
-        public static Period Of(TimeSpan duration) => new Period(duration);
+    public static Period Of(TimeSpan duration) => new Period(duration);
 
-        public static Period Of(long duration) => new Period(TimeSpan.FromSeconds(duration));
+    public static Period Of(long duration) => new Period(TimeSpan.FromSeconds(duration));
 
-        public bool IsForever() => ToMilliseconds() == Forever.ToMilliseconds();
+    public bool IsForever() => ToMilliseconds() == Forever.ToMilliseconds();
 
-        public DateTime ToFutureDateTime() => IsForever() ? DateTime.MaxValue : DateTime.Now.Add(Duration);
+    public DateTime ToFutureDateTime() => IsForever() ? DateTime.MaxValue : DateTime.Now.Add(Duration);
 
-        public long ToMilliseconds() => Convert.ToInt64(Duration.TotalMilliseconds);
+    public long ToMilliseconds() => Convert.ToInt64(Duration.TotalMilliseconds);
 
-        protected Period(TimeSpan duration) => Duration = duration;
-    }
+    protected Period(TimeSpan duration) => Duration = duration;
 }

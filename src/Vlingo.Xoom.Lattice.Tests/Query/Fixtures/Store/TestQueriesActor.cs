@@ -11,30 +11,29 @@ using Vlingo.Xoom.Lattice.Query;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.State;
 
-namespace Vlingo.Xoom.Lattice.Tests.Query.Fixtures.Store
+namespace Vlingo.Xoom.Lattice.Tests.Query.Fixtures.Store;
+
+public class TestQueriesActor : StateStoreQueryActor<TestState>, ITestQueries
 {
-    public class TestQueriesActor : StateStoreQueryActor<TestState>, ITestQueries
+    public TestQueriesActor(IStateStore stateStore) : base(stateStore)
     {
-        public TestQueriesActor(IStateStore stateStore) : base(stateStore)
-        {
-        }
-
-        public ICompletes<TestState> TestStateById(string id) => QueryStateFor(id);
-
-        public ICompletes<TestState> TestStateById(string id, TestState notFoundState) => QueryStateFor(id, notFoundState);
-
-        public ICompletes<TestState> TestStateById(string id, int retryInterval, int retryCount) => QueryStateFor(id, retryInterval, retryCount);
-
-        public ICompletes<TestState> TestStateById(string id, TestState notFoundState, int retryInterval, int retryCount) => QueryStateFor(id, notFoundState, retryInterval, retryCount);
-
-        public ICompletes<ObjectState<TestState>> TestObjectStateById(string id) => QueryObjectStateFor(id);
-
-        public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState) => QueryObjectStateFor(id, notFoundState);
-
-        public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, int retryInterval, int retryCount) => QueryObjectStateFor(id, retryInterval, retryCount);
-
-        public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState, int retryInterval, int retryCount) => QueryObjectStateFor(id, notFoundState, retryInterval, retryCount);
-        
-        public ICompletes<IEnumerable<TestState>> All(List<TestState> all) => AllOf(all);
     }
+
+    public ICompletes<TestState> TestStateById(string id) => QueryStateFor(id);
+
+    public ICompletes<TestState> TestStateById(string id, TestState notFoundState) => QueryStateFor(id, notFoundState);
+
+    public ICompletes<TestState> TestStateById(string id, int retryInterval, int retryCount) => QueryStateFor(id, retryInterval, retryCount);
+
+    public ICompletes<TestState> TestStateById(string id, TestState notFoundState, int retryInterval, int retryCount) => QueryStateFor(id, notFoundState, retryInterval, retryCount);
+
+    public ICompletes<ObjectState<TestState>> TestObjectStateById(string id) => QueryObjectStateFor(id);
+
+    public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState) => QueryObjectStateFor(id, notFoundState);
+
+    public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, int retryInterval, int retryCount) => QueryObjectStateFor(id, retryInterval, retryCount);
+
+    public ICompletes<ObjectState<TestState>> TestObjectStateById(string id, ObjectState<TestState> notFoundState, int retryInterval, int retryCount) => QueryObjectStateFor(id, notFoundState, retryInterval, retryCount);
+        
+    public ICompletes<IEnumerable<TestState>> All(List<TestState> all) => AllOf(all);
 }

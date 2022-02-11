@@ -8,17 +8,16 @@
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Lattice.Model;
 
-namespace Vlingo.Xoom.Lattice.Router
+namespace Vlingo.Xoom.Lattice.Router;
+
+public class CommandRouterWorkerActor : Actor, ICommandRouter
 {
-    public class CommandRouterWorkerActor : Actor, ICommandRouter
-    {
-        private readonly Stage _stage;
+    private readonly Stage _stage;
         
-        public CommandRouterWorkerActor() => _stage = Stage;
+    public CommandRouterWorkerActor() => _stage = Stage;
 
-        public void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command => 
-            command.HandleWithin(_stage);
+    public void Route<TProtocol, TCommand, TAnswer>(RoutableCommand<TProtocol, TCommand, TAnswer> command) where TCommand : Command => 
+        command.HandleWithin(_stage);
 
-        public CommandRouterType CommandRouterType => CommandRouterType.NotDefined;
-    }
+    public CommandRouterType CommandRouterType => CommandRouterType.NotDefined;
 }

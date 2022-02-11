@@ -9,29 +9,28 @@ using System;
 using Vlingo.Xoom.Actors;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Grid.Spaces
-{
-    internal class ExpirableQuery : IScheduledScannable<ExpirableQuery>, IComparable<ExpirableQuery>
-    {
-        internal ICompletesEventually Completes { get; }
-        internal DateTime ExpiresOn { get; }
-        internal IKey Key { get; }
-        internal Period Period { get; }
-        internal bool RetainItem { get; }
+namespace Vlingo.Xoom.Lattice.Grid.Spaces;
 
-        internal ExpirableQuery(IKey key, bool retainItem, DateTime expiresOn, Period period, ICompletesEventually completes)
-        {
-            Key = key;
-            RetainItem = retainItem;
-            ExpiresOn = expiresOn;
-            Period = period;
-            Completes = completes;
-        }
-        
-        internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
-        
-        public int CompareTo(ExpirableQuery? other) => Key.Compare(Key, other?.Key!);
-        
-        public ExpirableQuery Scannable() => this;
+internal class ExpirableQuery : IScheduledScannable<ExpirableQuery>, IComparable<ExpirableQuery>
+{
+    internal ICompletesEventually Completes { get; }
+    internal DateTime ExpiresOn { get; }
+    internal IKey Key { get; }
+    internal Period Period { get; }
+    internal bool RetainItem { get; }
+
+    internal ExpirableQuery(IKey key, bool retainItem, DateTime expiresOn, Period period, ICompletesEventually completes)
+    {
+        Key = key;
+        RetainItem = retainItem;
+        ExpiresOn = expiresOn;
+        Period = period;
+        Completes = completes;
     }
+        
+    internal bool IsMaximumExpiration => ExpiresOn.GetCurrentSeconds() == DateTime.MaxValue.GetCurrentSeconds();
+        
+    public int CompareTo(ExpirableQuery? other) => Key.Compare(Key, other?.Key!);
+        
+    public ExpirableQuery Scannable() => this;
 }

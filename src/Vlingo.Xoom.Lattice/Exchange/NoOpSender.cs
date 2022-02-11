@@ -5,19 +5,18 @@
 // was not distributed with this file, You can obtain
 // one at https://mozilla.org/MPL/2.0/.
 
-namespace Vlingo.Xoom.Lattice.Exchange
-{
-    /// <summary>
-    /// For when you are a consumer only.
-    /// </summary>
-    public class NoOpSender : IExchangeSender<object>
-    {
-        void IExchangeSender<object>.Send(object message)
-        {
-        }
+namespace Vlingo.Xoom.Lattice.Exchange;
 
-        void IExchangeSender.Send(object message)
-        {
-        }
+/// <summary>
+/// For when you are a consumer only.
+/// </summary>
+public class NoOpSender : IExchangeSender<object>
+{
+    void IExchangeSender<object>.Send(object message)
+    {
+    }
+
+    void IExchangeSender.Send(object message)
+    {
     }
 }

@@ -10,170 +10,169 @@ using System.Collections;
 using System.Collections.Generic;
 using Vlingo.Xoom.Common;
 
-namespace Vlingo.Xoom.Lattice.Util
+namespace Vlingo.Xoom.Lattice.Util;
+
+public class WeakQueue<T> where T : class
 {
-    public class WeakQueue<T> where T : class
+    private readonly AtomicBoolean _idle;
+
+    private Queue<WeakReference<T>> _delegate;
+
+    public WeakQueue() : this(new Queue<WeakReference<T>>())
     {
-        private readonly AtomicBoolean _idle;
+    }
 
-        private Queue<WeakReference<T>> _delegate;
-
-        public WeakQueue() : this(new Queue<WeakReference<T>>())
-        {
-        }
-
-        private WeakQueue(Queue<WeakReference<T>> @delegate)
-        {
-            _idle = new AtomicBoolean(true);
-            _delegate = @delegate;
-        }
+    private WeakQueue(Queue<WeakReference<T>> @delegate)
+    {
+        _idle = new AtomicBoolean(true);
+        _delegate = @delegate;
+    }
         
-        private Queue<WeakReference<T>> GetDelegate()
+    private Queue<WeakReference<T>> GetDelegate()
+    {
+        ExpungeStaleEntries();
+        return _delegate;
+    }
+
+    private void ExpungeStaleEntries()
+    {
+        var tempQueue = new Queue<WeakReference<T>>();
+
+        foreach (var weak in _delegate)
         {
-            ExpungeStaleEntries();
-            return _delegate;
-        }
-
-        private void ExpungeStaleEntries()
-        {
-            var tempQueue = new Queue<WeakReference<T>>();
-
-            foreach (var weak in _delegate)
+            if (weak.TryGetTarget(out _))
             {
-                if (weak.TryGetTarget(out _))
-                {
-                    tempQueue.Enqueue(weak);
-                }
-            }
-
-            _delegate = tempQueue;
-        }
-
-        private void Atomic(Action supplier)
-        {
-            try
-            {
-                while (_idle.CompareAndSet(true, false)) ;
-                supplier();
-            }
-            finally
-            {
-                _idle.Set(true);
+                tempQueue.Enqueue(weak);
             }
         }
+
+        _delegate = tempQueue;
+    }
+
+    private void Atomic(Action supplier)
+    {
+        try
+        {
+            while (_idle.CompareAndSet(true, false)) ;
+            supplier();
+        }
+        finally
+        {
+            _idle.Set(true);
+        }
+    }
         
-        private TA Atomic<TA>(Func<TA> supplier)
+    private TA Atomic<TA>(Func<TA> supplier)
+    {
+        try
         {
-            try
-            {
-                while (_idle.CompareAndSet(true, false)) ;
-                return supplier();
-            }
-            finally
-            {
-                _idle.Set(true);
-            }
+            while (_idle.CompareAndSet(true, false)) ;
+            return supplier();
         }
-
-        private T ExpungeStaleEntryOnSupply(Func<WeakReference<T>> supplier)
+        finally
         {
-            return Optional.OfNullable(supplier())
-                .Map(w =>
-                {
-                    T? t = null;
-                    if (w.TryGetTarget(out var target)) t = target;
-
-                    return Optional.OfNullable(t)
-                        .OrElseGet(() =>
-                            ExpungeStaleEntryOnSupply(supplier));
-                })
-                .OrElse(default!);
+            _idle.Set(true);
         }
+    }
+
+    private T ExpungeStaleEntryOnSupply(Func<WeakReference<T>> supplier)
+    {
+        return Optional.OfNullable(supplier())
+            .Map(w =>
+            {
+                T? t = null;
+                if (w.TryGetTarget(out var target)) t = target;
+
+                return Optional.OfNullable(t)
+                    .OrElseGet(() =>
+                        ExpungeStaleEntryOnSupply(supplier));
+            })
+            .OrElse(default!);
+    }
         
-        public void Enqueue(T t)
+    public void Enqueue(T t)
+    {
+        if (t == null)
         {
-            if (t == null)
-            {
-                throw new ArgumentNullException(nameof(t), "Null entries not allowed");
-            }
+            throw new ArgumentNullException(nameof(t), "Null entries not allowed");
+        }
             
-            Atomic(() => GetDelegate().Enqueue(new WeakReference<T>(t)));
-        }
+        Atomic(() => GetDelegate().Enqueue(new WeakReference<T>(t)));
+    }
 
-        public void EnqueueAll(IEnumerable<T> values)
+    public void EnqueueAll(IEnumerable<T> values)
+    {
+        foreach (var value in values)
         {
-            foreach (var value in values)
-            {
-                Enqueue(value);
-            }
+            Enqueue(value);
         }
+    }
 
-        public T? Poll()
+    public T? Poll()
+    {
+        try
         {
-            try
-            {
-                return Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
+            return Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
         }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
         
-        public T Dequeue() => Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
+    public T Dequeue() => Atomic(() => ExpungeStaleEntryOnSupply(GetDelegate().Dequeue));
 
-        public T? Peek()
+    public T? Peek()
+    {
+        try
         {
-            try
-            {
-                return Atomic(() => ExpungeStaleEntryOnSupply(_delegate.Peek));
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
+            return Atomic(() => ExpungeStaleEntryOnSupply(_delegate.Peek));
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    public IEnumerator<T> GetEnumerator() => new ExpungingEnumerator(this, _delegate.GetEnumerator());
+
+    public int Count => _delegate.Count;
+
+    private class ExpungingEnumerator : IEnumerator<T>
+    {
+        private readonly WeakQueue<T> _queue;
+        private Queue<WeakReference<T>>.Enumerator _enumerator;
+
+        private T _next = null!;
+
+        public ExpungingEnumerator(WeakQueue<T> queue, Queue<WeakReference<T>>.Enumerator enumerator)
+        {
+            _queue = queue;
+            _enumerator = enumerator;
         }
 
-        public IEnumerator<T> GetEnumerator() => new ExpungingEnumerator(this, _delegate.GetEnumerator());
-
-        public int Count => _delegate.Count;
-
-        private class ExpungingEnumerator : IEnumerator<T>
+        public bool MoveNext()
         {
-            private readonly WeakQueue<T> _queue;
-            private Queue<WeakReference<T>>.Enumerator _enumerator;
+            _next = _queue.ExpungeStaleEntryOnSupply(Iterate);
+            return _next != null;
+        }
 
-            private T _next = null!;
+        public void Reset() => throw new InvalidOperationException("Cannot call Reset() on this queue.");
 
-            public ExpungingEnumerator(WeakQueue<T> queue, Queue<WeakReference<T>>.Enumerator enumerator)
+        public T Current => _next;
+
+        object? IEnumerator.Current => Current;
+
+        public void Dispose() => _enumerator.Dispose();
+
+        private WeakReference<T> Iterate()
+        {
+            if (_enumerator.MoveNext())
             {
-                _queue = queue;
-                _enumerator = enumerator;
+                return _enumerator.Current;
             }
 
-            public bool MoveNext()
-            {
-                _next = _queue.ExpungeStaleEntryOnSupply(Iterate);
-                return _next != null;
-            }
-
-            public void Reset() => throw new InvalidOperationException("Cannot call Reset() on this queue.");
-
-            public T Current => _next;
-
-            object? IEnumerator.Current => Current;
-
-            public void Dispose() => _enumerator.Dispose();
-
-            private WeakReference<T> Iterate()
-            {
-                if (_enumerator.MoveNext())
-                {
-                    return _enumerator.Current;
-                }
-
-                return null!;
-            }
+            return null!;
         }
     }
 }

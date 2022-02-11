@@ -9,32 +9,31 @@ using Vlingo.Xoom.Common;
 using Vlingo.Xoom.Lattice.Model.Process;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Xoom.Lattice.Tests.Model.Process
+namespace Vlingo.Xoom.Lattice.Tests.Model.Process;
+
+public class FiveStepEmittingSourcedProcess : SourcedProcess<PorcessObjectState>, IFiveStepProcess
 {
-    public class FiveStepEmittingSourcedProcess : SourcedProcess<PorcessObjectState>, IFiveStepProcess
-    {
-        private int _stepCount;
+    private int _stepCount;
 
-        public override string ProcessId => StreamName;
+    public override string ProcessId => StreamName;
 
-        public FiveStepEmittingSourcedProcess() => RegisterConsumer<ProcessMessage>(ApplyProcessMessage);
+    public FiveStepEmittingSourcedProcess() => RegisterConsumer<ProcessMessage>(ApplyProcessMessage);
 
-        public ICompletes<int> QueryStepCount() => Completes().With(_stepCount);
+    public ICompletes<int> QueryStepCount() => Completes().With(_stepCount);
 
-        public void StepOneHappened() => Process(new DoStepTwo());
+    public void StepOneHappened() => Process(new DoStepTwo());
 
-        public void StepTwoHappened() => Process(new DoStepThree());
+    public void StepTwoHappened() => Process(new DoStepThree());
 
-        public void StepThreeHappened() => Process(new DoStepFour());
+    public void StepThreeHappened() => Process(new DoStepFour());
 
-        public void StepFourHappened() => Process(new DoStepFive());
+    public void StepFourHappened() => Process(new DoStepFive());
 
-        public void StepFiveHappened() => ++_stepCount;
+    public void StepFiveHappened() => ++_stepCount;
 
-        private void ApplyProcessMessage(ProcessMessage message) => ++_stepCount;
-    }
+    private void ApplyProcessMessage(ProcessMessage message) => ++_stepCount;
+}
 
-    public class PorcessObjectState : StateObject
-    {
-    }
+public class PorcessObjectState : StateObject
+{
 }

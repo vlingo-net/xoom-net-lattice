@@ -7,26 +7,25 @@
 
 using Vlingo.Xoom.Symbio;
 
-namespace Vlingo.Xoom.Lattice.Model
+namespace Vlingo.Xoom.Lattice.Model;
+
+/// <summary>
+/// A abstract base for commands, which are considered a type of <see cref="Source{T}"/>.
+/// </summary>
+public abstract class Command : Source<Command>
 {
     /// <summary>
-    /// A abstract base for commands, which are considered a type of <see cref="Source{T}"/>.
+    /// Construct my default state with a type version of 1.
     /// </summary>
-    public abstract class Command : Source<Command>
+    protected Command()
     {
-        /// <summary>
-        /// Construct my default state with a type version of 1.
-        /// </summary>
-        protected Command()
-        {
-        }
+    }
         
-        /// <summary>
-        /// Construct my default state with a <paramref name="commandTypeVersion"/> greater than 1.
-        /// </summary>
-        /// <param name="commandTypeVersion">The int version of this command type</param>
-        protected Command(int commandTypeVersion) : base(commandTypeVersion)
-        {
-        }
+    /// <summary>
+    /// Construct my default state with a <paramref name="commandTypeVersion"/> greater than 1.
+    /// </summary>
+    /// <param name="commandTypeVersion">The int version of this command type</param>
+    protected Command(int commandTypeVersion) : base(commandTypeVersion)
+    {
     }
 }

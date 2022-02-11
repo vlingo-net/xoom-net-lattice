@@ -13,84 +13,83 @@ using Vlingo.Xoom.Lattice.Model.Object;
 using Vlingo.Xoom.Symbio;
 using Vlingo.Xoom.Symbio.Store.Object;
 
-namespace Vlingo.Xoom.Lattice.Model.Process
+namespace Vlingo.Xoom.Lattice.Model.Process;
+
+/// <summary>
+/// Abstract base definition for all concrete object process types.
+/// </summary>
+/// <typeparam name="T">The type of the <see cref="ObjectEntity{T}"/></typeparam>
+public abstract class ObjectProcess<T> : ObjectEntity<T>, IProcess<T> where T : StateObject
 {
+    private readonly Info _info;
+    private readonly List<ISource> _applied;
+        
+    public abstract Chronicle<T> Chronicle { get; }
+        
+    public abstract string ProcessId { get; }
+
     /// <summary>
-    /// Abstract base definition for all concrete object process types.
+    /// Construct my default state using my <code>address</code> as my <code>id</code>.
     /// </summary>
-    /// <typeparam name="T">The type of the <see cref="ObjectEntity{T}"/></typeparam>
-    public abstract class ObjectProcess<T> : ObjectEntity<T>, IProcess<T> where T : StateObject
+    public ObjectProcess() : this(null)
     {
-        private readonly Info _info;
-        private readonly List<ISource> _applied;
+    }
         
-        public abstract Chronicle<T> Chronicle { get; }
+    protected ObjectProcess(string? id) : base(id)
+    {
+        _info = Stage.World.ResolveDynamic<ProcessTypeRegistry>(ProcessTypeRegistry.InternalName).Info(GetType());
+        _applied = new List<ISource>(2);
+    }
         
-        public abstract string ProcessId { get; }
+    public void Process(Command command)
+    {
+        _applied.Add(command);
+        Apply(Chronicle.State, new ProcessMessage(command));
+    }
+        
+    public ICompletes<TResult> Process<TResult>(Command command, Func<TResult> andThen)
+    {
+        _applied.Add(command);
+        return Apply(Chronicle.State, new ProcessMessage(command), andThen);
+    }
+        
+    public void Process(DomainEvent @event)
+    {
+        _applied.Add(@event);
+        Apply(Chronicle.State, new ProcessMessage(@event));
+    }
+        
+    public ICompletes<TResult> Process<TResult>(DomainEvent @event, Func<TResult> andThen)
+    {
+        _applied.Add(@event);
+        return Apply(Chronicle.State, new ProcessMessage(@event), andThen);
+    }
+        
+    public void ProcessAll<TSource>(IEnumerable<Source<TSource>> sources)
+    {
+        var listSources = sources.ToList();
+        _applied.AddRange(listSources);
+        Apply(Chronicle.State, ProcessMessage.Wrap(listSources));
+    }
+        
+    public ICompletes<TResult> ProcessAll<TResult, TSource>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen)
+    {
+        var listSources = sources.ToList();
+        _applied.AddRange(listSources);
+        return Apply(Chronicle.State, ProcessMessage.Wrap(listSources), andThen);
+    }
 
-        /// <summary>
-        /// Construct my default state using my <code>address</code> as my <code>id</code>.
-        /// </summary>
-        public ObjectProcess() : this(null)
-        {
-        }
-        
-        protected ObjectProcess(string? id) : base(id)
-        {
-            _info = Stage.World.ResolveDynamic<ProcessTypeRegistry>(ProcessTypeRegistry.InternalName).Info(GetType());
-            _applied = new List<ISource>(2);
-        }
-        
-        public void Process(Command command)
-        {
-            _applied.Add(command);
-            Apply(Chronicle.State, new ProcessMessage(command));
-        }
-        
-        public ICompletes<TResult> Process<TResult>(Command command, Func<TResult> andThen)
-        {
-            _applied.Add(command);
-            return Apply(Chronicle.State, new ProcessMessage(command), andThen);
-        }
-        
-        public void Process(DomainEvent @event)
-        {
-            _applied.Add(@event);
-            Apply(Chronicle.State, new ProcessMessage(@event));
-        }
-        
-        public ICompletes<TResult> Process<TResult>(DomainEvent @event, Func<TResult> andThen)
-        {
-            _applied.Add(@event);
-            return Apply(Chronicle.State, new ProcessMessage(@event), andThen);
-        }
-        
-        public void ProcessAll<TSource>(IEnumerable<Source<TSource>> sources)
-        {
-            var listSources = sources.ToList();
-            _applied.AddRange(listSources);
-            Apply(Chronicle.State, ProcessMessage.Wrap(listSources));
-        }
-        
-        public ICompletes<TResult> ProcessAll<TResult, TSource>(IEnumerable<Source<TSource>> sources, Func<TResult> andThen)
-        {
-            var listSources = sources.ToList();
-            _applied.AddRange(listSources);
-            return Apply(Chronicle.State, ProcessMessage.Wrap(listSources), andThen);
-        }
+    public void Send(Command command) => _info.Exchange.Send(command);
 
-        public void Send(Command command) => _info.Exchange.Send(command);
+    public void Send(DomainEvent @event) => _info.Exchange.Send(@event);
 
-        public void Send(DomainEvent @event) => _info.Exchange.Send(@event);
-
-        protected override void AfterApply()
+    protected override void AfterApply()
+    {
+        foreach (var source in _applied)
         {
-            foreach (var source in _applied)
-            {
-                _info.Exchange.Send(source);
-            }
+            _info.Exchange.Send(source);
+        }
             
-            _applied.Clear();
-        }
+        _applied.Clear();
     }
 }

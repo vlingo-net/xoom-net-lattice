@@ -7,14 +7,13 @@
 
 using Vlingo.Xoom.Common.Message;
 
-namespace Vlingo.Xoom.Lattice.Exchange.Local
+namespace Vlingo.Xoom.Lattice.Exchange.Local;
+
+public class LocalExchangeSender : DefaultExchangeSender<LocalExchangeMessage>
 {
-    public class LocalExchangeSender : DefaultExchangeSender<LocalExchangeMessage>
-    {
-        public IMessageQueue Queue { get; }
+    public IMessageQueue Queue { get; }
 
-        public LocalExchangeSender(IMessageQueue queue) => Queue = queue;
+    public LocalExchangeSender(IMessageQueue queue) => Queue = queue;
 
-        public override void Send(LocalExchangeMessage message) => Queue.Enqueue(message);
-    }
+    public override void Send(LocalExchangeMessage message) => Queue.Enqueue(message);
 }
