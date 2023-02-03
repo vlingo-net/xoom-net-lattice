@@ -28,9 +28,9 @@ public class GridDeliver : IMessage
         return message =>
         {
             var returns = Optional.OfNullable(message.Completes);
-                
+
             var answerCorrelationId = returns
-                .Map(completes => Guid.NewGuid())
+                .Map(_ => Guid.NewGuid())
                 .OrElse(Guid.Empty);
                 
             var deliver = new GridDeliver(
@@ -41,7 +41,7 @@ public class GridDeliver : IMessage
                 answerCorrelationId,
                 message.Representation);
                 
-            if (answerCorrelationId != null)
+            if (answerCorrelationId != Guid.Empty)
             {
                 correlation(answerCorrelationId, new UnAckMessage(message.Protocol, receiver, returns.Get(), deliver));
             }

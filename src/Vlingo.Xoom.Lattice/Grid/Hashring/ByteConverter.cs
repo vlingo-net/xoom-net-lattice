@@ -31,7 +31,9 @@ public static class ByteConverter
         var formatter = new BinaryFormatter();
         using (var stream = new MemoryStream())
         {
+#pragma warning disable SYSLIB0011
             formatter.Serialize(stream, item);
+#pragma warning disable SYSLIB0011
             return stream.ToArray();
         }
     }

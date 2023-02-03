@@ -83,7 +83,7 @@ public class ExpiringHardRefHolder : Actor, IHardRefHolder, IScheduled<object>
 
         internal Expiring(DateTime bestBefore, object reference)
         {
-            if (bestBefore == null)
+            if (bestBefore == DateTime.MinValue)
             {
                 throw new ArgumentNullException(nameof(bestBefore));
             }

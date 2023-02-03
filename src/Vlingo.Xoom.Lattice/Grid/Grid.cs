@@ -284,7 +284,9 @@ public class Grid : Stage, IGridRuntime, IDisposable
     {
         try
         {
+#pragma warning disable SYSLIB0006
             _runnableThread?.Abort();
+#pragma warning restore SYSLIB0006
         }
         catch
         {

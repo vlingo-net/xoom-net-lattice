@@ -106,7 +106,7 @@ public abstract class AbstractProjectable : IProjectable
         {
             return default!;
         }
-        return (T) _state.Metadata.Object;
+        return (T) _state.Metadata.Object!;
     }
 
     public Optional<T> OptionalObject<T>()
